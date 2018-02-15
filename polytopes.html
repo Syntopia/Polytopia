@@ -76,7 +76,7 @@
 
 	</p>
 
-	
+
 	<p>
 		<a href="https://terrytao.wordpress.com/2010/07/10/cayley-graphs-and-the-geometry-of-groups/">Cayley graphs</a>
 		<br/>
@@ -93,36 +93,52 @@
 
 
 	<h2>Example: symmetries of the cube</h2>
-<p>
-	Let us start with a simple three dimensional cube. </p>
-	
-	<p>This cube has several automorphisms - transformations that will map the
-	cube onto itself. For instance, we can easily find several rotations (from vertex to opposite vertex: 4 (120 degrees), from
-	mid-edge to opposite mid-edge: 6 (180 degrees), from mid-face to opposite face: 3 (90 degrees): a total of: 4*2+6*1+3*3
-	= 23 rotations. 
+	<p>
+		Let us start with a simple three dimensional cube. </p>
+
+	<p>This cube has several automorphisms - transformations that will map the cube onto itself. For instance, we can easily find
+		several rotations (from vertex to opposite vertex: 4 (120 degrees), from mid-edge to opposite mid-edge: 6 (180 degrees),
+		from mid-face to opposite face: 3 (90 degrees): a total of: 4*2+6*1+3*3 = 23 rotations.
 	</p>
 	<p>
-	Including the identity transformation, and taking into account that we could also mirror these transformations (parity
-	flip) every one of these transformations, we arrive at
-	<b>48</b> automorphisms of the cube.
-</p>
-<p>These transformations form a <em>group</em>: which mathematically, is a set of elements, together with an operation for combining any two elements such that the results is again an element
-	in the set. There muse an identity element in the group, and every element must have an inverse element: i.e. an element such that combining the element and its inverse, results in the identity element.
-	In our case, combining any number of the 48 transformations will result in a transformation that is already in the present in our set of transformations.
-	Likewise, for all rotations and reflections there exists an inverse transformation (for 180 degrees transformations, and for reflections, these transformations are their 
-	own inverses).
-</p>
+		Including the identity transformation, and taking into account that we could also mirror these transformations (parity flip)
+		every one of these transformations, we arrive at
+		<b>48</b> automorphisms of the cube.
+	</p>
+	<p>These transformations form a
+		<em>group</em>: which mathematically, is a set of elements, together with an operation for combining any two elements such
+		that the results is again an element in the set. There muse an identity element in the group, and every element must have
+		an inverse element: i.e. an element such that combining the element and its inverse, results in the identity element. In
+		our case, combining any number of the 48 transformations will result in a transformation that is already in the present
+		in our set of transformations. Likewise, for all rotations and reflections there exists an inverse transformation (for
+		180 degrees transformations, and for reflections, these transformations are their own inverses).
+	</p>
 
-<p>
-	Generators: a subset, S, of elements in the group G, which can be used to express all elements (using their inverses as well).
-</p>
+	<p>
+		Generators: a subset, S, of elements in the group G, which can be used to express all elements (using their inverses as well).
+	</p>
 
-<p>
-	Coxeter group: relations on the form \((ab)^{m_{ab}}\).
-</p>
+	<p>
+		Coxeter group: relations on the form \((ab)^{m_{ab}}\).
+	</p>
 
 
 	<script>
+
+		function createLine(from, to, width, color) {
+			var m = new THREE.MeshStandardMaterial({
+				color: color,
+			});
+			var dist = from.distanceTo(to);
+
+			var geometry = new THREE.CylinderGeometry(width, width, dist, 20, 1);
+			var mesh = new THREE.Mesh(geometry, m);
+			var axis = new THREE.Vector3(0, 1, 0);
+			var vector = (new THREE.Vector3()).subVectors(to, from);
+			mesh.quaternion.setFromUnitVectors(axis, vector.clone().normalize());
+			mesh.position.copy(from.clone().addScaledVector(vector, 0.5));
+			return mesh;
+		}
 
 		function createPlane(v1, v2, v4, color) {
 			var m = new THREE.MeshStandardMaterial({
@@ -130,8 +146,6 @@
 				transparent: true,
 				side: THREE.DoubleSide,
 				color: color,
-				//	depthTest: false,
-				//wireframe: true,
 			});
 
 			var g = new THREE.Geometry();
@@ -152,16 +166,35 @@
 					offset += 4;
 				}
 			}
-
-			//	g.vertices.push(v1,v2,v3,v4);
-			//g.faces.push( new THREE.Face3( 0, 1, 2),new THREE.Face3( 2, 3, 0));
 			g.computeFlatVertexNormals();
-
-
-
 			return new THREE.Mesh(g, m);
 		}
 
+
+		function getStandard3DView(container, w, h) {
+			var camera = new THREE.PerspectiveCamera(40, w / h, 1, 2000);
+			camera.position.set(0.0, 1.2, 1.2 * 3.5);
+			var scene2 = new THREE.Scene( { antialias: true });
+			scene2.background = new THREE.Color(0xffffff);
+			scene2.add(camera);
+
+			var ambientLight = new THREE.AmbientLight(0xffffff);
+			camera.add(ambientLight);
+			var directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+			directionalLight.position.set(0, 2, 9);
+			camera.add(directionalLight);
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(w, h);
+			container.appendChild(renderer.domElement);
+
+			var controls = new THREE.OrbitControls(camera, renderer.domElement);
+			controls.addEventListener('change', function () { renderer.render(scene2, camera); });
+
+			setTimeout(function () { renderer.render(scene2, camera) });
+			return scene2;
+		}
 
 		function mid(v1, v2) {
 			return new THREE.Vector3().addScaledVector(v1, 0.5).addScaledVector(v2, 0.5);
@@ -183,132 +216,88 @@
 			document.body.appendChild(container);
 			return inner;
 		}
-	</script>
-
-
-	<script>
-
 		if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-		init();
-
-		/*
-				 1--2
-			   0--3 |
-		       |  | |
-			   | 5|-6
-			   4--7
-		*/
-		function init() {
-			var container = getContainer();
-			var w = getSideWidth();
-			var h = getSideWidth();
-
-			var camera2 = new THREE.PerspectiveCamera(40, w / h, 1, 2000);
-			camera2.position.set(0.0, 1.2, 1.2 * 3.5);
-
-			var scene2 = new THREE.Scene();
-			scene2.background = new THREE.Color(0xffffff);
-			scene2.add(camera2);
-
+		function getVertices() {
 			var v = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(1, -1, -1),
-			new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
+				new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
+				return v;
+		};
 
-			scene2.add(createPlane(v[0], v[1], v[3], 0xff0000)); // top
-			scene2.add(createPlane(v[5], v[6], v[4], 0xff0000)); // bottom
-			scene2.add(createPlane(v[3], v[2], v[7], 0x00ff00)); // right
-			scene2.add(createPlane(v[0], v[1], v[4], 0x00ff00)); // left
-			scene2.add(createPlane(v[0], v[3], v[4], 0x0000ff)); // front
-			scene2.add(createPlane(v[1], v[2], v[5], 0x0000ff)); // back
-
-			var lineMaterial2 = new THREE.LineBasicMaterial({ linewidth: 3, color: 0x000000 });
-			var g2 = new THREE.Geometry();
-			v.forEach(function (vv) { vv.multiplyScalar(2); });
-			g2.vertices.push(v[0], v[6], v[1], v[7], v[2], v[4], v[3], v[5]);
-			var centers = new THREE.LineSegments(g2, lineMaterial2);
-			scene2.add(centers);
-
-
-			var spotLight = new THREE.AmbientLight(0xffffff, 0.5);
-			scene2.add(spotLight);
-			var directionalLight = new THREE.DirectionalLight(0xffaaaa, 1);
-			directionalLight.position.set(0, 2, 9);
-			camera2.add(directionalLight);
-
-
-			var renderer2 = new THREE.WebGLRenderer();
-			renderer2.setPixelRatio(window.devicePixelRatio);
-			renderer2.setSize(w, h);
-			container.appendChild(renderer2.domElement);
-
-			var controls = new THREE.OrbitControls(camera2, renderer2.domElement);
-			controls.addEventListener('change', function () { renderer2.render(scene2, camera2); });
-			renderer2.render(scene2, camera2);
-		}
-
-
-
+		function getEdges() {
+			var v = getVertices();
+			var e = [];
+			e.push(v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]);
+			e.push(v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4]);
+			e.push(v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]);
+			return e;
+		};
 	</script>
-
 
 
 	<script>
 
-		if (!Detector.webgl) Detector.addGetWebGLMessage();
+		
 
 		init();
-
 		function init() {
-			var container = getContainer(getSideWidth() + 20);
-			var w = getSideWidth();
-			var h = getSideWidth();
+			var scene = getStandard3DView(getContainer(20), getSideWidth(), getSideWidth());
+
+			var v = getVertices();
+			var e = getEdges();
+
+			scene.add(createPlane(v[0], v[1], v[3], 0xff0000)); // top
+			scene.add(createPlane(v[5], v[6], v[4], 0xff0000)); // bottom
+			scene.add(createPlane(v[3], v[2], v[7], 0x00ff00)); // right
+			scene.add(createPlane(v[0], v[1], v[4], 0x00ff00)); // left
+			scene.add(createPlane(v[0], v[3], v[4], 0x0000ff)); // front
+			scene.add(createPlane(v[1], v[2], v[5], 0x0000ff)); // back
+
+			v.forEach(function (vv) { vv.multiplyScalar(1.3); });
+			var w = 0.05;
+			var c = 0xffffff;
+			scene.add(createLine(v[0], v[6], w, c));
+			scene.add(createLine(v[1], v[7], w, c));
+			scene.add(createLine(v[2], v[4], w, c));
+			scene.add(createLine(v[3], v[5], w, c));
 
 
-			var camera2 = new THREE.PerspectiveCamera(40, w / h, 1, 2000);
-			camera2.position.set(0.0, 1.2, 1.2 * 3.5);
-
-			var scene2 = new THREE.Scene();
-			scene2.background = new THREE.Color(0xffffff);
-			scene2.add(camera2);
-
-			var v = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(1, -1, -1),
-			new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
-
-			var boxGeometry = new THREE.Geometry();
-			boxGeometry.vertices.push(v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]);
-			boxGeometry.vertices.push(v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4]);
-			boxGeometry.vertices.push(v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]);
-			var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-			var line = new THREE.LineSegments(boxGeometry, lineMaterial);
-			scene2.add(line);
-
-			scene2.add(createPlane(v[0], v[2], v[4], 0xff0000));
-			scene2.add(createPlane(v[1], v[3], v[5], 0xff0000));
-			scene2.add(createPlane(v[0], v[3], v[5], 0x00ff00));
-			scene2.add(createPlane(v[1], v[2], v[4], 0x00ff00));
-			scene2.add(createPlane(v[4], v[5], v[3], 0x333333));
-			scene2.add(createPlane(v[0], v[1], v[7], 0x333333));
-			scene2.add(createPlane(mid(v[0], v[3]), mid(v[1], v[2]), mid(v[4], v[7]), 0x0000ff));
-			scene2.add(createPlane(mid(v[0], v[1]), mid(v[2], v[3]), mid(v[4], v[5]), 0x0000ff));
-			scene2.add(createPlane(mid(v[0], v[4]), mid(v[3], v[7]), mid(v[1], v[5]), 0x0000ff));
+			var l = 1.5; w = 0.05; c = 0xff5566;
+			scene.add(createLine(new THREE.Vector3(-l, 0, 0), new THREE.Vector3(l, 0, 0), w, c));
+			scene.add(createLine(new THREE.Vector3(0, -l, 0), new THREE.Vector3(0, l, 0), w, c));
+			scene.add(createLine(new THREE.Vector3(0, 0, -l), new THREE.Vector3(0, 0, l), w, c));
+			var  c = 0x5566ff;
+			for (var i = 0; i < e.length; i += 2) {
+				var v1 = mid(e[i],e[i+1]).multiplyScalar(1.2);
+				var v2 = v1.clone().multiplyScalar(-1);
+				scene.add(createLine(v1,v2, w, c));
+			}
+		}
+	</script>
 
 
-			var spotLight = new THREE.AmbientLight(0xffffff);
-			scene2.add(spotLight);
-			var directionalLight = new THREE.DirectionalLight(0xffaaaa, 1);
-			directionalLight.position.set(0, 2, 9);
-			camera2.add(directionalLight);
+	<script>
+		function init() {
+			var scene = getStandard3DView(getContainer(getSideWidth() + 20), getSideWidth(), getSideWidth());
 
-			var renderer2 = new THREE.WebGLRenderer();
-			renderer2.setPixelRatio(window.devicePixelRatio);
-			renderer2.setSize(w, h);
-			container.appendChild(renderer2.domElement);
+			var v = getVertices();
+			var e = getEdges();
 
-			var controls = new THREE.OrbitControls(camera2, renderer2.domElement);
-			controls.addEventListener('change', function () { renderer2.render(scene2, camera2); });
-			renderer2.render(scene2, camera2);
+			for (var i = 0; i < e.length; i += 2) {
+				scene.add(createLine(e[i], e[i + 1], 0.02, 0xffffff));
+			}
+			scene.add(createPlane(v[0], v[2], v[4], 0xff0000));
+			scene.add(createPlane(v[1], v[3], v[5], 0xff0000));
+			scene.add(createPlane(v[0], v[3], v[5], 0x00ff00));
+			scene.add(createPlane(v[1], v[2], v[4], 0x00ff00));
+			scene.add(createPlane(v[4], v[5], v[3], 0x333333));
+			scene.add(createPlane(v[0], v[1], v[7], 0x333333));
+			scene.add(createPlane(mid(v[0], v[3]), mid(v[1], v[2]), mid(v[4], v[7]), 0x0000ff));
+			scene.add(createPlane(mid(v[0], v[1]), mid(v[2], v[3]), mid(v[4], v[5]), 0x0000ff));
+			scene.add(createPlane(mid(v[0], v[4]), mid(v[3], v[7]), mid(v[1], v[5]), 0x0000ff));
 		}
 
+		init();
 
 
 	</script>
@@ -316,51 +305,23 @@
 
 	<script>
 
-
-		init();
-
-
 		function init() {
-			var container = getContainer(2 * (getSideWidth() + 20));
-			var w = getSideWidth();
-			var h = getSideWidth();
+			var scene = getStandard3DView(getContainer(2 * (getSideWidth() + 20)), getSideWidth(), getSideWidth());
 
+			var v = getVertices();
+			var e = getEdges();
+			
+			for (var i = 0; i < e.length; i += 2) {
+				scene.add(createLine(e[i], e[i + 1], 0.02, 0xffffff));
+			}
 
-			var camera2 = new THREE.PerspectiveCamera(40, w / h, 1, 2000);
-			camera2.position.set(0.0, 1.2, 1.2 * 3.5);
-
-			var scene2 = new THREE.Scene();
-			scene2.background = new THREE.Color(0xffffff);
-
-			var v = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(1, -1, -1),
-			new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
-
-			var boxGeometry = new THREE.Geometry();
-			boxGeometry.vertices.push(v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]);
-			boxGeometry.vertices.push(v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4]);
-			boxGeometry.vertices.push(v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]);
-			var lineMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff });
-			var line = new THREE.LineSegments(boxGeometry, lineMaterial);
-			scene2.add(line);
-
-			scene2.add(createPlane(v[0], v[2], v[4], 0xff0000));
-			scene2.add(createPlane(v[0], v[3], v[5], 0x00ff00));
-			scene2.add(createPlane(mid(v[0], v[3]), mid(v[1], v[2]), mid(v[4], v[7]), 0x0000ff));
-
-			var spotLight = new THREE.AmbientLight(0xffffff);
-			scene2.add(spotLight);
-
-			var renderer2 = new THREE.WebGLRenderer();
-			renderer2.setPixelRatio(window.devicePixelRatio);
-			renderer2.setSize(w, h);
-			container.appendChild(renderer2.domElement);
-
-			var controls = new THREE.OrbitControls(camera2, renderer2.domElement);
-			controls.addEventListener('change', function () { renderer2.render(scene2, camera2); });
-			renderer2.render(scene2, camera2);
+			scene.add(createPlane(v[0], v[2], v[4], 0x00ff00));
+			scene.add(createPlane(v[0], v[3], v[5], 0x0000ff));
+			scene.add(createPlane(mid(v[0], v[3]), mid(v[1], v[2]), mid(v[4], v[7]), 0xff0000));
 		}
 
 
+		init();
 
 	</script>
 
@@ -368,7 +329,7 @@
 		Here we have three reflection planes, which we could think of as operators: R, G, and B.
 	</p>
 	<p>
-		Notice that the angle between the reflection planes are: $$\angle(R,B) = 45^{\circ} $$ $$\angle(G,R) = 60^{\circ} $$ $$\angle(G,B)
+		Notice that the angle between the reflection planes are: $$\angle(R,G) = 45^{\circ} $$ $$\angle(G,B) = 60^{\circ} $$ $$\angle(R,B)
 		= 90^{\circ} $$
 	</p>
 	<p>
@@ -376,7 +337,7 @@
 		would be equal to a rotation of 120 degrees. And applying GR three times, e.g. GRGRGR, would not change the input.
 	</p>
 	<p>This means we can establish the following relations between the generators:</p>
-	$$R^2 = B^2 = G^2 = (RB)^4 = (GR)^3 = (GB)^2 = I$$
+	$$R^2 = B^2 = G^2 = (RG)^4 = (GB)^3 = (RB)^2 = I$$
 	<p>
 		Now, given this set of generators, how many different elements are there in our set? For instance, are (RBGR)^n different
 		elements for all n? This turns out to be a computationally hard problem, known as the
@@ -389,41 +350,164 @@
 		The
 		<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd-Coxeter Algorithm</a> a provides a way to identify and count all elements generated by our generators.
 	</p>
-	<p>Actually, the algorithm does a bit more: it allows for enumerating all cosets of G, for a given subgroup H. What does this mean?
-<br>A coset is the set resulting by multiplying the all members in \(H\) by a group element from, \(g\). A (left) coset is written \(gH\). 
-The number of cosets is written \(|G:H|\). Lagrange's theorem states that \( [G:H]={|G| \over |H|} \).
-
-
-
-set G/N tov
+	<p>Actually, the algorithm does a bit more: it allows for enumerating all cosets of G, for a given subgroup H. What does this
+		mean?
+		<br>A coset is the set resulting by multiplying the all members in \(H\) by a group element from, \(g\). A (left) coset is
+		written \(gH\). The number of cosets is written \(|G:H|\). Lagrange's theorem states that \( [G:H]={|G| \over |H|} \).
 
 	</p>
 
 	<p>
 		<table class="blueTable">
-		<thead><th>name</th><th>generators</th><th>free count</th><th>g;b;</th><th>r;b;</th><th>r;g;</th></tr></thead><tbody>
-			<tr><td>Tetrahedron</td><td>rgrgrg;gbgbgb;rbrb;</td><td>24</td><td>4</td><td>6</td><td>4</td></tr>
-			<tr><td>Cube</td><td>rgrgrgrg;gbgbgb;rbrb;</td><td>48</td><td>8</td><td>12</td><td>6</td></tr>
-			<tr><td>Octahedron</td><td>rgrgrg;gbgbgbgb;rbrb;</td><td>48</td><td>6</td><td>12</td><td>8</td></tr>
-			<tr><td>Dodecahedron</td><td>rgrgrgrgrg;gbgbgb;rbrb;</td><td>120</td><td>20</td><td>30</td><td>12</td></tr>
-			<tr><td>Icosahedron</td><td>rgrgrg;gbgbgbgbgb;rbrb;</td><td>120</td><td>12</td><td>30</td><td>20</td></tr>
-			</tbody></table>
-			<table class="blueTable">
-		
-			<thead><th>name</th><th>generators</th><th>free count</th><th>g;b;a;</th><th>r;b;a;</th><th>r;g;a;</th><th>r;g;b;</th></tr></thead><tbody>
-			<tr><td>5-cell</td><td>rgrgrg;gbgbgb;bababa;rbrb;rara;gaga;</td><td>120</td><td>5</td><td>10</td><td>10</td><td>5</td></tr>
-			<tr><td>8-cell</td><td>rgrgrgrg;gbgbgb;bababa;rbrb;rara;gaga;</td><td>384</td><td>16</td><td>32</td><td>24</td><td>8</td></tr>
-			<tr><td>16-cell</td><td>rgrgrg;gbgbgb;babababa;rbrb;rara;gaga;</td><td>384</td><td>8</td><td>24</td><td>32</td><td>16</td></tr>
-			<tr><td>120-cell</td><td>rgrgrgrgrg;gbgbgb;bababa;rbrb;rara;gaga;</td><td>14400</td><td>600</td><td>1200</td><td>720</td><td>120</td></tr>
-			<tr><td>600-cell</td><td>rgrgrg;gbgbgb;bababababa;rbrb;rara;gaga;</td><td>14400</td><td>120</td><td>720</td><td>1200</td><td>600</td></tr>
-			</tbody></table>
+			<thead>
+				<th>name</th>
+				<th>generators</th>
+				<th>free count</th>
+				<th>g;b;</th>
+				<th>r;b;</th>
+				<th>r;g;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Tetrahedron</td>
+					<td>rgrgrg;gbgbgb;rbrb;</td>
+					<td>24</td>
+					<td>4</td>
+					<td>6</td>
+					<td>4</td>
+				</tr>
+				<tr>
+					<td>Cube</td>
+					<td>rgrgrgrg;gbgbgb;rbrb;</td>
+					<td>48</td>
+					<td>8</td>
+					<td>12</td>
+					<td>6</td>
+				</tr>
+				<tr>
+					<td>Octahedron</td>
+					<td>rgrgrg;gbgbgbgb;rbrb;</td>
+					<td>48</td>
+					<td>6</td>
+					<td>12</td>
+					<td>8</td>
+				</tr>
+				<tr>
+					<td>Dodecahedron</td>
+					<td>rgrgrgrgrg;gbgbgb;rbrb;</td>
+					<td>120</td>
+					<td>20</td>
+					<td>30</td>
+					<td>12</td>
+				</tr>
+				<tr>
+					<td>Icosahedron</td>
+					<td>rgrgrg;gbgbgbgbgb;rbrb;</td>
+					<td>120</td>
+					<td>12</td>
+					<td>30</td>
+					<td>20</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="blueTable">
+
+			<thead>
+				<th>name</th>
+				<th>generators</th>
+				<th>free count</th>
+				<th>g;b;a;</th>
+				<th>r;b;a;</th>
+				<th>r;g;a;</th>
+				<th>r;g;b;</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>5-cell</td>
+					<td>rgrgrg;gbgbgb;bababa;rbrb;rara;gaga;</td>
+					<td>120</td>
+					<td>5</td>
+					<td>10</td>
+					<td>10</td>
+					<td>5</td>
+				</tr>
+				<tr>
+					<td>8-cell</td>
+					<td>rgrgrgrg;gbgbgb;bababa;rbrb;rara;gaga;</td>
+					<td>384</td>
+					<td>16</td>
+					<td>32</td>
+					<td>24</td>
+					<td>8</td>
+				</tr>
+				<tr>
+					<td>16-cell</td>
+					<td>rgrgrg;gbgbgb;babababa;rbrb;rara;gaga;</td>
+					<td>384</td>
+					<td>8</td>
+					<td>24</td>
+					<td>32</td>
+					<td>16</td>
+				</tr>
+				<tr>
+					<td>120-cell</td>
+					<td>rgrgrgrgrg;gbgbgb;bababa;rbrb;rara;gaga;</td>
+					<td>14400</td>
+					<td>600</td>
+					<td>1200</td>
+					<td>720</td>
+					<td>120</td>
+				</tr>
+				<tr>
+					<td>600-cell</td>
+					<td>rgrgrg;gbgbgb;bababababa;rbrb;rara;gaga;</td>
+					<td>14400</td>
+					<td>120</td>
+					<td>720</td>
+					<td>1200</td>
+					<td>600</td>
+				</tr>
+			</tbody>
+		</table>
 
 	</p>
-	
+
+	<script>
+
+		function init() {
+			var container = document.createElement('div');
+			container.style.width = "600px";
+			container.style.height = "600px";
+			document.body.appendChild(container);
+
+			var scene = getStandard3DView(container, 600, 600);
+
+			var v = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(1, -1, -1),
+			new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
+
+			var vertices = [];
+			vertices.push(v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]);
+			vertices.push(v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4]);
+			vertices.push(v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]);
+			for (var i = 0; i < vertices.length; i += 2) {
+				scene.add(createLine(vertices[i], vertices[i + 1], 0.02, 0xffffff));
+			}
+
+			scene.add(createPlane(v[0], v[2], v[4], 0x00ff00));
+			scene.add(createPlane(v[0], v[3], v[5], 0x0000ff));
+			scene.add(createPlane(mid(v[0], v[3]), mid(v[1], v[2]), mid(v[4], v[7]), 0xff0000));
+		}
 
 
+		init();
+	//https://math.berkeley.edu/~kmill/tools/tc.html rr; gg; bb; rbrbrbrb; grgrgr; gbgb; GRGRGR = I GR = I
 
-	https://math.berkeley.edu/~kmill/tools/tc.html rr; gg; bb; rbrbrbrb; grgrgr; gbgb; GRGRGR = I GR = I
+	</script>
+
+
+	<h2>Projection</h2>
 
 
 
