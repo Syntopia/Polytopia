@@ -13,7 +13,7 @@ Table.prototype = {
     constructor: Relations,
 
     toHTML: function (symbolMapper) {
-        var s = "<table class='blueTable'><thead><th>" + this.name + "</th>";
+        var s = "<div id='table-scroll'><table class='blueTable'><thead><th>" + this.name + "</th>";
         for (var i = 0; i < this.genList.length; i++) {
             s += "<th>" + symbolMapper(this.genList[i]) + "</th>";
         }
@@ -26,7 +26,7 @@ Table.prototype = {
             }
             s += "</tr>";
         }
-        s += "</table>";
+        s += "</table></div>";
         return s;
     },
 
@@ -208,14 +208,25 @@ ToddCoxeter.prototype = {
     debugState: function () {
         var self = this;
         var mapper = function (e) { return self.rels.generators[e]; };
-        var out = this.cosetTable.toHTML(mapper) + " <p></p>";
+        var out = this.cosetTable.toHTML(mapper) ;
 
         for (var i = 0; i < this.relationTables.length; i++) {
-            out += this.relationTables[i].toHTML(mapper) + " <p></p>";
+            out += this.relationTables[i].toHTML(mapper) ;
         }
 
         document.getElementById('tables').innerHTML = out;
 
+    },
+
+    getTables: function() {
+        var self = this;
+        var mapper = function (e) { return self.rels.generators[e]; };
+        var out = this.cosetTable.toHTML(mapper) ;
+        
+        for (var i = 0; i < self.relationTables.length; i++) {
+            out += self.relationTables[i].toHTML(mapper) ;
+        }
+        return out;
     },
 
     addRow: function (coset) {
@@ -223,10 +234,19 @@ ToddCoxeter.prototype = {
         this.rows.push(new Array(this.genList.length));
     },
 
-
-
     solve: function () {
         var startTime = Date.now();
+        
+        var doIteration = this.initSolver();
+        while (doIteration()) {};
+
+        console.log("Elapsed: " + (Date.now() - startTime) + " ms. Cosets: " + this.cosetTable.rows.length);
+        this.cosetCounts = this.cosetTable.rows.length;
+        console.log(" ");
+        return this.cosetCounts;
+    },
+
+    initSolver: function () {
         var cosetCounter = 1; // Initially we have one coset.
         var self = this;
 
@@ -319,45 +339,45 @@ ToddCoxeter.prototype = {
         }
 
 
-        for (; ;) {
+        var f = function doIteration() {
             if (cosetCounter > 15000) {
-                break;
+                return false;
             }
-            if (this.newInformation.length == 0) {
+            if (self.newInformation.length == 0) {
                 // Find first empty entry in coset table.
                 var entry = firstEmptyCosetEntry();
-                if (entry == undefined) break;
+                if (entry == undefined) return false;
 
                 var newCoset = cosetCounter++;
                 var row = entry[0];
                 var coset = entry[1];
                 var g = entry[2];
-                this.cosetTable.setCosetEntry(row, g, newCoset);
+                self.cosetTable.setCosetEntry(row, g, newCoset);
                 //this.cosetTable.rows[row][g] = newCoset;
 
                 addCoset(newCoset);
 
                 // The reverse relation must be present as well.
-                var newCosetRow = this.cosetTable.getCosetRow(newCoset);
+                var newCosetRow = self.cosetTable.getCosetRow(newCoset);
 
                 //this.cosetTable.rows[newCosetRow][g] = coset;
-                this.cosetTable.setCosetEntry(newCosetRow, g, coset);
+                self.cosetTable.setCosetEntry(newCosetRow, g, coset);
 
             } else {
-                while (this.newInformation.length > 0) {
-                    var i = this.newInformation.pop();
+                while (self.newInformation.length > 0) {
+                    var i = self.newInformation.pop();
 
                     // coset*g = newCoset
                     var coset = i[0];
                     var g = i[1]; 
                     var newCoset = i[2];
 
-                    var cosetRow = this.cosetTable.getCosetRow(coset);
-                    var val = this.cosetTable.rows[cosetRow][g];
+                    var cosetRow = self.cosetTable.getCosetRow(coset);
+                    var val = self.cosetTable.rows[cosetRow][g];
 
                     if (val == undefined) {
                         //this.cosetTable.rows[cosetRow][g] = newCoset;
-                        this.cosetTable.setCosetEntry(cosetRow, g, newCoset);
+                        self.cosetTable.setCosetEntry(cosetRow, g, newCoset);
 
                     } else {
                         if (val != newCoset) {
@@ -366,11 +386,11 @@ ToddCoxeter.prototype = {
                     }
 
                     // per symmetry: newCoset*g = coset
-                    var cosetRow = this.cosetTable.getCosetRow(newCoset);
-                    var val = this.cosetTable.rows[cosetRow][g];
+                    var cosetRow = self.cosetTable.getCosetRow(newCoset);
+                    var val = self.cosetTable.rows[cosetRow][g];
                     if (val == undefined) {
                         //this.cosetTable.rows[cosetRow][g] = coset;
-                        this.cosetTable.setCosetEntry(cosetRow, g, coset);
+                        self.cosetTable.setCosetEntry(cosetRow, g, coset);
 
                     } else {
                         if (val != coset) {
@@ -386,12 +406,9 @@ ToddCoxeter.prototype = {
 
             //	this.debugState();
             //	debugger;
+            return true;
         }
-
-        console.log("Elapsed: " + (Date.now() - startTime) + " ms. Cosets: " + this.cosetTable.rows.length);
-        this.cosetCounts = this.cosetTable.rows.length;
-        console.log(" ");
-        return this.cosetCounts;
+        return f;
     },
 
     // Return first element in each coset.

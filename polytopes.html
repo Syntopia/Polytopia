@@ -36,13 +36,12 @@
 		}
 
 		table.blueTable {
-			//border: 1px solid #1C6EA4;
-			background-color: #EEEEEE; //text-align: left;
-			border-collapse: collapse; //display: inline-block;
-			//float: left;
+			border-collapse: collapse; 
 			padding: 10px;
 			font-size: 13px;
 			margin: 0px;
+			max-height: 600px;
+			display: inline-block;
 		}
 
 		table.blueTable tr.highlight {
@@ -94,56 +93,54 @@
 		}
 
 		#table-scroll {
-			height: 650px;
+			max-height: 650px;
 			display: inline-block;
 			width: auto;
 			overflow-y: auto;
 		}
 
 		select {
-  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50px' height='50px'><polyline points='46.139,15.518 25.166,36.49 4.193,15.519'/></svg>");
-  background-color:#3498DB;
-  background-repeat:no-repeat;
-  background-position: right 10px top 15px;
-  background-size: 16px 16px;
-  color:white;
-  padding:12px;
-  width:auto;
-  font-family:arial,tahoma;
-  font-size:16px;
-  font-weight:bold;
-  color:#fff;
-  text-align:center;
-  text-shadow:0 -1px 0 rgba(0, 0, 0, 0.25);
-  border-radius:3px;
-  -webkit-border-radius:3px;
-  -webkit-appearance: none;
-  border:0;
-  outline:0;
-  -webkit-transition:0.3s ease all;
-	   -moz-transition:0.3s ease all;
-	    -ms-transition:0.3s ease all;
-	     -o-transition:0.3s ease all;
-	        transition:0.3s ease all;
-}
+			background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50px' height='50px'><polyline points='46.139,15.518 25.166,36.49 4.193,15.519'/></svg>");
+			background-color: #3498DB;
+			background-repeat: no-repeat;
+			background-position: right 10px top 15px;
+			background-size: 16px 16px;
+			color: white;
+			padding: 12px;
+			width: auto;
+			font-family: arial, tahoma;
+			font-size: 16px;
+			font-weight: bold;
+			color: #fff;
+			text-align: center;
+			text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+			border-radius: 3px;
+			-webkit-border-radius: 3px;
+			-webkit-appearance: none;
+			border: 0;
+			outline: 0;
+			-webkit-transition: 0.3s ease all;
+			-moz-transition: 0.3s ease all;
+			-ms-transition: 0.3s ease all;
+			-o-transition: 0.3s ease all;
+			transition: 0.3s ease all;
+		}
 
-#s1 {
-  background-color:#3498DB;
-}
+		#s1 {
+			background-color: #3498DB;
+		}
 
-#s1:hover {
-  background-color:#2980B9;
-}
+		#s1:hover {
+			background-color: #2980B9;
+		}
 
-#s2 {
-  background-color:rgb(255, 166, 0);
-}
+		#s2 {
+			background-color: rgb(255, 166, 0);
+		}
 
-#s2:hover {
-  background-color:rgb(180, 118, 1);
-}
-		
-		
+		#s2:hover {
+			background-color: rgb(180, 118, 1);
+		}
 	</style>
 	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 </head>
@@ -157,6 +154,7 @@
 		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.4/svg.js" integrity="sha256-Vfh4R0uOWH2tv2NrGrtTZUo+hRBMGtEczBeTz3CSvj4="
 		 crossorigin="anonymous"></script>
+		 <script src="toddcoxeter.js" type="text/javascript"></script>
 
 		<script>
 			var showSceneObjects;
@@ -240,7 +238,7 @@
 			function getStandard3DView(container, w, h) {
 				var camera = new THREE.PerspectiveCamera(40, w / h, 1, 2000);
 				camera.position.set(0.0, 1.4, 1.4 * 3.5);
-				var scene2 = new THREE.Scene({ antialias: true  });
+				var scene2 = new THREE.Scene({ antialias: true });
 				//scene2.background = new THREE.Color(0xffffff);
 				scene2.add(camera);
 
@@ -250,8 +248,8 @@
 				directionalLight.position.set(0, 2, 9);
 				camera.add(directionalLight);
 
-				var renderer = new THREE.WebGLRenderer({ alpha: true});
-				renderer.setClearColor(0x000000,0);
+				var renderer = new THREE.WebGLRenderer({ alpha: true });
+				renderer.setClearColor(0x000000, 0);
 				renderer.setPixelRatio(window.devicePixelRatio);
 				renderer.setSize(w, h);
 				container.appendChild(renderer.domElement);
@@ -285,11 +283,11 @@
 				container.style.width = "1px";
 				container.style.height = "1px";
 
-				
+
 
 				var inner = document.createElement('div');
 				inner.style.position = "relative";
-				inner.style.left = (document.getElementById("main").getBoundingClientRect().width ) + "px";
+				inner.style.left = (document.getElementById("main").getBoundingClientRect().width) + "px";
 				inner.style.top = offset + "px";
 				inner.style.width = (getSideWidth()) + "px";
 				container.appendChild(inner);
@@ -441,7 +439,8 @@
 			<b>48</b> automorphisms of the cube.
 		</p>
 		<p>
-			Shown to the right are the 9 different reflection operations, that will also map the cube onto itself (although in i mirrored version).
+			Shown to the right are the 9 different reflection operations, that will also map the cube onto itself (although in i mirrored
+			version).
 		</p>
 		<p>These 48 transformations form a
 			<b>group</b>: a set of elements, together with a rule for combining any two elements such that the result is again an element
@@ -500,7 +499,8 @@
 			Now, combining two reflections, result in a rotation of twice the angle between the reflection planes. So applying e.g. GB
 			would be equal to a rotation of 120 degrees. And applying GB three times, e.g. GBGBGB, would not change the input.
 		</p>
-		<p>This means we can establish the following <b>relations</b> between the generators:</p>
+		<p>This means we can establish the following
+			<b>relations</b> between the generators:</p>
 		$$R^2 = B^2 = G^2 = (RG)^4 = (GB)^3 = (RB)^2 = I$$
 		<p>
 			Now, given this set of generators, how many different elements are there in our set? For instance, are (RBGR)^n different
@@ -519,35 +519,92 @@
 			The
 			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd-Coxeter Algorithm</a> a provides a way to identify and count all elements generated by our generators.
 		</p>
-		<p>Actually, the algorithm does a bit more: it allows for enumerating all cosets of G, for a given subgroup H. </p><p>What does this
-			mean?<p></p>
-			A coset is the set resulting by multiplying the all members in \(H\) by a group element from, \(g\). A (left) coset is
-			written \(gH\). The number of cosets is written \(|G:H|\). Lagrange's theorem states that \( [G:H]={|G| \over |H|} \).
-			The cosets for a subgroup form a new set, called a <b>quotient set</b> (denoted G/H). 
+		<p>Actually, the algorithm does a bit more: it allows for enumerating all cosets of G, for a given subgroup H. </p>
+		<p>What does this mean?
+			<p></p>
+			A coset is the set resulting by multiplying the all members in \(H\) by a group element from, \(g\). A (left) coset is written
+			\(gH\). The number of cosets is written \(|G:H|\). Lagrange's theorem states that \( [G:H]={|G| \over |H|} \). The cosets
+			for a subgroup form a new set, called a
+			<b>quotient set</b> (denoted G/H).
 		</p>
-		<p>The Todd-Coxeter algorithm might be the first non-numerical algorithm to be implemented on a digital computer (using a <a href="https://www.cambridge.org/core/journals/mathematical-proceedings-of-the-cambridge-philosophical-society/article/coset-enumeration-on-digital-computers/047323FB9415ACF3466E627590ABB790">
-		EDSAC 1 in 1953</a>) </p>
-		<p>The algorithm works bykeeping track of several tables: a coset table (listing the generator actions on the different cosets), a subgroup table (listing sub group
-			generator actions), and a table for each relation between the group generators. The algorithm works by filling out rows in these tables. Once a row is closed, a 
-			(potentially) new piece of information is known.</p><p> Here is a demo:
+		<p>The Todd-Coxeter algorithm might be the first non-numerical algorithm to be implemented on a digital computer (using a
+			<a href="https://www.cambridge.org/core/journals/mathematical-proceedings-of-the-cambridge-philosophical-society/article/coset-enumeration-on-digital-computers/047323FB9415ACF3466E627590ABB790">
+				EDSAC 1 in 1953</a>) </p>
+		<p>The algorithm works bykeeping track of several tables: a coset table (listing the generator actions on the different cosets),
+			a subgroup table (listing sub group generator actions), and a table for each relation between the group generators. The
+			algorithm works by filling out rows in these tables. Once a row is closed, a (potentially) new piece of information is
+			known.</p>
+		<p> Here is a demo:
 		</p>
 		<p>
 			Group:
-			<select id="s1" style="width: 350px">
+			<select onchange="updateToddCoxeter()" id="s1" style="width: 350px">
 				<option>rgrgrg,gbgbgb,rbrb (tetrahedron)</option>
 				<option selected="selected">rgrgrgrg,gbgbgb,rbrb (cube)</option>
 				<option>rgrgrg,gbgbgbgb,rbrb (octa)</option>
-				<option>rgrgrgrg,gbgbgb,rbrb (dodecahedron)</option>
-				<option>rgrgrgrg,gbgbgb,rbrb (icosahedron)</option>
-			 </select>
-			 Subgroup: 
-			 <select id="s2" style="width: 150px">
-					<option selected="selected" >none</option>
-					<option>r,g</option>
-					<option>g,b</option>
-					<option>r,b</option>
-				 </select>
+				<option>rgrgrgrgrg,gbgbgb,rbrb (dodecahedron)</option>
+				<option>rgrgrg,gbgbgbgbgb,rbrb (icosahedron)</option>
+			</select>
+			Subgroup:
+			<select onchange="updateToddCoxeter()" id="s2" style="width: 150px">
+				<option >none</option>
+				<option>r,g</option>
+				<option>g,b</option>
+				<option selected="selected">r,b</option>
+			</select>
+			<a href="javascript:doStep()" class="interactive">Step</a>
 			
+			<div id="output"></div>
+
+			<script>
+
+				var tcStep;
+				var doIteration;
+				var iter = 0;
+
+				function doStep() {
+					if (tcStep == undefined) {
+						tcStep = getTC();
+						doIteration = tcStep.initSolver();
+						iter = 0;
+			    	}
+				    if (!doIteration()) {
+						var d = document.getElementById("output");
+				d.innerHTML = "<p>Number of cosets:"+tcStep.cosetTable.rows.length+"<p>" + tcStep.getTables();
+				tcStep = undefined; // reset
+					
+						return;
+					}
+					var d = document.getElementById("output");
+					d.innerHTML = "<p><b>In progress (step " + (++iter)+ ")</b><p>" + tcStep.getTables();
+			
+				}
+			
+				function getTC() {
+
+					var e = document.getElementById("s1");
+					var group = e.options[e.selectedIndex].value.split(" ")[0];
+
+					var e = document.getElementById("s2");
+					var subgroup = e.options[e.selectedIndex].value;
+					if (subgroup == "none") subgroup = undefined;
+
+					var tc = new ToddCoxeter(group, subgroup);
+					return tc;
+				}
+
+				function updateToddCoxeter() {
+					tcStep = undefined; // reset
+					var tc = getTC();
+					tc.solve();
+					var d = document.getElementById("output");
+					d.innerHTML = "<p>Number of cosets:"+tc.getCosetCounts()+"<p>" + tc.getTables();
+				}
+
+				updateToddCoxeter();
+
+
+			</script>
 		</p>
 
 		<p>Let us look at the variuos cosets you get when you use Todd-Coxeter on the symmetry groups, using different subsets of
@@ -752,9 +809,8 @@
 			Since the last vector in this orthogonal representation must be both perpendicular to the first reflection plane normal,
 			and to the second reflection plane normal, this vector must be in the intersection of the two reflection planes.
 		</p>
-		
-		<script src="toddcoxeter.js" type="text/javascript"></script>
 
+	
 
 		<script>
 
@@ -846,93 +902,97 @@
 
 		</script>
 
-<script>
+		<script>
 
-		function cross(v1, v2) {
-			return (new THREE.Vector3()).crossVectors(v1, v2);
-		}
+			function cross(v1, v2) {
+				return (new THREE.Vector3()).crossVectors(v1, v2);
+			}
 
 
-		function gramSchmidt(vs) {
-			var out = [];
+			function gramSchmidt(vs) {
+				var out = [];
 
-			for (var i = 0; i < vs.length; i++) {
-				var v = vs[i].clone();
+				for (var i = 0; i < vs.length; i++) {
+					var v = vs[i].clone();
 
-				for (var j = 0; j < out.length; j++) {
-					v.projectOnPlane(out[j]);
+					for (var j = 0; j < out.length; j++) {
+						v.projectOnPlane(out[j]);
+					}
+
+					out.push(v.normalize());
 				}
 
-				out.push(v.normalize());
+				return out;
 			}
 
-			return out;
-		}
+			function init() {
+				var container = document.createElement('div');
+				//container.style.width = "800px";
+				//scontainer.style.height = "800px";
+				container.style.display = "inline";
+				container.style.position = "absolute";
+				//container.style.top = "-1px";
+				//container.style.left = "";
+				document.getElementById("main").appendChild(container);
 
-		function init() {
-			var container = document.createElement('div');
-			//container.style.width = "800px";
-			//scontainer.style.height = "800px";
-			container.style.display = "inline";
-			container.style.position = "absolute";
-			//container.style.top = "-1px";
-			//container.style.left = "";
-			document.getElementById("main").appendChild(container);
+				var scene = getStandard3DView(container, 700, 700);
 
-			var scene = getStandard3DView(container, 700, 700);
+				var v = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(1, -1, -1),
+				new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
 
-			var v = [new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, -1), new THREE.Vector3(1, 1, -1), new THREE.Vector3(1, -1, -1),
-			new THREE.Vector3(-1, -1, 1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, 1, 1), new THREE.Vector3(1, -1, 1)];
+				var vertices = [];
+				vertices.push(v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]);
+				vertices.push(v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4]);
+				vertices.push(v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]);
+				for (var i = 0; i < vertices.length; i += 2) {
+					scene.add(createLine(vertices[i], vertices[i + 1], 0.02, 0xffffff));
+				}
 
-			var vertices = [];
-			vertices.push(v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]);
-			vertices.push(v[4], v[5], v[5], v[6], v[6], v[7], v[7], v[4]);
-			vertices.push(v[0], v[4], v[1], v[5], v[2], v[6], v[3], v[7]);
-			for (var i = 0; i < vertices.length; i += 2) {
-				scene.add(createLine(vertices[i], vertices[i + 1], 0.02, 0xffffff));
+				scene.add(createPlane(v[0], v[2], v[4], 0x00ff00));
+				scene.add(createPlane(v[0], v[3], v[5], 0x0000ff));
+				var r1 = mid(v[0], v[3]);
+				var r2 = mid(v[1], v[2]);
+				var r3 = mid(v[4], v[7]);
+				scene.add(createPlane(r1, r2, r3, 0xff0000));
+
+				var nG = cross(sub(v[2], v[0]), sub(v[4], v[0]));
+				var nB = cross(sub(v[3], v[0]), sub(v[5], v[0]));
+				var nR = cross(sub(r2, r1), sub(r3, r1));
+
+				var nGp = gramSchmidt([nG, nR, nB])[2];
+				var nBp = gramSchmidt([nB, nG, nR])[2];
+				var nRp = gramSchmidt([nR, nB, nG])[2];
+				if (nBp.dot(nGp) < 0) nBp.multiplyScalar(-1);
+				if (nRp.dot(nGp) < 0) nRp.multiplyScalar(-1);
+
+
+				var O = new THREE.Vector3(0, 0, 0);
+				var w = 0.01;
+				var arrowWidth = 0.03;
+				var arrowLength = 0.1;
+
+				scene.add(createLine(O, nGp.multiplyScalar(2.0), w, 0x00ff00, arrowWidth, arrowLength));
+				scene.add(createLine(O, nBp.multiplyScalar(2.0), w, 0x0000ff, arrowWidth, arrowLength));
+				scene.add(createLine(O, nRp.multiplyScalar(2.0), w, 0xff0000, arrowWidth, arrowLength));
+
+
 			}
 
-			scene.add(createPlane(v[0], v[2], v[4], 0x00ff00));
-			scene.add(createPlane(v[0], v[3], v[5], 0x0000ff));
-			var r1 = mid(v[0], v[3]);
-			var r2 = mid(v[1], v[2]);
-			var r3 = mid(v[4], v[7]);
-			scene.add(createPlane(r1, r2, r3, 0xff0000));
 
-			var nG = cross(sub(v[2], v[0]), sub(v[4], v[0]));
-			var nB = cross(sub(v[3], v[0]), sub(v[5], v[0]));
-			var nR = cross(sub(r2, r1), sub(r3, r1));
-
-			var nGp = gramSchmidt([nG, nR, nB])[2];
-			var nBp = gramSchmidt([nB, nG, nR])[2];
-			var nRp = gramSchmidt([nR, nB, nG])[2];
-			if (nBp.dot(nGp) < 0) nBp.multiplyScalar(-1);
-			if (nRp.dot(nGp) < 0) nRp.multiplyScalar(-1);
-
-
-			var O = new THREE.Vector3(0, 0, 0);
-			var w = 0.01;
-			var arrowWidth = 0.03;
-			var arrowLength = 0.1;
-
-			scene.add(createLine(O, nGp.multiplyScalar(2.0), w, 0x00ff00, arrowWidth, arrowLength));
-			scene.add(createLine(O, nBp.multiplyScalar(2.0), w, 0x0000ff, arrowWidth, arrowLength));
-			scene.add(createLine(O, nRp.multiplyScalar(2.0), w, 0xff0000, arrowWidth, arrowLength));
-
-
-		}
-
-
-		init();
+			init();
 //https://math.berkeley.edu/~kmill/tools/tc.html rr; gg; bb; rbrbrbrb; grgrgr; gbgb; GRGRGR = I GR = I
 
-	</script>
-<p>
-Notice how the different cosets connects vertices, edges, and faces.
-</p><p>	
-For instance, see how vertex <a class='interactive' onmouseover='selectRow(0,0)' onmouseout='selectRow(0)'>V0</a> connects to 
-		three edges (E0,E1,E3) and three faces (F0,F1,F2). Likewise, edge <a class='interactive' onmouseover='selectRow(1,0)' onmouseout='selectRow(0)'>E0</a> connects two vertices (V0,V1) and two faces (F0, F1).
-        The face <a class='interactive' onmouseover='selectRow(2,0)' onmouseout='selectRow(0)'>F0</a> connects four vertices (V0,V1,V2,V3) and four edges (E0,E1,E2,E4)
+		</script>
+		<p>
+			Notice how the different cosets connects vertices, edges, and faces.
+		</p>
+		<p>
+			For instance, see how vertex
+			<a class='interactive' onmouseover='selectRow(0,0)' onmouseout='selectRow(0)'>V0</a> connects to three edges (E0,E1,E3) and three faces (F0,F1,F2). Likewise, edge
+			<a class='interactive' onmouseover='selectRow(1,0)'
+			 onmouseout='selectRow(0)'>E0</a> connects two vertices (V0,V1) and two faces (F0, F1). The face
+			<a class='interactive' onmouseover='selectRow(2,0)'
+			 onmouseout='selectRow(0)'>F0</a> connects four vertices (V0,V1,V2,V3) and four edges (E0,E1,E2,E4)
 		</p>
 
 		<h2>Projection</h2>
