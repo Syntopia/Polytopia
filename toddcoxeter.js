@@ -13,11 +13,11 @@ Table.prototype = {
     constructor: Relations,
 
     toHTML: function (symbolMapper) {
-        var s = "<div id='table-scroll'><table class='blueTable'><thead><th>" + this.name + "</th>";
+        var s = "<div id='table-scroll'><table class='blueTable'><thead><tr><th>" + this.name + "</th>";
         for (var i = 0; i < this.genList.length; i++) {
             s += "<th>" + symbolMapper(this.genList[i]) + "</th>";
         }
-        s += "</thead>";
+        s += "</tr></thead>";
         for (var i = 0; i < this.rows.length; i++) {
             s += "<tr><td>" + this.rowCosets[i] + "</td>";
             for (var j = 0; j < this.genList.length; j++) {
