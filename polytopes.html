@@ -148,14 +148,14 @@
 		</p>
 		<p>
 			In our case, combining any number of the 48 transformations will result in a transformation that is already in the present
-			in our set of transformations. Likewise, for all rotations and reflections there exists an inverse transformation (for
+			in our set of transformations. Likewise, for all rotations and reflections, there exists an inverse transformation (for
 			180 degrees transformations, and for reflections, these transformations are their own inverses).
 		</p>
 		<p>These transformations are not independent: some transformations can be expressed by combining other transformations. Perhaps
 			it is possible to find a smaller subset of transformation, that can be combined to form all the 48 automorphisms?
 		</p>
 		<p>
-			This is know a set of
+			This is known as a set of
 			<b>generators</b>: a subset, S, of elements in the group G, which can be used to express all elements (using their inverses
 			as well).
 		</p>
@@ -191,11 +191,11 @@
 			R, G, and B after their colors. This set can be used to construct all other transformations.
 		</p>
 		<p>
-			Notice that the angle between the reflection planes are: $$\angle(R,G) = 45^{\circ} $$ $$\angle(G,B) = 60^{\circ} $$ $$\angle(R,B)
+			Notice that the angle between the reflection planes is: $$\angle(R,G) = 45^{\circ} $$ $$\angle(G,B) = 60^{\circ} $$ $$\angle(R,B)
 			= 90^{\circ} $$
 		</p>
 		<p>
-			Now, combining two reflections, result in a rotation of twice the angle between the reflection planes. So applying e.g. GB
+			Now, combining two reflections, results in a rotation of twice the angle between the reflection planes. So applying e.g. GB
 			would be equal to a rotation of 120 degrees. And applying GB three times, e.g. GBGBGB, would not change the input.
 		</p>
 		<p>This means we can establish the following
@@ -221,7 +221,7 @@
 		<p>Actually, the algorithm does a bit more: it allows for enumerating all cosets of G, for a given subgroup H. </p>
 		<p>What does this mean?</p>
 		<p>
-			A coset is the set resulting by multiplying the all members in \(H\) by a group element from, \(g\). A (left) coset is written
+			A coset is the set resulting from multiplying all members in \(H\) by a group element from, \(g\). A (left) coset is written
 			\(gH\). The number of cosets is written \(|G:H|\). Lagrange's theorem states that \( [G:H]={|G| \over |H|} \). The cosets
 			for a subgroup form a new set, called a
 			<b>quotient set</b> (denoted G/H).
@@ -230,7 +230,7 @@
 			<a href="https://www.cambridge.org/core/journals/mathematical-proceedings-of-the-cambridge-philosophical-society/article/coset-enumeration-on-digital-computers/047323FB9415ACF3466E627590ABB790">
 				EDSAC 1 in 1953</a>) </p>
 		<p>The algorithm works by keeping track of several tables: a coset table (listing the generator actions on the different cosets),
-			a subgroup table (listing sub group generator actions), and a table for each relation between the group generators. The
+			a subgroup table (listing subgroup generator actions), and a table for each relation between the group generators. The
 			algorithm works by filling out rows in these tables. Once a row is closed, a (potentially) new piece of information is
 			known.
 		</p>
@@ -969,7 +969,7 @@
 					}
 				</script>
 				<p>
-					Notice how the different cosets connects vertices, edges, and faces.
+					Notice how the different cosets connect vertices, edges, and faces.
 				</p>
 				<p>
 					For instance, see how vertex
@@ -987,13 +987,13 @@
 				</p>
 				<p>
 					But it is possible to construct very efficient distance estimators for the reflection group polytopes - including the four-dimensional ones. Utilizing modern 
-					GPU this makes it possible to ray trace high-quality images in real-time.
+					GPUs, this makes it possible to ray trace high-quality images in real-time.
 				</p>
 				<p>
 					This technique was originally described by Knighty in <a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
 				</p>
-				<p>The basic idea is delightfully simple: instead of trying to calculate the positions of vertices and edges, we will first transform (using the group reflections) all points in space
-					into the same 'fundamental' region. Once we are in this region we can more easily test whether we are inside a vertex, edge or plane (at least after 
+				<p>The basic idea is delightfully simple: instead of trying to calculate the positions of all vertices and edges, we will first transform (using the group reflections) all points in space
+					into the same 'fundamental' region. Once we are in this region, we can more easily test whether we are inside a vertex, edge, or plane (at least after 
 					assigning a width to these objects). 
 				</p>
 				<p>
@@ -1001,7 +1001,7 @@
 					will give us the distance to the closest part of the structure we are depicting. This function is the distance estimator. It is even perfectly fine
 					for the distance estimator to be conservative and return a number that is smaller than the actual distance to the object. I previously described the 
 					technique 
-					<a href="http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/">here</a> for a recursive octahedron.
+					<a href="http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/">here</a> for a recursive tetrahedron.
 
 				</p>
 
