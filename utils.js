@@ -264,12 +264,15 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader) {
     };
 
     var geometry = new THREE.PlaneBufferGeometry(2.0, 2.0);
+
+    scene.uniforms = {
+        resolution: { value: new THREE.Vector2(w, h) },
+        cameraWorldMatrix: { value: camera.matrixWorld },
+        cameraProjectionMatrixInverse: { value: new THREE.Matrix4().getInverse(camera.projectionMatrix) },
+     };
+    
     var material = new THREE.RawShaderMaterial({
-        uniforms: {
-            resolution: { value: new THREE.Vector2(w, h) },
-            cameraWorldMatrix: { value: camera.matrixWorld },
-            cameraProjectionMatrixInverse: { value: new THREE.Matrix4().getInverse(camera.projectionMatrix) }
-        },
+        uniforms: scene.uniforms,
         vertexShader: vertexShader,
         fragmentShader: fragmentShader
     });
@@ -283,7 +286,6 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader) {
         renderer.render(scene, camera)
     };
     scene.controls = controls;
-
     controls.addEventListener('change', function () { scene.doRender() });
 
     setTimeout(function () { scene.doRender(); });

@@ -8,20 +8,24 @@ uniform vec3 cameraPosition;
 uniform mat4 cameraWorldMatrix;
 uniform mat4 cameraProjectionMatrixInverse;
 
+uniform float U;
+uniform float V;
+uniform float W;
 
-// Symmetry group type.
-#define Type 5
-
-#define PI 3.141592
-#define U 0.7
-#define V 0.0
-#define W 0.4
 #define VRadius 0.04
 #define SRadius 0.03
-
+ 
 #define displayFaces true
 #define displaySegments true
 #define displayVertices true
+
+
+
+
+#define PI 3.141592
+// Symmetry group type.
+#define Type 5
+
 
 
 #define face0Color vec3(1.0,0.0,0.0)

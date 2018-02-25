@@ -4,12 +4,13 @@
 <head>
 	<title>Polytopes and Coxeter Groups</title>
 	<link rel='stylesheet' href='style.css' type='text/css' />
+	<link rel='stylesheet' href='datgui.css' type='text/css' />
 	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 </head>
 
 <body>
 
-	<div class="main" id="main">
+	<div class="mainContent" id="main">
 		<script src="js/three.min.js" type="text/javascript"></script>
 		<script src="js/OrbitControls.js" type="text/javascript"></script>
 		<script src="js/Detector.js" type="text/javascript"></script>
@@ -18,6 +19,7 @@
 		 crossorigin="anonymous"></script>
 		<script src="toddcoxeter.js" type="text/javascript"></script>
 		<script src="utils.js" type="text/javascript"></script>
+		<script src="js/dat.gui.min.js" type="text/javascript"></script>
 
 		<script>
 			var showSceneObjects;
@@ -240,7 +242,7 @@
 		</p>
 		<p>
 			Group:
-			<select onchange="updateToddCoxeter()" id="s1" style="width: 350px">
+			<select class="fancy" onchange="updateToddCoxeter()" id="s1" style="width: 350px">
 				<option>rgrgrg,gbgbgb,rbrb (tetrahedron)</option>
 				<option selected="selected">rgrgrgrg,gbgbgb,rbrb (cube)</option>
 				<option>rgrgrg,gbgbgbgb,rbrb (octa)</option>
@@ -248,7 +250,7 @@
 				<option>rgrgrg,gbgbgbgbgb,rbrb (icosahedron)</option>
 			</select>
 			Subgroup:
-			<select onchange="updateToddCoxeter()" id="s2" style="width: 150px">
+			<select class="fancy" onchange="updateToddCoxeter()" id="s2" style="width: 150px">
 				<option>none</option>
 				<option>r,g</option>
 				<option>g,b</option>
@@ -993,14 +995,60 @@
 
 
 				<script>
+					var gui = new dat.GUI({ autoPlace: false });
+					var staticContainer = getContainer(00);
+					staticContainer.style.width = "300px";
+					staticContainer.appendChild(gui.domElement);
+
+
 					var containerZ = document.createElement('div');
 					containerZ.style.display = "inline";
 					document.getElementById("main").appendChild(containerZ);
+					var polyhedronScene;
 					loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
-						var scene = createFragmentShader(containerZ, 700, 700, s[0], s[1] + s[2]);
-						scene.getCamera().position.set(-1,2,-0.5);
-						scene.controls.update();
+						polyhedronScene = createFragmentShader(containerZ, 700, 700, s[0], s[1] + s[2]);
+						polyhedronScene.uniforms.U = { value: 1 };
+						polyhedronScene.uniforms.V = { value: 0 };
+						polyhedronScene.uniforms.W = { value: 0 };
+
+						polyhedronScene.getCamera().position.set(-1, 2, -0.5);
+						polyhedronScene.controls.update();
+						//	scene.uniforms.U = { value: 0.1};
+						/*
+						scene.uniforms.V = 0.0;
+						scene.uniforms.W = 1.0;
+						scene.uniforms.VRadius = 0.1;
+						scene.uniforms.SRadius = 0.1;
+						scene.uniforms.displayFaces = true;
+						scene.uniforms.displaySegments = true;
+						scene.uniforms.displayVertices = true;
+*/
 					});
+
+
+					var params = {
+						U: 1,
+						V: 0,
+						W: 0,
+						default: "Cube",
+					};
+
+					gui.add(params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"] ).name("Preset");
+					var effectFolder = gui.addFolder('Params');
+					effectFolder.add(params, 'U', 0, 1).step(0.01).name("Coordinate U").onChange(function (v) {
+						polyhedronScene.uniforms.U = { value: v };
+						polyhedronScene.doRender();
+					});
+					effectFolder.add(params, 'V', 0, 1).step(0.01).name("Coordinate V").onChange(function (v) {
+						polyhedronScene.uniforms.V = { value: v };
+						polyhedronScene.doRender();
+					});
+					effectFolder.add(params, 'W', 0, 1).step(0.01).name("Coordinate W").onChange(function (v) {
+						polyhedronScene.uniforms.W = { value: v };
+						polyhedronScene.doRender();
+					});
+					effectFolder.open();
+					gui.open();
 
 				</script>
 				<p>TODO: 3D Demoe</p>
@@ -1019,13 +1067,14 @@
 					document.getElementById("main").appendChild(containerX);
 					loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
 						var scene = createFragmentShader(containerX, 700, 700, s[0], s[1] + s[2]);
-						scene.getCamera().position.set(-7,-0.3,-17);
+						scene.getCamera().position.set(-7, -0.3, -17);
 						scene.controls.update();
 					});
 
+					
+
 				</script>
-				
-				
+
 
 				<h2>Links</h2>
 				<p>
