@@ -1,3 +1,5 @@
 # Polytopes
 
-Work-in-progress. As of now a complete mess.
+Work-in-progress.
+
+May be tested at: https://syntopia.github.io/Polytopia/polytopes.html
