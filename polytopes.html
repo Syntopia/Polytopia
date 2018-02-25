@@ -3,7 +3,7 @@
 
 <head>
 	<title>Polytopes and Coxeter Groups</title>
-	<link rel='stylesheet' href='style.css' type='text/css' />    
+	<link rel='stylesheet' href='style.css' type='text/css' />
 	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 </head>
 
@@ -23,7 +23,9 @@
 			var showSceneObjects;
 		</script>
 		<h1>Building four dimensional polytopes</h1>
-		<p> <strong>This is work-in-progress and probably not worth reading yet!</strong> </p>
+		<p>
+			<strong>This is work-in-progress and probably not worth reading yet!</strong>
+		</p>
 		<p>
 			Several years ago I stumbled upon
 			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a>, a tool for visualizing four dimensional geometric structures. Jenn describes itself as follows:</p>
@@ -195,8 +197,8 @@
 			= 90^{\circ} $$
 		</p>
 		<p>
-			Now, combining two reflections, results in a rotation of twice the angle between the reflection planes. So applying e.g. GB
-			would be equal to a rotation of 120 degrees. And applying GB three times, e.g. GBGBGB, would not change the input.
+			Now, combining two reflections, results in a rotation of twice the angle between the reflection planes. So applying e.g.
+			GB would be equal to a rotation of 120 degrees. And applying GB three times, e.g. GBGBGB, would not change the input.
 		</p>
 		<p>This means we can establish the following
 			<b>relations</b> between the generators:</p>
@@ -521,11 +523,11 @@
 
 				</p>
 				<p>
-					$$ \begin{pmatrix} & 1 & cos(\theta_{12}) & cos(\theta_{13}) \\ & 0 & \sqrt{1-cos^2(\theta_{12})} & \frac{cos(\theta_{23})-
-					cos(\theta_{12})cos(\theta_{13}) }{\sqrt{1-cos^2(\theta_{12})}} \\ & 0 & 0 & N \end{pmatrix} $$
+					$$ \begin{pmatrix} & 1 \\ & 0 \\ & 0 \end{pmatrix}, \begin{pmatrix} & cos(\theta_{12}) \\ & N_1 \\ & 0 \end{pmatrix}, \begin{pmatrix}
+					& cos(\theta_{13}) \\ & \frac{cos(\theta_{23})-cos(\theta_{12})cos(\theta_{13}) }{N_1} \\ & N_2 \end{pmatrix} $$
 				</p>
-				<p>Here the columns represent the normals of the reflecting planes (N is a normalization constant, I skipped - all the normals
-					must be unit length)</p>
+				<p>Here the columns represent the normals of the reflecting planes (The N's are normalization constants that can be trivially
+					calculated - all the normals must be unit length)</p>
 				<p>
 					We also need to figure out a starting point: gram-schmidt: take the ordered set of normals and create an orthogonal representation.
 					Since the last vector in this orthogonal representation must be both perpendicular to the first reflection plane normal,
@@ -605,54 +607,7 @@
 					freeGroup.cosetTable.extraColumns.push(findSub("rbrb", "r,b", "E"));
 					freeGroup.cosetTable.extraColumns.push(findSub("rgrgrg", "r,g", "F"));
 
-					// Find vertices
-					// Returns { vertexOperators,  edgeList, faceList };
-					function getStructure(group) {
 
-						var vertices = 0;
-						var edges = 0;
-						var faces = 0;
-
-						for (var i = 0; i < group.cosetTable.extraColumns[0].length; i++) {
-							vertices = Math.max(group.cosetTable.extraColumns[0][i] + 1, vertices);
-							edges = Math.max(group.cosetTable.extraColumns[0][i] + 1, edges);
-							faces = Math.max(group.cosetTable.extraColumns[0][i] + 1, faces);
-						}
-
-						var vxs = new Array(vertices);
-						var ms = new Array(vertices);
-
-						// Vertices and reflection matrices
-						var current = 0;
-						for (var i = 0; i < group.cosetTable.extraColumns[0].length; i++) {
-							var vertex = group.cosetTable.extraColumns[0][i];
-							if (vxs[vertex] == undefined) {
-								vxs[vertex] = group.getRepresentiveForCoset(i);
-								console.log("Setting vertex " + vertex + " to " + vxs[vertex]);
-							}
-						}
-
-
-						var edgeList = new Array(edges);
-						var faceList = new Array(faces);
-
-						// Edges and faces
-						for (var i = 0; i < group.cosetTable.extraColumns[1].length; i++) {
-							var v = group.cosetTable.extraColumns[0][i];
-							var e = group.cosetTable.extraColumns[1][i];
-							var f = group.cosetTable.extraColumns[2][i];
-							if (edgeList[e] == undefined) edgeList[e] = [];
-							if (edgeList[e].indexOf(v) == -1) edgeList[e].push(v);
-
-							if (faceList[f] == undefined) faceList[f] = [];
-							if (faceList[f].indexOf(e) == -1) faceList[f].push(e);
-
-
-						}
-
-
-						return { vertexOperators: vxs, edgeList: edgeList, faceList: faceList };
-					}
 
 
 
@@ -705,7 +660,7 @@
 					}
 
 					var cayley;
-					var structure = getStructure(freeGroup);
+					var structure = freeGroup.getStructure();
 
 
 					function createOrtho(v1) {
@@ -784,7 +739,7 @@
 						reflectionMatrices.push(getReflectionMatrix(nB.x, nB.y, nB.z));
 
 						var ms = getVertixMatrices(structure.vertexOperators, reflectionMatrices);
-				
+
 						var spheres = [];
 						var cayley = [];
 						cayley.clear = function () {
@@ -967,6 +922,34 @@
 								}
 
 					}
+
+					function readFileHttp(fname, callback) {
+						xmlhttp = getXmlHttp();
+						xmlhttp.onreadystatechange = function () {
+							if (xmlhttp.readyState == 4) {
+								callback(xmlhttp.responseText);
+							}
+						}
+						xmlhttp.open("GET", fname, true);
+						xmlhttp.send(null);
+					}
+
+					/*
+					Return a cross-browser xmlhttp request object
+					*/
+					function getXmlHttp() {
+						if (window.XMLHttpRequest) {
+							xmlhttp = new XMLHttpRequest();
+						} else if (window.ActiveXObject) {
+							xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+						}
+						if (xmlhttp == null) {
+							alert("Your browser does not support XMLHTTP.");
+						}
+						return xmlhttp;
+					}
+
+					readFileHttp("test.txt", function (e) { console.log(e); });
 				</script>
 				<p>
 					Notice how the different cosets connect vertices, edges, and faces.
@@ -979,43 +962,69 @@
 				</p>
 
 				<h2>Raytracing reflection groups</h2>
-				<p>I have been a long time fan of ray marching, and <a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">distance estimation techniques.</a> 
+				<p>I have been a long time fan of ray marching, and
+					<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">distance estimation techniques.</a>
 				</p>
 				<p>
-					The previous section showed how to construct geometry by explicitly calculating vertices, edges, and faces, and the displaying the structures using 
-					polygonized raster graphics (in this case WebGL).
+					The previous section showed how to construct geometry by explicitly calculating vertices, edges, and faces, and the displaying
+					the structures using polygonized raster graphics (in this case WebGL).
 				</p>
 				<p>
-					But it is possible to construct very efficient distance estimators for the reflection group polytopes - including the four-dimensional ones. Utilizing modern 
-					GPUs, this makes it possible to ray trace high-quality images in real-time.
+					But it is possible to construct very efficient distance estimators for the reflection group polytopes - including the four-dimensional
+					ones. Utilizing modern GPUs, this makes it possible to ray trace high-quality images in real-time.
 				</p>
 				<p>
-					This technique was originally described by Knighty in <a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
+					This technique was originally described by Knighty in
+					<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
 				</p>
-				<p>The basic idea is delightfully simple: instead of trying to calculate the positions of all vertices and edges, we will first transform (using the group reflections) all points in space
-					into the same 'fundamental' region. Once we are in this region, we can more easily test whether we are inside a vertex, edge, or plane (at least after 
-					assigning a width to these objects). 
+				<p>The basic idea is delightfully simple: instead of trying to calculate the positions of all vertices and edges, we will
+					first transform (using the group reflections) all points in space into the same 'fundamental' region. Once we are in
+					this region, we can more easily test whether we are inside a vertex, edge, or plane (at least after assigning a width
+					to these objects).
 				</p>
 				<p>
-					This works, because of the simplicity of distance estimators: in order to draw something, we only need a single function that for every point in space
-					will give us the distance to the closest part of the structure we are depicting. This function is the distance estimator. It is even perfectly fine
-					for the distance estimator to be conservative and return a number that is smaller than the actual distance to the object. I previously described the 
-					technique 
+					This works, because of the simplicity of distance estimators: in order to draw something, we only need a single function
+					that for every point in space will give us the distance to the closest part of the structure we are depicting. This
+					function is the distance estimator. It is even perfectly fine for the distance estimator to be conservative and return
+					a number that is smaller than the actual distance to the object. I previously described the technique
 					<a href="http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/">here</a> for a recursive tetrahedron.
 
 				</p>
 
-					TODO: 3D demo
-				<p></p>
-				
+
+				<script>
+					var containerZ = document.createElement('div');
+					containerZ.style.display = "inline";
+					document.getElementById("main").appendChild(containerZ);
+					loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
+						var scene = createFragmentShader(containerZ, 700, 700, s[0], s[1] + s[2]);
+						scene.getCamera().position.set(-1,2,-0.5);
+						scene.controls.update();
+					});
+
+				</script>
+				<p>TODO: 3D Demoe</p>
+
 				<h2>The fourth dimension</h2>
 				<p>TODO: Stereographical projection (3D->2D) + inline demo.
 				</p>
 
 				<h2>Results</h2>
+
+				<p>TODO: Polytopes in 4D (vector) TODO: Polytopes in 4D (ray traced)</p>
+
+				<script>
+					var containerX = document.createElement('div');
+					containerX.style.display = "inline";
+					document.getElementById("main").appendChild(containerX);
+					loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
+						var scene = createFragmentShader(containerX, 700, 700, s[0], s[1] + s[2]);
+						scene.getCamera().position.set(-7,-0.3,-17);
+						scene.controls.update();
+					});
+
+				</script>
 				
-				TODO: Polytopes in 4D (vector)
-				TODO: Polytopes in 4D (ray traced)
 				
 
 				<h2>Links</h2>

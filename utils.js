@@ -197,3 +197,95 @@ function insertCoxeter(container, relations, col) {
             draw.text(relations[i] + "").x(cx - 11).y(y - 10).font({ size: 12 });
     }
 }
+
+
+// Based on https://stackoverflow.com/questions/4878145/javascript-and-webgl-external-scripts
+function loadFile(url, data, callback) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+
+    request.onreadystatechange = function () {
+        if (request.readyState == 4) {
+            if (request.status == 200 || (request.status == 0 && request.responseText != "")) {
+                callback(request.responseText, data)
+            } else {
+                console.log(request);
+                throw "Failed to download:" + url;
+            }
+        }
+    };
+
+    request.send(null);
+}
+
+function loadFiles(urls, callback) {
+    var numUrls = urls.length;
+    var numComplete = 0;
+    var result = [];
+
+    function partialCallback(text, urlIndex) {
+        result[urlIndex] = text;
+        numComplete++;
+        if (numComplete == numUrls) {
+            callback(result);
+        }
+    }
+
+    for (var i = 0; i < numUrls; i++) {
+        loadFile(urls[i], i, partialCallback);
+    }
+}
+
+
+function createFragmentShader(container, w, h, vertexShader, fragmentShader) {
+    var renderer = new THREE.WebGLRenderer({ alpha: true });
+    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(w, h);
+    container.appendChild(renderer.domElement);
+
+    /*
+    window.addEventListener('resize', function () {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = canvas.width / canvas.height;
+        camera.updateProjectionMatrix();
+        material.uniforms.resolution.value.set(canvas.width, canvas.height);
+        material.uniforms.cameraProjectionMatrixInverse.value.getInverse(camera.projectionMatrix);
+    });
+    */
+
+    // Scene
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(60, w / h, 1, 2000);
+    camera.position.z = 4;
+    scene.add(camera);
+    scene.getCamera = function () {
+        return camera;
+    };
+
+    var geometry = new THREE.PlaneBufferGeometry(2.0, 2.0);
+    var material = new THREE.RawShaderMaterial({
+        uniforms: {
+            resolution: { value: new THREE.Vector2(w, h) },
+            cameraWorldMatrix: { value: camera.matrixWorld },
+            cameraProjectionMatrixInverse: { value: new THREE.Matrix4().getInverse(camera.projectionMatrix) }
+        },
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader
+    });
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.frustumCulled = false;
+    scene.add(mesh);
+
+    // Controls
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    scene.doRender = function () {
+        renderer.render(scene, camera)
+    };
+    scene.controls = controls;
+
+    controls.addEventListener('change', function () { scene.doRender() });
+
+    setTimeout(function () { scene.doRender(); });
+    return scene;
+}

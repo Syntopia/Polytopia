@@ -208,23 +208,23 @@ ToddCoxeter.prototype = {
     debugState: function () {
         var self = this;
         var mapper = function (e) { return self.rels.generators[e]; };
-        var out = this.cosetTable.toHTML(mapper) ;
+        var out = this.cosetTable.toHTML(mapper);
 
         for (var i = 0; i < this.relationTables.length; i++) {
-            out += this.relationTables[i].toHTML(mapper) ;
+            out += this.relationTables[i].toHTML(mapper);
         }
 
         document.getElementById('tables').innerHTML = out;
 
     },
 
-    getTables: function() {
+    getTables: function () {
         var self = this;
         var mapper = function (e) { return self.rels.generators[e]; };
-        var out = this.cosetTable.toHTML(mapper) ;
-        
+        var out = this.cosetTable.toHTML(mapper);
+
         for (var i = 0; i < self.relationTables.length; i++) {
-            out += self.relationTables[i].toHTML(mapper) ;
+            out += self.relationTables[i].toHTML(mapper);
         }
         return out;
     },
@@ -236,9 +236,9 @@ ToddCoxeter.prototype = {
 
     solve: function () {
         var startTime = Date.now();
-        
+
         var doIteration = this.initSolver();
-        while (doIteration()) {};
+        while (doIteration()) { };
 
         console.log("Elapsed: " + (Date.now() - startTime) + " ms. Cosets: " + this.cosetTable.rows.length);
         this.cosetCounts = this.cosetTable.rows.length;
@@ -307,7 +307,7 @@ ToddCoxeter.prototype = {
                         var newCoset = rt.rows[row][lastEmpty + 1];
                         var gen = rt.genList[lastEmpty + 1];
 
-                        
+
                         var ctRow = self.cosetTable.findRowPointingToCoset(gen, newCoset);
                         if (ctRow != undefined) {
                             var closed = rt.set(row, lastEmpty, self.cosetTable.rowCosets[ctRow]);
@@ -369,7 +369,7 @@ ToddCoxeter.prototype = {
 
                     // coset*g = newCoset
                     var coset = i[0];
-                    var g = i[1]; 
+                    var g = i[1];
                     var newCoset = i[2];
 
                     var cosetRow = self.cosetTable.getCosetRow(coset);
@@ -504,5 +504,54 @@ ToddCoxeter.prototype = {
             out[i] = transformedCosetList;
         }
         return out;
+    },
+
+    // Find vertices
+    // Returns { vertexOperators,  edgeList, faceList };
+    getStructure: function () {
+
+        var vertices = 0;
+        var edges = 0;
+        var faces = 0;
+
+        for (var i = 0; i < this.cosetTable.extraColumns[0].length; i++) {
+            vertices = Math.max(this.cosetTable.extraColumns[0][i] + 1, vertices);
+            edges = Math.max(this.cosetTable.extraColumns[0][i] + 1, edges);
+            faces = Math.max(this.cosetTable.extraColumns[0][i] + 1, faces);
+        }
+
+        var vxs = new Array(vertices);
+        var ms = new Array(vertices);
+
+        // Vertices and reflection matrices
+        var current = 0;
+        for (var i = 0; i < this.cosetTable.extraColumns[0].length; i++) {
+            var vertex = this.cosetTable.extraColumns[0][i];
+            if (vxs[vertex] == undefined) {
+                vxs[vertex] = this.getRepresentiveForCoset(i);
+                console.log("Setting vertex " + vertex + " to " + vxs[vertex]);
+            }
+        }
+
+
+        var edgeList = new Array(edges);
+        var faceList = new Array(faces);
+
+        // Edges and faces
+        for (var i = 0; i < this.cosetTable.extraColumns[1].length; i++) {
+            var v = this.cosetTable.extraColumns[0][i];
+            var e = this.cosetTable.extraColumns[1][i];
+            var f = this.cosetTable.extraColumns[2][i];
+            if (edgeList[e] == undefined) edgeList[e] = [];
+            if (edgeList[e].indexOf(v) == -1) edgeList[e].push(v);
+
+            if (faceList[f] == undefined) faceList[f] = [];
+            if (faceList[f].indexOf(e) == -1) faceList[f].push(e);
+
+
+        }
+
+
+        return { vertexOperators: vxs, edgeList: edgeList, faceList: faceList };
     }
 }
