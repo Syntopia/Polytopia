@@ -555,3 +555,50 @@ ToddCoxeter.prototype = {
         return { vertexOperators: vxs, edgeList: edgeList, faceList: faceList };
     }
 }
+
+
+
+function getCoxeterGroup(rgPower, gbPower, rbPower) {
+    function copyString(string, copies) {
+        var s = "";
+        for (var i = 0; i < copies; i++) {
+            s+= string;
+        }
+        return s;
+    }
+
+    function findSub(subgroupRelation, subgroupGenerators, name) {
+        var tc = new ToddCoxeter(subgroupRelation);
+        var total = tc.solve();
+        var subgroupMembers = freeGroup.getCosetsForRepresentives(tc.translate(tc.getRepresentivesForCosets(), freeGroup));
+
+        var tc = new ToddCoxeter(relations, subgroupGenerators);
+        var total = tc.solve();
+
+        var cosetActions = tc.translate(tc.getRepresentivesForCosets(), freeGroup);
+
+        var subsets = freeGroup.apply(cosetActions, subgroupMembers);
+
+        var vLabel = new Array(tc.getCosetCounts());
+        for (var i = 0; i < subsets.length; i++) {
+            for (var j = 0; j < subsets[i].length; j++) {
+                vLabel[subsets[i][j]] = i;
+            }
+        }
+        return vLabel;
+    }
+
+
+    var relations = copyString("rg",rgPower)+","+copyString("gb",gbPower)+","+copyString("rb",rbPower);
+    var freeGroup = new ToddCoxeter(relations);
+    var total = freeGroup.solve();
+    freeGroup.cosetTable.extraColumns = [];
+    freeGroup.cosetTable.extraColumnNames = [["Vertices", "V"], ["Edges", "E"], ["Faces", "F"], ["Cells", "C"]];
+    freeGroup.cosetTable.extraColumns.push(findSub(copyString("gb",gbPower), "g,b", "V"));
+    freeGroup.cosetTable.extraColumns.push(findSub(copyString("rb",rbPower), "r,b", "E"));
+    freeGroup.cosetTable.extraColumns.push(findSub(copyString("rg",rgPower), "r,g", "F"));
+    freeGroup.powers = [rgPower,gbPower,rbPower];
+    return freeGroup;
+}
+
+

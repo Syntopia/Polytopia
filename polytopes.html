@@ -579,36 +579,8 @@
 						return s;
 					};
 
-					function findSub(subgroupRelation, subgroupGenerators, name) {
-						var tc = new ToddCoxeter(subgroupRelation);
-						var total = tc.solve();
-						var subgroupMembers = freeGroup.getCosetsForRepresentives(tc.translate(tc.getRepresentivesForCosets(), freeGroup));
-
-						var tc = new ToddCoxeter(relations, subgroupGenerators);
-						var total = tc.solve();
-
-						var cosetActions = tc.translate(tc.getRepresentivesForCosets(), freeGroup);
-
-						var subsets = freeGroup.apply(cosetActions, subgroupMembers);
-
-						var vLabel = new Array(tc.getCosetCounts());
-						for (var i = 0; i < subsets.length; i++) {
-							for (var j = 0; j < subsets[i].length; j++) {
-								vLabel[subsets[i][j]] = i;
-							}
-						}
-						return vLabel;
-					}
-
-					var relations = "rgrgrg,gbgbgbgbgb,rbrb";
-					var freeGroup = new ToddCoxeter(relations);
-					var total = freeGroup.solve();
-					freeGroup.cosetTable.extraColumns = [];
-					freeGroup.cosetTable.extraColumnNames = [["Vertices", "V"], ["Edges", "E"], ["Faces", "F"], ["Cells", "C"]];
-					freeGroup.cosetTable.extraColumns.push(findSub("gbgbgbgbgb", "g,b", "V"));
-					freeGroup.cosetTable.extraColumns.push(findSub("rbrb", "r,b", "E"));
-					freeGroup.cosetTable.extraColumns.push(findSub("rgrgrg", "r,g", "F"));
-
+				
+					var freeGroup = getCoxeterGroup(5,3,2);
 
 
 
@@ -643,24 +615,6 @@
 
 					values = {};
 
-					function createSlider(container, name, label, defaultValue, min, max) {
-						var html = "<div class='dynamicUI'><span id='" + name + "Label'>" + label + "&nbsp;&nbsp;</span>";
-						html += "<input id='" + name + "Slider' value='" + 100 * (defaultValue - min) / (max - min) + "' type='range' min='0' max='100' style='width: 300px;'>";
-						html += "&nbsp;&nbsp;<span id='" + name + "Value'>" + defaultValue.toFixed(3) + "</span></div>";
-						container.insertAdjacentHTML('beforeend', html);
-
-						var slider = document.getElementById(name + "Slider");
-						var value = document.getElementById(name + "Value");
-						values[name] = slider.value * 0.01 * (max - min) + min;
-
-						slider.addEventListener('input', function () {
-							var val = slider.value * 0.01 * (max - min) + min;
-							value.innerHTML = val.toFixed(3);
-							values[name] = val;
-							setInitialVertex(values["nR"], values["nG"], values["nB"]);
-						});
-					}
-
 					var cayley;
 					var structure = freeGroup.getStructure();
 
@@ -676,19 +630,21 @@
 					}
 
 					function init() {
+					
+
 						var container = document.createElement('div');
 						container.style.display = "inline";
 						container.style.position = "absolute";
 						document.getElementById("main").appendChild(container);
-
+					
 						var scene = getStandard3DView(container, 700, 700);
 						var nG;
 						var nB;
 						var nR;
 
-						var a12 = Math.PI / 3;
-						var a23 = Math.PI / 5;
-						var a13 = Math.PI / 2;
+						var a12 = Math.PI / freeGroup.powers[0];
+						var a23 = Math.PI / freeGroup.powers[1];
+						var a13 = Math.PI / freeGroup.powers[2];
 
 						nR = new THREE.Vector3(1, 0, 0);
 						nG = new THREE.Vector3(Math.cos(a12), Math.sqrt(1 - Math.cos(a12) * Math.cos(a12)), 0);
@@ -896,10 +852,29 @@
 					var c2 = document.createElement('div');
 					document.getElementById("main").appendChild(c2);
 
-					createSlider(c2, "nR", "RN", 1, 0, 2);
-					createSlider(c2, "nG", "RG", 0, 0, 2);
-					createSlider(c2, "nB", "RB", 0, 0, 2);
+					var gui = new dat.GUI({ autoPlace: false });
+					var staticContainer = getContainer(-600);
+					staticContainer.style.width = "300px";
+					staticContainer.appendChild(gui.domElement);
+					document.getElementById("main").appendChild(staticContainer);
+					var f = gui.addFolder("Initial vertex");
+					f.open();
+					var pp = {
+						nR: 1,
+						nG: 0,
+						nB: 0,
+					};
 
+					f.add(pp, "nR", 0, 2).name("nR").onChange(function (v) {
+						setInitialVertex(pp.nR, pp.nG, pp.nB);
+					});
+					f.add(pp, "nG", 0, 2).name("nG").onChange(function (v) {
+						setInitialVertex(pp.nR, pp.nG, pp.nB);
+					});
+					f.add(pp, "nB", 0, 2).name("nB").onChange(function (v) {
+						setInitialVertex(pp.nR, pp.nG, pp.nB);
+					});
+					
 					function selectRow(col, r) {
 						var table = document.getElementById("mainTable");
 
@@ -925,33 +900,7 @@
 
 					}
 
-					function readFileHttp(fname, callback) {
-						xmlhttp = getXmlHttp();
-						xmlhttp.onreadystatechange = function () {
-							if (xmlhttp.readyState == 4) {
-								callback(xmlhttp.responseText);
-							}
-						}
-						xmlhttp.open("GET", fname, true);
-						xmlhttp.send(null);
-					}
-
-					/*
-					Return a cross-browser xmlhttp request object
-					*/
-					function getXmlHttp() {
-						if (window.XMLHttpRequest) {
-							xmlhttp = new XMLHttpRequest();
-						} else if (window.ActiveXObject) {
-							xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-						}
-						if (xmlhttp == null) {
-							alert("Your browser does not support XMLHTTP.");
-						}
-						return xmlhttp;
-					}
-
-					readFileHttp("test.txt", function (e) { console.log(e); });
+				
 				</script>
 				<p>
 					Notice how the different cosets connect vertices, edges, and faces.
@@ -1000,56 +949,20 @@
 					staticContainer.style.width = "300px";
 					staticContainer.appendChild(gui.domElement);
 
-
 					var containerZ = document.createElement('div');
 					containerZ.style.display = "inline";
 					document.getElementById("main").appendChild(containerZ);
 					var polyhedronScene;
-					loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
-						polyhedronScene = createFragmentShader(containerZ, 700, 700, s[0], s[1] + s[2]);
-						polyhedronScene.uniforms.U = { value: 1 };
-						polyhedronScene.uniforms.V = { value: 0 };
-						polyhedronScene.uniforms.W = { value: 0 };
 
+					loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
+						polyhedronScene = createFragmentShader(containerZ, 700, 700, s[0], s[1] + s[2], gui);
+						
+						polyhedronScene.params.default = "Cube";
+						gui.add(polyhedronScene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"] ).name("Preset");
+						
 						polyhedronScene.getCamera().position.set(-1, 2, -0.5);
 						polyhedronScene.controls.update();
-						//	scene.uniforms.U = { value: 0.1};
-						/*
-						scene.uniforms.V = 0.0;
-						scene.uniforms.W = 1.0;
-						scene.uniforms.VRadius = 0.1;
-						scene.uniforms.SRadius = 0.1;
-						scene.uniforms.displayFaces = true;
-						scene.uniforms.displaySegments = true;
-						scene.uniforms.displayVertices = true;
-*/
 					});
-
-
-					var params = {
-						U: 1,
-						V: 0,
-						W: 0,
-						default: "Cube",
-					};
-
-					gui.add(params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"] ).name("Preset");
-					var effectFolder = gui.addFolder('Params');
-					effectFolder.add(params, 'U', 0, 1).step(0.01).name("Coordinate U").onChange(function (v) {
-						polyhedronScene.uniforms.U = { value: v };
-						polyhedronScene.doRender();
-					});
-					effectFolder.add(params, 'V', 0, 1).step(0.01).name("Coordinate V").onChange(function (v) {
-						polyhedronScene.uniforms.V = { value: v };
-						polyhedronScene.doRender();
-					});
-					effectFolder.add(params, 'W', 0, 1).step(0.01).name("Coordinate W").onChange(function (v) {
-						polyhedronScene.uniforms.W = { value: v };
-						polyhedronScene.doRender();
-					});
-					effectFolder.open();
-					gui.open();
-
 				</script>
 				<p>TODO: 3D Demoe</p>
 
@@ -1071,7 +984,7 @@
 						scene.controls.update();
 					});
 
-					
+
 
 				</script>
 

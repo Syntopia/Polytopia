@@ -8,23 +8,25 @@ uniform vec3 cameraPosition;
 uniform mat4 cameraWorldMatrix;
 uniform mat4 cameraProjectionMatrixInverse;
 
-uniform float U;
-uniform float V;
-uniform float W;
+// control-group: coordinate
+uniform float U; // control[1, 0-1]
+uniform float V; // control[0, 0-1]
+uniform float W; // control[0, 0-1]
 
-#define VRadius 0.04
-#define SRadius 0.03
+// control-group: style
+uniform float VRadius; // control[0.04, 0-0.2]
+uniform float SRadius; // control[0.03, 0-0.2]
  
-#define displayFaces true
-#define displaySegments true
-#define displayVertices true
+uniform bool displayFaces; // control[true]
+uniform bool displaySegments; // control[true]
+uniform bool displayVertices; // control[true]
 
 
 
 
 #define PI 3.141592
 // Symmetry group type.
-#define Type 5
+uniform float Type; // control[5, 2-7]
 
 
 
@@ -47,10 +49,12 @@ void init() {
 }
 
 vec3 fold(vec3 pos) {
-	for(int i=0;i<Type;i++){
+	int max = int(Type);
+	for(int i=0;i<7;i++){
 		pos.xy=abs(pos.xy);
 		float t=-2.*min(0.,dot(pos,nc));
 		pos+=t*nc;
+		if (i>=max) break;
 	}
 	return pos;
 }

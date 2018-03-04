@@ -237,7 +237,7 @@ function loadFiles(urls, callback) {
 }
 
 
-function createFragmentShader(container, w, h, vertexShader, fragmentShader) {
+function createFragmentShader(container, w, h, vertexShader, fragmentShader, folder) {
     var renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -269,8 +269,8 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader) {
         resolution: { value: new THREE.Vector2(w, h) },
         cameraWorldMatrix: { value: camera.matrixWorld },
         cameraProjectionMatrixInverse: { value: new THREE.Matrix4().getInverse(camera.projectionMatrix) },
-     };
-    
+    };
+
     var material = new THREE.RawShaderMaterial({
         uniforms: scene.uniforms,
         vertexShader: vertexShader,
@@ -289,5 +289,52 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader) {
     controls.addEventListener('change', function () { scene.doRender() });
 
     setTimeout(function () { scene.doRender(); });
+
+    scene.params = {};
+
+    function extractUniforms( ) {
+        const floatUniform = /uniform\s+float\s+(\S+)\s*;\s*\/\/\s+control\[(\S+)\,\s*(\S+)-(\S+)\]/g;
+        const booleanUniform = /uniform\s+bool\s+(\S+)\s*;\s*\/\/\s+control\[(\S+)]/g;
+        const controlGroup = /\/\/\s*control-group\s*:\s*(\S+)/g;
+    
+        var currentFolder = folder;
+        
+        var lines = fragmentShader.split('\n');
+        lines.forEach(function (line) {
+            let m;
+            console.log(line);
+
+            while ((m = floatUniform.exec(line)) !== null) {
+                var name = m[1];
+                var initial = parseFloat(m[2]);
+                var from = parseFloat(m[3]);
+                var to = parseFloat(m[4]);
+                scene.uniforms[name] = { value: initial };
+                scene.params[name] = initial;
+                currentFolder.add(scene.params, name, from, to).name(name).onChange(function (v) {
+                    scene.uniforms[name] = { value: v };
+                    scene.doRender();
+                });
+            }
+            while ((m = booleanUniform.exec(line)) !== null) {
+                var name = m[1];
+                var initial = m[2] == "true" ? true : false;
+                scene.uniforms[name] = { value: initial };
+                scene.params[name] = initial;
+                currentFolder.add(scene.params, name, from, to).name(name).onChange(function (v) {
+                    scene.uniforms[name] = { value: v };
+                    scene.doRender();
+                });
+            }
+    
+            while ((m = controlGroup.exec(line)) !== null) {
+                var name = m[1];
+                currentFolder = folder.addFolder(name);
+                currentFolder.open();   
+            }
+        })
+    }
+
+    extractUniforms();
     return scene;
 }

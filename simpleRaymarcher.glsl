@@ -1,5 +1,5 @@
 
-#define MaxSteps 60
+#define MaxSteps 80
 #define MinimumDistance 0.0009
 #define normalDistance     0.0002
 
@@ -9,26 +9,34 @@
 #define Jitter 0.06
 #define FudgeFactor 1.0
 
-#define Ambient 0.32184
+#define Ambient 0.8
 #define Diffuse 0.5
 #define LightDir vec3(1.0)
-#define LightColor vec3(1,1,1)
+#define LightColor vec3(0.3,0.3,0.3)
 #define LightDir2 vec3(1.0,-1.0,1.0)
-#define LightColor2 vec3(1,1,1)
+#define LightColor2 vec3(0.2,0.2,0.2)
 #define Offset vec3(0.92858,0.92858,0.32858)
 
 vec3 lightDir = LightDir;
 vec3 lightDir2 = LightDir2;
+vec3 spotDir = LightDir2;
 
 // Two light sources. No specular 
 vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
-	float diffuse = max(0.0,dot(-normal, lightDir)); // Lambertian
+	float diffuse = max(0.0,dot(normal, lightDir)); // Lambertian
 	
-	float diffuse2 = max(0.0,dot(-normal, lightDir2)); // Lambertian
+	float diffuse2 = max(0.0,dot(normal, lightDir2)); // Lambertian
 	
+
+	vec3 r = spotDir - 2.0 * dot(normal, spotDir) * normal;
+	float s = max(0.0,dot(dir,-r));
+	
+	
+
 	return
 	(diffuse*Diffuse)*(LightColor*color) +
-	(diffuse2*Diffuse)*(LightColor2*color);
+	(diffuse2*Diffuse)*(LightColor2*color) +
+	pow(s,120.0)*vec3(0.4);
 }
 
 // Finite difference normal
@@ -45,7 +53,7 @@ vec3 getNormal(in vec3 pos) {
 
 // Solid color 
 vec3 getColor(vec3 normal, vec3 pos) {
-	return vec3(1.0,1.0,1.0);
+	return vec3(0.6,0.6,0.7);
 }
 
 
@@ -63,7 +71,7 @@ float ambientOcclusion(vec3 p, vec3 n) {
 	float wSum = 0.0;
 	float w = 1.0;
     float d = 1.0;
-    float aoEps = 0.3;
+    float aoEps = 0.04;
 	for (float i =1.0; i <6.0; i++) {
 		// D is the distance estimate difference.
 		// If we move 'n' units in the normal direction,
@@ -84,12 +92,26 @@ vec4 rayMarch(in vec3 from, in vec3 dir) {
 	float distance;
 	int steps = 0;
 	vec3 pos;
+	vec3 bestPos;
+	float bestDist = 1000.0;
+	float bestTotal = 0.0;
 	for (int i=0; i <= MaxSteps; i++) {
 		pos = from + totalDistance * dir;
 		distance = DE(pos)*FudgeFactor;
+		
+		if (distance<bestDist) {
+			bestDist = distance;
+			bestPos = pos;
+			bestTotal = totalDistance;
+		}
+		
 		totalDistance += distance;
 		if (distance < MinimumDistance) break;
 		steps = i;
+	}
+
+	if (steps == MaxSteps) {
+		pos = bestPos;
 	}
 	
 	
@@ -97,18 +119,20 @@ vec4 rayMarch(in vec3 from, in vec3 dir) {
 	// backstep when calc'ing normal
 	vec3 normal = getNormal(pos-dir*normalDistance*3.0);
 	
-	float ao = ambientOcclusion(pos,normal);	
+	float ao = ambientOcclusion(pos,normal)*0.4;	
 	
 	vec3 bg = vec3(1);
-	if (steps == MaxSteps) {
-		return vec4(bg,1.0);
-	}
+	
 
 	vec3 color = getColor(normal, pos);
 	vec3 light = getLight(color, normal, dir);
 	
 	color = mix(color*Ambient+light,vec3(0),ao);
-	return vec4(color,1.0);
+	
+	if (steps == MaxSteps) {
+		return vec4(mix(color,bg,min(bestDist/bestTotal*400.,1.0)),1.0);
+	}
+	return vec4(pow(color,vec3(0.6,0.5,0.5)),1.0);
 } 
 
 
@@ -129,6 +153,10 @@ void main(void) {
 	// convert ray direction from normalized device coordinate to world coordinate
 	vec3 ray = ( cameraWorldMatrix * cameraProjectionMatrixInverse * ndcRay ).xyz;
 	ray = normalize( ray );
+
+	lightDir = normalize(cameraPosition);
+	lightDir2 = normalize(cameraPosition + vec3(5,0,0));
+	spotDir = normalize(vec3(-1.,-1.,-1.));
 	init();
 	gl_FragColor = vec4( rayMarch(cameraPosition, ray));
 }
