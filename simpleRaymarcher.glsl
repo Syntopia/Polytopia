@@ -10,7 +10,7 @@
 #define FudgeFactor 1.0
 
 #define Ambient 0.8
-#define Diffuse 0.5
+#define Diffuse 0.9
 #define LightDir vec3(1.0)
 #define LightColor vec3(0.3,0.3,0.3)
 #define LightDir2 vec3(1.0,-1.0,1.0)

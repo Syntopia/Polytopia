@@ -1,33 +1,3 @@
-body {
-    color: #000;
-    background-color: #fff;
-
-}
-
-body {
-    font-family: 'Lato', serif;
-    font-size: 20px;
-    line-height: 28px;
-}
-
-.mainContent {
-    display: table;
-    max-width: 800px;
-    /*whatever you want*/
-    min-width: 600px;
-    width: auto;
-    margin: 50px 10px 50px 150px;
-}
-
-h1,
-h2,
-h3,
-h4 {
-    font-family: 'Lato', serif;
-    font-weight: 400;
-    position: relative;
-    left: -50px;
-}
 
 table.blueTable {
     border-collapse: collapse;
@@ -239,3 +209,100 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
     background: #3071A9;
 }
+
+
+
+body {
+  margin: 0;
+}
+
+a {
+  color: #004276;
+}
+
+/*
+The CSS below is heavily inspired by https://distill.pub/guide/, in some cases even directly copying and reusing styling.
+While distill.pub articles are MIT licenses, I'm not sure this also applies to the CSS below.
+*/
+
+.mainContent > div,.mainContent > p,.mainContent > h1,.mainContent > h2
+{
+  width: auto;
+  margin-left: 36px;
+  margin-right: 36px;
+  box-sizing: border-box;
+}
+
+@media(min-width: 1000px) {
+  .mainContent > div,.mainContent > p,.mainContent > h1,.mainContent > h2
+  {
+    margin-left: calc(50% - 900px / 2);
+    width: 700px;
+  } 
+  .mainContent {
+    font-size: 20px;
+  }
+  .mainContent h1 {
+    font-size: 50px;
+    letter-spacing: -0.02em;
+  }
+}
+
+.mainContent > div.fullwidth
+  {
+    margin-left: 0;
+    width: 100%;
+	background: #f8f8f8;
+	text-align: center;
+  } 
+
+@media(min-width: 1000px) {
+  .mainContent h1 {
+    font-size: 50px;
+    letter-spacing: -0.02em;
+  }
+}
+
+.mainContent {
+  display: block;
+  color: rgba(0, 0, 0, 0.8);
+  font: 17px/1.45em Georgia, serif;
+  padding-bottom: 72px;
+}
+
+@media(min-width: 1000px) { 
+  .mainContent {
+    font-size: 20px;
+  }
+}
+
+.mainContent h1 {
+  color: rgba(0, 0, 0,);
+   margin-top: 18px;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1em;
+}
+
+.mainContent h2 {
+   color: rgba(0, 0, 0);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.25em;
+  margin-top: 36px;
+  margin-bottom: 24px;
+}
+
+.mainContent p {
+  margin-bottom: 24px;
+}
+
+.mainContent .rightBox {
+    clear: both;
+    float: right;
+    margin-top: 0;
+    margin-left: 24px;
+    margin-right: calc((100vw - 1000px) / 2 + 168px); /* vw is viewport width. TODO: Clean this up */
+    width: calc((1000px - 850px) / 2 - 24px);
+}
+
