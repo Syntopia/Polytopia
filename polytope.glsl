@@ -32,13 +32,20 @@ vec2 rotate(vec2 v, float a) {
 }
 
 #define Type 5
-float U;
-float V;
-float W;
-float T =  1.0;
+// control-group: coordinate
+uniform float U; // control[1, 0-1]
+uniform float V; // control[0, 0-1]
+uniform float W; // control[0, 0-1]
+uniform float T; // control[1, 0-1]
 
-float VRadius = 0.05048;
-float SRadius = 0.05476;
+// control-group: style
+uniform float VRadius; // control[0.04, 0-0.2]
+uniform float SRadius; // control[0.03, 0-0.2]
+ 
+uniform bool displaySegments; // control[true]
+uniform bool displayVertices; // control[true]
+
+
 vec3 RotVector = vec3(0.0,1.0,1.0);
 float RotAngle;
 
@@ -46,11 +53,7 @@ float RotAngle;
 mat3 rot;
 vec4 nc,nd,p;
 void init() {
-	float iTime = 1.;
-     U = 0.0*cos(iTime)*0.5+0.1;
-    V =  0.2*sin(iTime*0.1)*0.5+0.2;
-    W =  1.0*cos(iTime*1.2)*0.5+0.5;
-    RotAngle = iTime*0.0;
+    RotAngle = 0.0;
     
 	float cospin=cos(PI/float(Type)), isinpin=1./sin(PI/float(Type));
 	float scospin=sqrt(2./3.-cospin*cospin), issinpin=1./sqrt(3.-4.*cospin*cospin);
@@ -70,10 +73,12 @@ void init() {
 }
 
 vec4 fold(vec4 pos) {
-	for(int i=0;i<Type*(Type-2);i++){
+	for(int i=0;i<25;i++){
+		vec4 tmp = pos;
 		pos.xy=abs(pos.xy);
 		float t=-2.*min(0.,dot(pos,nc)); pos+=t*nc;
 		t=-2.*min(0.,dot(pos,nd)); pos+=t*nd;
+		if (tmp == pos) { return pos; }
 	}
 	return pos;
 }
@@ -115,10 +120,13 @@ float dist2Segments(vec4 z, float r){
 }
 
 float DE(vec3 pos) {
+	
 	float r=length(pos);
 	vec4 z4=vec4(2.*pos,1.-r*r)*1./(1.+r*r);//Inverse stereographic projection of pos: z4 lies onto the unit 3-sphere centered at 0.
 	z4.xyw=rot*z4.xyw;
 	z4=fold(z4);//fold it
-
-	return min(dist2Vertex(z4,r),dist2Segments(z4, r));
+	float d=10000.;
+	if(displayVertices ) d=min(d,dist2Vertex(z4,r));
+	if(displaySegments) d=min(d,dist2Segments(z4, r));
+	return d ;
 }

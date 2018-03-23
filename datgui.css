@@ -33,6 +33,7 @@ body .dg.main .close-button:hover {
 body .dg {
     color: #555;
     text-shadow: none !important;
+	
 }
 
 body .dg.main::-webkit-scrollbar {

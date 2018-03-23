@@ -9,8 +9,6 @@
 </head>
 
 <body>
-
-	<div class="mainContent" id="main">
 		<script src="js/three.min.js" type="text/javascript"></script>
 		<script src="js/OrbitControls.js" type="text/javascript"></script>
 		<script src="js/Detector.js" type="text/javascript"></script>
@@ -20,14 +18,22 @@
 		<script src="toddcoxeter.js" type="text/javascript"></script>
 		<script src="utils.js" type="text/javascript"></script>
 		<script src="js/dat.gui.min.js" type="text/javascript"></script>
-
 		<script>
 			var showSceneObjects;
 		</script>
+		<div class="header">
 		<h1>Building four dimensional polytopes</h1>
-		<p>
-			<strong>This is work-in-progress and probably not worth reading yet!</strong>
-		</p>
+<div class="author">by Mikael Hvidtfeldt Christensen, <a href="https://twitter.com/syntopiadk?lang=en">@SyntopiaDK</a></div>
+<p>Several years ago I became aware of which is called the <i>convex regular 4-polytopes</i> - basically four-dimensional analogs of the Platonic solids. 
+At that time I did not fully understand the mathematics, but wanted to revisit the topic at a later time.  
+</p>
+</div>
+
+
+<div class="mainContent" id="main">
+	
+
+
 		<p>
 			Several years ago I stumbled upon
 			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a>, a tool for visualizing four dimensional geometric structures. Jenn describes itself as follows:</p>
@@ -549,10 +555,15 @@
 				<p>Here the columns represent the normals of the reflecting planes (The N's are normalization constants that can be trivially
 					calculated - all the normals must be unit length)</p>
 				<p>
-					We also need to figure out a starting point: gram-schmidt: take the ordered set of normals and create an orthogonal representation.
-					Since the last vector in this orthogonal representation must be both perpendicular to the first reflection plane normal,
-					and to the second reflection plane normal, this vector must be in the intersection of the two reflection planes.
+					We also need to figure out a starting point. As previously mentioned the cube and octahedron 
+					share the same generator relations (they are dual). So why are they different? Looking at their coxeter diagram in the table above, this has to do with the special outer circle:
+					this outer circle has a special meaning: the initial starting point should be located on the two other reflection planes (the blue and the green), but not on the red one.</p>
+					<p>
+					We can use Gram-Schmidt to create a vector that is contained in the blue and the green plan, but not in the red. We do this by starting out with the three reflection plane normal vectors:
+					[nB, nG, nR]. After applying Gram-Schmidt to this set of vectors, the last vector in the transformed set will be orthogonal to the blue and green reflection plane normal vectors (and thus be located 
+					on the intersection of these two planes).
 				</p>
+			
 
 <div class="fullwidth" id="largeContainer">
 
@@ -565,7 +576,7 @@
 						var genSymbols = tc.rels.generators;
 
 						var mapper = function (e) { return self.rels.generators[e]; };
-						var s = '<div id="table-scroll">';
+						var s = '<div id="table-scroll" style="vertical-align: top; height: 600px">';
 
 						s += "<table class='blueTable' style='height: 600px' id='mainTable'><thead><th></th><th>Element</th>";
 						for (var i = 0; i < table.genList.length; i++) {
@@ -622,7 +633,7 @@
 					document.getElementById("largeContainer").appendChild(container);
 
 
-					container.innerHTML += "<p>" + dumpTable(freeGroup);
+					container.innerHTML +=  dumpTable(freeGroup);
 
 				</script>
 				<script>
@@ -655,7 +666,7 @@
 						//container.style.position = "absolute";
 						document.getElementById("largeContainer").appendChild(container);
 					
-						var scene = getStandard3DView(container, 700, 700);
+						var scene = getStandard3DView(container, 600, 600);
 						var nG;
 						var nB;
 						var nR;
@@ -870,9 +881,11 @@
 				
 					var gui = new dat.GUI({ autoPlace: false });
 					
-					var staticContainer = document.createElement('span');
-					staticContainer.style.width = "100px";
+					var staticContainer = document.createElement('div');
+					staticContainer.style.width = "300px";
 					staticContainer.style.display = "inline";
+					staticContainer.style.position = "absolute";
+					staticContainer.style.whitespace= "nowrap";
 					
 					staticContainer.appendChild(gui.domElement);
 					document.getElementById("largeContainer").appendChild(staticContainer);
@@ -964,6 +977,9 @@
 				</p>
 
 
+				<p>
+				Example of raytracing a system of three generators:
+				</p>
 		<div class="rightBox" id="datGui1">
 		</div>
 
@@ -988,23 +1004,185 @@
 						polyhedronScene.controls.update();
 					});
 				</script>
-				<p>TODO: 3D Demoe</p>
-
+			
 				<h2>The fourth dimension</h2>
-				<p>TODO: Stereographical projection (3D->2D) + inline demo.
+				<p>To get to the fourth dimension, we need one additional trick: the stereographic projection</p>
+				<p>
+				
 				</p>
 
-				<h2>Results</h2>
+			
+		<div id="rboxSimple3">
+		</div>
 
-				<p>TODO: Polytopes in 4D (vector) TODO: Polytopes in 4D (ray traced)</p>
 
+		<script>
+
+
+			function sceneAdd(scene, object, group) {
+				if (scene.groupings == undefined) {
+					scene.groupings = new Map();
+				}
+				if (scene.groupings.get(group) == undefined) {
+					scene.groupings.set(group, []);
+				}
+				scene.groupings.get(group).push(object);
+				scene.add(object);
+			}
+
+			function project(v) {
+				// Top is (0,Math.sqrt(3),0) - find line to plane a y=-Math.sqrt(3).
+				var dist = ( Math.sqrt(3)-v.y)/(2.0*Math.sqrt(3.0));
+				return new THREE.Vector3(v.x/dist,-Math.sqrt(3), v.z/dist);
+			}
+			
+			var addProjection;
+			
+				var gui3 = new dat.GUI({ autoPlace: false });
+					var staticContainer3 = document.getElementById("rboxSimple3");
+					//staticContainer.style.width = "300px";
+					staticContainer3.appendChild(gui3.domElement);
+
+					var containerZ2 = document.createElement('div');
+					containerZ2.style.display = "inline";
+					document.getElementById("main").appendChild(containerZ2);
+			
+					var f = gui3.addFolder("Rotation");
+					f.open();
+					var pp = {
+						rX: 0,
+						rY: 0,
+						rZ: 0,
+					};
+
+					f.add(pp, "rX", 0, 6.14).name("Rotate X").onChange(function (v) {
+						addProjection();	
+					});
+					f.add(pp, "rY", 0, 6.14).name("Rotate Y").onChange(function (v) {
+						addProjection();	
+					});
+					f.add(pp, "rZ", 0, 6.14).name("Rotate Z").onChange(function (v) {
+					addProjection();	
+						});
+					init();
+		
+			
+			function init() {
+				var d = document.getElementById("rboxSimple3");
+				
+				var scene = getStandard3DView(d, 500,500);
+
+			
+				var v = getVertices();
+				var e = getEdges();
+
+				var m = new THREE.MeshStandardMaterial({
+					opacity: 0.3,
+					transparent: true,
+					color: 0x997744,
+				});
+				var geometry = new THREE.SphereGeometry(Math.sqrt(3), 32, 32);
+				var sphere = new THREE.Mesh(geometry, m);
+				//sphere.position.copy(v[i]);
+				scene.add(sphere);
+				
+				var geometry = new THREE.TorusGeometry( Math.sqrt(3), 0.01, 16, 100 );
+				
+				 var  rotObjectMatrix = new THREE.Matrix4();
+                 rotObjectMatrix.makeRotationAxis(new THREE.Vector3(1,0,0), Math.PI/2.0);
+
+			
+				
+				var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+				var torus = new THREE.Mesh( geometry, material );
+
+					torus.matrix.multiply(rotObjectMatrix);
+								torus.rotation.setFromRotationMatrix(torus.matrix);
+								
+				var geometry = new THREE.PlaneGeometry(20, 20, 32 );
+				var material = new THREE.MeshBasicMaterial( {color: 0xeeeeee, side: THREE.DoubleSide} );
+				var plane = new THREE.Mesh( geometry, material );
+				plane.position.copy(new THREE.Vector3(0,-Math.sqrt(3)-0.01,0));
+				plane.matrix.multiply(rotObjectMatrix);
+												plane.rotation.setFromRotationMatrix(torus.matrix);
+				scene.add( plane );
+
+				scene.add( torus );
+				scene.groupings = new Map();
+				scene.groupings["dynamic"] = [];
+				
+				addProjection = function() {
+				if (scene.groupings.get("dynamic")!==undefined) {
+					scene.groupings.get("dynamic").forEach(function (obj) { scene.remove(obj);obj.geometry.dispose();obj.material.dispose();  });
+					var a = scene.groupings.get("dynamic");
+					while(a.length > 0) {
+					a.pop();
+					}	
+					}
+				var euler = new THREE.Euler( pp.rX,pp.rY,pp.rZ );
+					
+					var vv = [];
+					for (var i = 0; i < v.length; i++) {
+						vv.push(v[i].clone().applyEuler(euler));
+					}
+					
+					var ee = [];
+					for (var i = 0; i < e.length; i++) {
+						ee.push(e[i].clone().applyEuler(euler));
+					}
+					
+					var zenith = new THREE.Vector3(0,Math.sqrt(3),0);
+					spheres = [];
+					for (var i = 0; i < vv.length; i++) {
+						sceneAdd(scene,createLine(zenith,project(vv[i]), 0.0152, 0xaa0000), "dynamic");
+					}
+									
+					var divs = 20;
+					for (var i = 0; i < ee.length; i+=2) {				
+						sceneAdd(scene,createLine(ee[i],ee[i+1], 0.02, 0x444444), "dynamic");
+						
+						var delta = ee[i+1].clone().sub(ee[i]).multiplyScalar(1.0/divs);
+						var f1 = ee[i].clone();
+						var f2 = f1.clone().add(delta);
+						for (var j = 0; j < divs; j++) {
+							var g1 = f1.clone().normalize().multiplyScalar(Math.sqrt(3));
+							var g2 = f2.clone().normalize().multiplyScalar(Math.sqrt(3));
+							
+							sceneAdd(scene,createLine(project(g1),project(g2),  0.0252, 0x444444), "dynamic");
+							var t = f1;
+							f1 = f2;
+							f2 = t.add(delta).add(delta);
+						}
+					}
+					console.log(scene.children.length);
+							scene.doRender();
+			
+				}
+				addProjection();
+			}
+		</script>
+
+
+			
+				<p>
+				Example of raytracing a system of four generators:
+				</p>
+
+				<div class="rightBox" id="datGui2">
+				</div>
 				<script>
+					var gui2 = new dat.GUI({ autoPlace: false });
+					var staticContainer = document.getElementById("datGui2");
+					staticContainer.appendChild(gui2.domElement);
+
 					var containerX = document.createElement('div');
 					containerX.style.display = "inline";
 					document.getElementById("main").appendChild(containerX);
 					loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
-						var scene = createFragmentShader(containerX, 700, 700, s[0], s[1] + s[2]);
-						scene.getCamera().position.set(-7, -0.3, -17);
+						var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
+					scene.params.default = "Cube";
+						gui2.add(scene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"] ).name("Preset");
+							scene.getCamera().position.set(-7, -0.3, -17);
 						scene.controls.update();
 					});
 

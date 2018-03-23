@@ -8,6 +8,7 @@ function createLine(from, to, width, color, arrowWidth, arrowLength) {
     var geometry = new THREE.CylinderGeometry(width, width, dist, 10, 1);
     var mesh = new THREE.Mesh(geometry, m);
     var axis = new THREE.Vector3(0, 1, 0);
+    geometry.dispose();
 
     if (arrowWidth != undefined) {
         var geometry2 = new THREE.CylinderGeometry(0, arrowWidth, arrowLength, 10, 1);

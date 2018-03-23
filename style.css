@@ -57,7 +57,7 @@ a.interactive:hover {
 }
 
 #table-scroll {
-    max-height: 650px;
+    max-height: 600px;
     display: inline-block;
     width: auto;
     overflow-y: auto;
@@ -212,8 +212,10 @@ input[type=range]:focus::-ms-fill-upper {
 
 
 
-body {
+body, html {
   margin: 0;
+  padding: 0;
+  
 }
 
 a {
@@ -234,6 +236,7 @@ While distill.pub articles are MIT licenses, I'm not sure this also applies to t
 }
 
 @media(min-width: 1000px) {
+	div.header > div,div.header > p,div.header > h1,
   .mainContent > div,.mainContent > p,.mainContent > h1,.mainContent > h2
   {
     margin-left: calc(50% - 900px / 2);
@@ -247,6 +250,22 @@ While distill.pub articles are MIT licenses, I'm not sure this also applies to t
     letter-spacing: -0.02em;
   }
 }
+div.header > h1 {
+   margin-top: 0px;
+   padding-top: 30px;
+   margin-bottom: 0px;
+   padding-bottom: 0px;
+    font-size: 50px;
+	 white-space: nowrap;
+    letter-spacing: -0.02em;
+	font-family: Lato;
+}
+
+div.header > p {
+   padding-top: 10px;
+   padding-bottom: 10px;
+}
+
 
 .mainContent > div.fullwidth
   {
@@ -254,6 +273,19 @@ While distill.pub articles are MIT licenses, I'm not sure this also applies to t
     width: 100%;
 	background: #f8f8f8;
 	text-align: center;
+  } 
+  
+div.header
+  {
+    margin-left: 0;
+    width: 100%;
+	background: #f8e8c8;
+  } 
+
+  div.author
+  {
+    font: 14px/1.25em Georgia, serif;
+	 font-style: italic;
   } 
 
 @media(min-width: 1000px) {
