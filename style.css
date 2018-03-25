@@ -295,6 +295,9 @@ div.header {
     background: #3e5d73;
     font: 17px/1.45em Georgia, serif;
     font-weight: 500;
+    background-image: url("back.jpg");
+    background-size: cover; -ms-background-size: cover; -o-background-size: cover; -moz-background-size: cover; -webkit-background-size: cover;
+
 }
 
 div.author {

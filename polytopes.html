@@ -41,27 +41,28 @@
 
 	<div class="mainContent" id="main">
 		<p>
-			My first encounter with four dimensional polytopes was
+			My first encounter with four-dimensional polytopes was
 			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a> (2001-2007) by Fritz Obermeyer. Jenn describes itself as follows:</p>
 		<p>
 			<em>Jenn is a toy for playing with various quotients of Cayley graphs of finite Coxeter groups on four generators. Jenn builds
 				the graphs using the Todd-Coxeter algorithm, embeds them into the 3-sphere, and stereographically projects them onto
-				euclidean 3-space.
+				Euclidean 3-space.
 			</em>
 		</p>
 		<p>
 			Wow. This made absolutely no sense to me at all when I first read it - none of these terms were familiar to me. This page
 			was created to decipher this sentence.
 		</p>
-<p>
-	We will also go one step further, and discuss how these structures can be raytraced in realtime. This can be done 
-	using a clever (inverse) construction technique of <em>folding</em> space into a fundamental domain. The technique was originally described by Knighty in
-	<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
-</p>
+		<p>
+			We will also go one step further, and discuss how these structures can be raytraced in realtime. This can be done using a
+			clever (inverse) construction technique of
+			<em>folding</em> space into a fundamental domain. The technique was originally described by Knighty in
+			<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
+		</p>
 
-<div class="fullwidth" >
-	<img src="img3.jpg" width="100%" />	
-</div>	
+		<div class="fullwidth">
+			<img src="img3.jpg" width="100%" />
+		</div>
 		<h2>Symmetries of the cube</h2>
 		<p>
 			We will start out in three dimensions with a familiar object: the cube. </p>
@@ -159,7 +160,7 @@
 			(between
 			<a href="" class="interactive" onmouseover="showSceneObjects('vertices')" onmouseout="showSceneObjects()">opposite vertices</a>: 4 (120 degrees), opposite
 			<a href="" class="interactive" onmouseover="showSceneObjects('edges')" onmouseout="showSceneObjects()">mid-edges</a>: 6 (180 degrees), opposite
-			<a href="" class="interactive" onmouseover="showSceneObjects('faces')" onmouseout="showSceneObjects()">faces</a>: 3 (90 degrees): a total of: 4*2+6*1+3*3 = 23 rotations.
+			<a href="" class="interactive" onmouseover="showSceneObjects('faces')" onmouseout="showSceneObjects()">faces</a>: 3 (90 degrees): a total of 4*2+6*1+3*3 = 23 rotations.
 		</p>
 		<p> Including the identity transformation, and taking into account that we could also mirror every one of these transformations,
 			we arrive at
@@ -221,8 +222,8 @@
 			= 90^{\circ} $$
 		</p>
 		<p>
-			Now, combining two reflections, results in a rotation of twice the angle between the reflection planes. So applying e.g.
-			GB would be equal to a rotation of 120 degrees. And applying GB three times, e.g. GBGBGB, would not change the input.
+			Now, combining two reflections results in a rotation of twice the angle between the reflection planes. So applying e.g. GB
+			would be equal to a rotation of 120 degrees. And applying GB three times, e.g. GBGBGB, would not change the input.
 		</p>
 		<p>This means we can establish the following
 			<b>relations</b> between the generators:</p>
@@ -232,15 +233,15 @@
 			elements for all n? This turns out to be a computationally hard problem, known as the
 			<a href="https://en.wikipedia.org/wiki/Word_problem_for_groups">word problem for groups</a>.
 		</p>
-		<div class="fullwidth" >
-				<img src="img2.jpg" width="100%" />	
-			</div>	
+		<div class="fullwidth">
+			<img src="img2.jpg" width="100%" />
+		</div>
 		<h2>The Todd-Coexeter Algorithm</h2>
 
 		<p>
-			Our example relations above form a special group, called a Coxeter group. That is a group where the generators have relations off the form:
-			 \((ab)^{m_{ab}}\), as above: $$(RG)^4 = (GB)^3 = (RB)^2$$ The generators must also be their own inverse: $$R^2 = B^2 = G^2$$ Since the generators are their own 
-			 inverses, they are associated with reflections. 
+			Our example relations above form a special group, called a Coxeter group. That is a group where the generators have relations
+			of the form: \((ab)^{m_{ab}}\), as above: $$(RG)^4 = (GB)^3 = (RB)^2$$ The generators must also be their own inverse:
+			$$R^2 = B^2 = G^2$$ Since the generators are their own inverses, they are associated with reflections.
 		</p>
 
 		<p>
@@ -255,7 +256,7 @@
 			for a subgroup form a new set, called a
 			<b>quotient set</b> (denoted G/H).
 		</p>
-		<p>The Todd-Coxeter algorithm might be the first non-numerical algorithm to be implemented on a digital computer (using a
+		<p>The Todd-Coxeter algorithm might be the first non-numerical algorithm to be implemented on a digital computer (using an
 			<a href="https://www.cambridge.org/core/journals/mathematical-proceedings-of-the-cambridge-philosophical-society/article/coset-enumeration-on-digital-computers/047323FB9415ACF3466E627590ABB790">
 				EDSAC 1 in 1953</a>) </p>
 		<p>The algorithm works by keeping track of several tables: a coset table (listing the generator actions on the different cosets),
@@ -532,9 +533,9 @@
 			Let us explore the quotient sets a bit more - for instance, how do we know how to associate edges with vertices?
 		</p>
 		<div class="fullwidth">
-				<img src="img1.jpg" width="100%" />	
-			</div>	
-	
+			<img src="img1.jpg" width="100%" />
+		</div>
+
 		<h2>Generating geometry from group structure</h2>
 		<p>
 			Let us see how to recreate the euclidean geometry from the abstract Coxeter group description.
@@ -853,7 +854,7 @@
 				}
 
 				init();
-			
+
 				var gui = new dat.GUI({ autoPlace: false });
 
 				var staticContainer = document.createElement('div');
@@ -919,8 +920,8 @@
 		</p>
 
 		<div class="fullwidth">
-				<img src="img4.jpg" width="100%" />	
-			</div>	
+			<img src="img4.jpg" width="100%" />
+		</div>
 		<h2>Raytracing reflection groups</h2>
 		<p>I have been a long time fan of ray marching, and
 			<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">distance estimation techniques.</a>
@@ -966,55 +967,66 @@
 			document.getElementById("main").appendChild(containerZ);
 			var polyhedronScene;
 
-			loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
-				polyhedronScene = createFragmentShader(containerZ, 650, 700, s[0], s[1] + s[2], gui);
-				polyhedronScene.params.default = "Cube";
-				gui.add(polyhedronScene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"]).name("Preset").onChange(function (v) {
-					function set(name, val) {
-						polyhedronScene.params[name] = val;
-						polyhedronScene.uniforms[name] = { value: val };
+			containerZ.innerHTML = "<span style='width: 650px; height: 700px'><img src='inactive2.png' onclick='initializePolyhedron()'></span>";
 
-					}
+			var initializePolyhedron = function () {
+				containerZ.innerHTML = "";
+				loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
+					polyhedronScene = createFragmentShader(containerZ, 650, 700, s[0], s[1] + s[2], gui);
+					polyhedronScene.params.default = "Cube";
+					gui.add(polyhedronScene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"]).name("Preset").onChange(function (v) {
+						function set(name, val) {
+							polyhedronScene.params[name] = val;
+							polyhedronScene.uniforms[name] = { value: val };
 
-					if (polyhedronScene.params.default == "Tetrahedron") {
-						set("Degree", 3);
-						set("U", 0.0);
-						set("V", 1.0);
-						set("W", 0.0);
-						polyhedronScene.doRender();
-					} else if (polyhedronScene.params.default == "Cube") {
-						set("Degree", 4);
-						set("U", 0.0);
-						set("V", 0.0);
-						set("W", 1.0);
-						polyhedronScene.doRender();
-					} else if (polyhedronScene.params.default == "Octahedron") {
-						set("Degree", 3);
-						set("U", 1.0);
-						set("V", 0.0);
-						set("W", 0.0);
-						polyhedronScene.doRender();
-					} else if (polyhedronScene.params.default == "Dodecahedron") {
-						set("Degree", 5);
-						set("U", 0.0);
-						set("V", 0.0);
-						set("W", 1.0);
-						polyhedronScene.doRender();
-					} else if (polyhedronScene.params.default == "Icosahedron") {
-						set("Degree", 5);
-						set("U", 0.0);
-						set("V", 1.0);
-						set("W", 0.0);
-						polyhedronScene.doRender();
-					} 
+						}
 
+						if (polyhedronScene.params.default == "Tetrahedron") {
+							set("Degree", 3);
+							set("U", 0.0);
+							set("V", 1.0);
+							set("W", 0.0);
+							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Cube") {
+							set("Degree", 4);
+							set("U", 0.0);
+							set("V", 0.0);
+							set("W", 1.0);
+							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Octahedron") {
+							set("Degree", 3);
+							set("U", 1.0);
+							set("V", 0.0);
+							set("W", 0.0);
+							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Dodecahedron") {
+							set("Degree", 5);
+							set("U", 0.0);
+							set("V", 0.0);
+							set("W", 1.0);
+							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Icosahedron") {
+							set("Degree", 5);
+							set("U", 0.0);
+							set("V", 1.0);
+							set("W", 0.0);
+							polyhedronScene.doRender();
+						}
+
+					});
+					polyhedronScene.getCamera().position.set(-1, 2, -0.5);
+					polyhedronScene.controls.update();
 				});
-				polyhedronScene.getCamera().position.set(-1, 2, -0.5);
-				polyhedronScene.controls.update();
-			});
+			};
 		</script>
-		<p>In the example above, the U,V,W parameters control the position of the initial vertex as specified in the coordinate system where each axis lives on the intersection of two reflection planes (the Gram-Schmidt discussion above).</p>
-		<p>The Degree parameter controls on of the angles between reflection planes (e.g. 3 = 60 degrees, 4 = 45 degrees, 5 = 36 degrees). The two other angles are always 90 degrees and 60 degrees.</p>
+		<p>In the example above, the U,V,W parameters control the position of the initial vertex as specified in the coordinate system
+			where each axis lives on the intersection of two reflection planes (the Gram-Schmidt discussion above).</p>
+		<p>The Degree parameter controls one of the angles between reflection planes (e.g. 3 = 60 degrees, 4 = 45 degrees, 5 = 36
+			degrees). The two other angles are always 90 degrees and 60 degrees.</p>
+		<div class="fullwidth">
+			<img src="img5.jpg" width="100%" />
+		</div>
+
 		<h2>The fourth dimension</h2>
 		<p>To get to the fourth dimension, we need one additional trick: the stereographic projection</p>
 		<p>
@@ -1161,7 +1173,10 @@
 				addProjection();
 			}
 		</script>
-
+		<div class="fullwidth">
+			<img src="img6.jpg" width="100%" />
+		</div>
+		<h2>Putting it all together</h2>
 		<p>
 			Example of raytracing a system of four generators:
 		</p>
@@ -1176,64 +1191,71 @@
 			var containerX = document.createElement('div');
 			containerX.style.display = "inline";
 			document.getElementById("main").appendChild(containerX);
-			loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
-				var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
-				scene.params.default = "Cube";
-				gui2.add(scene.params, 'default', ["5-cell", "8-cell", "24-cell", "16-cell", "120-cell", "600-cell"]).name("Preset").onChange(function (v) {
-					function set(name, val) {
-						scene.params[name] = val;
-						scene.uniforms[name] = { value: val };
-					}
+			containerX.innerHTML = "<span style='width: 650px; height: 700px'><img src='inactive1.png' onclick='initializeMe()'></span>";
+			var initializeMe = function () {
+				containerX.innerHTML = "";
+				loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
+					var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
+					scene.params.default = "Cube";
+					gui2.add(scene.params, 'default', ["5-cell", "8-cell", "24-cell", "16-cell", "120-cell", "600-cell"]).name("Preset").onChange(function (v) {
+						function set(name, val) {
+							scene.params[name] = val;
+							scene.uniforms[name] = { value: val };
+						}
 
-					if (scene.params.default == "5-cell") {
-						set("Degree", 3);
-						set("U", 0.0);
-						set("V", 1.0);
-						set("W", 0.0);
-						set("T", 0.0);
-						scene.doRender();
-					} else if (scene.params.default == "8-cell") {
-						set("Degree", 4);
-						set("U", 0.0);
-						set("V", 1.0);
-						set("W", 0.0);
-						set("T", 0.0);
-						scene.doRender();
-					} else if (scene.params.default == "24-cell") {
-						set("Degree", 4);
-						set("U", 0.0);
-						set("V", 0.0);
-						set("W", 1.0);
-						set("T", 0.0);
-						scene.doRender();
-					} else if (scene.params.default == "16-cell") {
-						set("Degree", 4);
-						set("U", 0.0);
-						set("V", 0.0);
-						set("W", 0.0);
-						set("T", 1.0);
-						scene.doRender();
-					} else if (scene.params.default == "120-cell") {
-						set("Degree", 5);
-						set("U", 0.0);
-						set("V", 1.0);
-						set("W", 0.0);
-						set("T", 0.0);
-						scene.doRender();
-					} else if (scene.params.default == "600-cell") {
-						set("Degree", 5);
-						set("U", 0.0);
-						set("V", 0.0);
-						set("W", 0.0);
-						set("T", 1.0);
-						scene.doRender();
-					}
+						if (scene.params.default == "5-cell") {
+							set("Degree", 3);
+							set("U", 0.0);
+							set("V", 1.0);
+							set("W", 0.0);
+							set("T", 0.0);
+							scene.doRender();
+						} else if (scene.params.default == "8-cell") {
+							set("Degree", 4);
+							set("U", 0.0);
+							set("V", 1.0);
+							set("W", 0.0);
+							set("T", 0.0);
+							scene.doRender();
+						} else if (scene.params.default == "24-cell") {
+							set("Degree", 4);
+							set("U", 0.0);
+							set("V", 0.0);
+							set("W", 1.0);
+							set("T", 0.0);
+							scene.doRender();
+						} else if (scene.params.default == "16-cell") {
+							set("Degree", 4);
+							set("U", 0.0);
+							set("V", 0.0);
+							set("W", 0.0);
+							set("T", 1.0);
+							scene.doRender();
+						} else if (scene.params.default == "120-cell") {
+							set("Degree", 5);
+							set("U", 0.0);
+							set("V", 1.0);
+							set("W", 0.0);
+							set("T", 0.0);
+							scene.doRender();
+						} else if (scene.params.default == "600-cell") {
+							set("Degree", 5);
+							set("U", 0.0);
+							set("V", 0.0);
+							set("W", 0.0);
+							set("T", 1.0);
+							scene.doRender();
+						}
 
+					});
+
+					scene.getCamera().position.set(-7, -0.3, -17);
+					scene.controls.update();
 				});
+			};
 
-				scene.getCamera().position.set(-7, -0.3, -17);
-				scene.controls.update();
-			});
+			//initializeMe();
+
 		</script>
 
 		<p>
