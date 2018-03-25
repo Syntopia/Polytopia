@@ -9,8 +9,8 @@
 #define Jitter 0.06
 #define FudgeFactor 1.0
 
-#define Ambient 0.8
-#define Diffuse 0.9
+#define Ambient 0.3
+#define Diffuse 2.0
 #define LightDir vec3(1.0)
 #define LightColor vec3(0.3,0.3,0.3)
 #define LightDir2 vec3(1.0,-1.0,1.0)
@@ -21,7 +21,12 @@ vec3 lightDir = LightDir;
 vec3 lightDir2 = LightDir2;
 vec3 spotDir = LightDir2;
 
-// Two light sources. No specular 
+// control-group: AO
+uniform float uD; // control[1, 0-16]
+uniform float uAO; // control[0.04, 0-1]
+ 
+
+// Two light sources plus specular 
 vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
 	float diffuse = max(0.0,dot(normal, lightDir)); // Lambertian
 	
@@ -31,12 +36,14 @@ vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
 	vec3 r = spotDir - 2.0 * dot(normal, spotDir) * normal;
 	float s = max(0.0,dot(dir,-r));
 	
+	vec3 r2 = vec3(-1,0,0) - 2.0 * dot(normal, vec3(-1,0,0)) * normal;
+	float s2 = max(0.0,dot(dir,-r2));
 	
 
 	return
+	
 	(diffuse*Diffuse)*(LightColor*color) +
-	(diffuse2*Diffuse)*(LightColor2*color) +
-	pow(s,120.0)*vec3(0.4);
+	(diffuse2*Diffuse)*(LightColor2*color) +pow(s,20.0)*vec3(0.3)+pow(s2,120.0)*vec3(0.3);
 }
 
 // Finite difference normal
@@ -53,7 +60,7 @@ vec3 getNormal(in vec3 pos) {
 
 // Solid color 
 vec3 getColor(vec3 normal, vec3 pos) {
-	return vec3(0.6,0.6,0.7);
+	return vec3(0.2,0.13,0.94);
 }
 
 
@@ -70,8 +77,8 @@ float ambientOcclusion(vec3 p, vec3 n) {
 	float de = DE(p);
 	float wSum = 0.0;
 	float w = 1.0;
-    float d = 1.0;
-    float aoEps = 0.04;
+    float d = uD;
+    float aoEps = uAO; // 0.04;
 	for (float i =1.0; i <6.0; i++) {
 		// D is the distance estimate difference.
 		// If we move 'n' units in the normal direction,
@@ -154,9 +161,9 @@ void main(void) {
 	vec3 ray = ( cameraWorldMatrix * cameraProjectionMatrixInverse * ndcRay ).xyz;
 	ray = normalize( ray );
 
-	lightDir = normalize(cameraPosition);
-	lightDir2 = normalize(cameraPosition + vec3(5,0,0));
-	spotDir = normalize(vec3(-1.,-1.,-1.));
+	lightDir = normalize(cameraPosition+ vec3(1,1,1));
+	lightDir2 = normalize(  vec3(-1,0,-1));
+	spotDir = normalize(vec3(-0.,-1.,-1.));
 	init();
 	gl_FragColor = vec4( rayMarch(cameraPosition, ray));
 }

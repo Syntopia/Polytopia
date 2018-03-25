@@ -5,38 +5,44 @@
 	<title>Polytopes and Coxeter Groups</title>
 	<link rel='stylesheet' href='style.css' type='text/css' />
 	<link rel='stylesheet' href='datgui.css' type='text/css' />
-	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Cinzel+Decorative" rel="stylesheet">
 </head>
 
 <body>
-		<script src="js/three.min.js" type="text/javascript"></script>
-		<script src="js/OrbitControls.js" type="text/javascript"></script>
-		<script src="js/Detector.js" type="text/javascript"></script>
-		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.4/svg.js" integrity="sha256-Vfh4R0uOWH2tv2NrGrtTZUo+hRBMGtEczBeTz3CSvj4="
-		 crossorigin="anonymous"></script>
-		<script src="toddcoxeter.js" type="text/javascript"></script>
-		<script src="utils.js" type="text/javascript"></script>
-		<script src="js/dat.gui.min.js" type="text/javascript"></script>
-		<script>
-			var showSceneObjects;
-		</script>
-		<div class="header">
-		<h1>Building four dimensional polytopes</h1>
-<div class="author">by Mikael Hvidtfeldt Christensen, <a href="https://twitter.com/syntopiadk?lang=en">@SyntopiaDK</a></div>
-<p>Several years ago I became aware of which is called the <i>convex regular 4-polytopes</i> - basically four-dimensional analogs of the Platonic solids. 
-At that time I did not fully understand the mathematics, but wanted to revisit the topic at a later time.  
-</p>
-</div>
-
-
-<div class="mainContent" id="main">
-	
-
-
+	<script src="js/three.min.js" type="text/javascript"></script>
+	<script src="js/OrbitControls.js" type="text/javascript"></script>
+	<script src="js/Detector.js" type="text/javascript"></script>
+	<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.4/svg.js" integrity="sha256-Vfh4R0uOWH2tv2NrGrtTZUo+hRBMGtEczBeTz3CSvj4="
+	 crossorigin="anonymous"></script>
+	<script src="toddcoxeter.js" type="text/javascript"></script>
+	<script src="utils.js" type="text/javascript"></script>
+	<script src="js/dat.gui.min.js" type="text/javascript"></script>
+	<script>
+		var showSceneObjects;
+	</script>
+	<div class="header">
+		<h1>Building 4D polytopes</h1>
+		<div class="author">by Mikael Hvidtfeldt Christensen,
+			<a href="https://twitter.com/syntopiadk?lang=en">@SyntopiaDK</a>
+		</div>
+		<p>Some years ago, I stumbled upon the
+			<i>convex regular 4-polytopes</i> - four-dimensional analogs of the Platonic solids. I did not understand the mathematics
+			behind these structures back then - but recently I found some time to implement and investigate the basic principles in
+			more detail. </p>
 		<p>
-			Several years ago I stumbled upon
-			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a>, a tool for visualizing four dimensional geometric structures. Jenn describes itself as follows:</p>
+			I also wanted to see if I could present my explorations in a more engaging and interactive fashion - I have been very impressed
+			with what has been happening on
+			<a href="http://worrydream.com/">Bret Victor's Worry Dream</a> and
+			<a href="https://distill.pub/">Distill.pub</a>.
+		</p>
+	</div>
+
+
+	<div class="mainContent" id="main">
+		<p>
+			My first encounter with four dimensional polytopes was
+			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a> (2001-2007) by Fritz Obermeyer. Jenn describes itself as follows:</p>
 		<p>
 			<em>Jenn is a toy for playing with various quotients of Cayley graphs of finite Coxeter groups on four generators. Jenn builds
 				the graphs using the Todd-Coxeter algorithm, embeds them into the 3-sphere, and stereographically projects them onto
@@ -44,19 +50,25 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			</em>
 		</p>
 		<p>
-
+			Wow. This made absolutely no sense to me at all when I first read it - none of these terms were familiar to me. This page
+			was created to decipher this sentence.
 		</p>
+<p>
+	We will also go one step further, and discuss how these structures can be raytraced in realtime. This can be done 
+	using a clever (inverse) construction technique of <em>folding</em> space into a fundamental domain. The technique was originally described by Knighty in
+	<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
+</p>
 
-		<h2>Example: symmetries of the cube</h2>
+<div class="fullwidth" >
+	<img src="img3.jpg" width="100%" />	
+</div>	
+		<h2>Symmetries of the cube</h2>
 		<p>
-			Let us start with a simple three dimensional cube. </p>
-
+			We will start out in three dimensions with a familiar object: the cube. </p>
 		<div class="rightBox" id="rboxSimple">
 		</div>
 
 		<script>
-
-
 			function sceneAdd(scene, object, group) {
 				if (scene.groupings == undefined) {
 					scene.groupings = new Map();
@@ -71,7 +83,7 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			init();
 			function init() {
 				var d = document.getElementById("rboxSimple");
-				
+
 				var scene = getStandard3DView(d, getSideWidth(), getSideWidth());
 
 				var v = getVertices();
@@ -114,15 +126,13 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			}
 		</script>
 
-
 		<div class="rightBox" id="rboxSimple2">
 		</div>
 
-		
 		<script>
 			function init() {
 				var d = document.getElementById("rboxSimple2");
-				var scene = getStandard3DView(d , getSideWidth(), getSideWidth());
+				var scene = getStandard3DView(d, getSideWidth(), getSideWidth());
 
 				var v = getVertices();
 				var e = getEdges();
@@ -142,8 +152,6 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			}
 
 			init();
-
-
 		</script>
 
 		<p>The cube has several
@@ -158,7 +166,7 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			<b>48</b> automorphisms of the cube.
 		</p>
 		<p>
-			Shown to the right are the 9 different reflection operations, that will also map the cube onto itself (although in i mirrored
+			Shown to the right are the 9 different reflection operations, that will also map the cube onto itself (although in a mirrored
 			version).
 		</p>
 		<p>These 48 transformations form a
@@ -172,25 +180,21 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			180 degrees transformations, and for reflections, these transformations are their own inverses).
 		</p>
 		<p>These transformations are not independent: some transformations can be expressed by combining other transformations. Perhaps
-			it is possible to find a smaller subset of transformation, that can be combined to form all the 48 automorphisms?
+			it is possible to find a smaller subset of transformation that could be combined to form all the 48 automorphisms?
 		</p>
-	
+
 		<p>
 			This is known as a set of
-			<b>generators</b>: a subset, S, of elements in the group G, which can be used to express all elements (using their inverses
-			as well).
+			<b>generators</b>: a subset, S, of elements in the group G, which can be used to express all elements.
 		</p>
-
-
 
 		<div class="rightBox" id="rbox1">
 		</div>
 
 		<script>
-
 			function init() {
 				var d = document.getElementById("rbox1");
-						
+
 				var scene = getStandard3DView(d, getSideWidth(), getSideWidth());
 
 				var v = getVertices();
@@ -205,9 +209,7 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 				scene.add(createPlane(mid(v[0], v[3]), mid(v[1], v[2]), mid(v[4], v[7]), 0xff0000));
 			}
 
-
 			init();
-
 		</script>
 		<p>
 			For the cube, it is possible to find a set of three reflections, which can be used to form all the 48 transformations. The
@@ -230,17 +232,20 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			elements for all n? This turns out to be a computationally hard problem, known as the
 			<a href="https://en.wikipedia.org/wiki/Word_problem_for_groups">word problem for groups</a>.
 		</p>
-
-
+		<div class="fullwidth" >
+				<img src="img2.jpg" width="100%" />	
+			</div>	
 		<h2>The Todd-Coexeter Algorithm</h2>
 
 		<p>
-			Coxeter group: relations on the form \((ab)^{m_{ab}}\).
+			Our example relations above form a special group, called a Coxeter group. That is a group where the generators have relations off the form:
+			 \((ab)^{m_{ab}}\), as above: $$(RG)^4 = (GB)^3 = (RB)^2$$ The generators must also be their own inverse: $$R^2 = B^2 = G^2$$ Since the generators are their own 
+			 inverses, they are associated with reflections. 
 		</p>
 
 		<p>
-			The
-			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd-Coxeter Algorithm</a> a provides a way to identify and count all elements generated by our generators.
+			For Coxeter groups, it is possible to identify all elements in the group, given the generators. The
+			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd-Coxeter Algorithm</a> provides a way to identify and count all elements generated by our generators.
 		</p>
 		<p>Actually, the algorithm does a bit more: it allows for enumerating all cosets of G, for a given subgroup H. </p>
 		<p>What does this mean?</p>
@@ -258,767 +263,767 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 			algorithm works by filling out rows in these tables. Once a row is closed, a (potentially) new piece of information is
 			known.
 		</p>
-		<p> Here is a demo:
+		<p> Here is a demo (use the 'step' button to fill the table):
 		</p>
 		<div class="fullwidth" id="coxeterDemo">
+			<p>
+				Group:
+				<select class="fancy" onchange="updateToddCoxeter()" id="s1" style="width: 350px">
+					<option>rgrgrg,gbgbgb,rbrb (tetrahedron)</option>
+					<option selected="selected">rgrgrgrg,gbgbgb,rbrb (cube)</option>
+					<option>rgrgrg,gbgbgbgb,rbrb (octa)</option>
+					<option>rgrgrgrgrg,gbgbgb,rbrb (dodecahedron)</option>
+					<option>rgrgrg,gbgbgbgbgb,rbrb (icosahedron)</option>
+				</select>
+				Subgroup:
+				<select class="fancy" onchange="updateToddCoxeter()" id="s2" style="width: 150px">
+					<option>none</option>
+					<option>r,g</option>
+					<option>g,b</option>
+					<option selected="selected">r,b</option>
+				</select>
+				<a href="javascript:doStep()" class="interactive">Step</a>
 
-		<p>
-			Group:
-			<select class="fancy" onchange="updateToddCoxeter()" id="s1" style="width: 350px">
-				<option>rgrgrg,gbgbgb,rbrb (tetrahedron)</option>
-				<option selected="selected">rgrgrgrg,gbgbgb,rbrb (cube)</option>
-				<option>rgrgrg,gbgbgbgb,rbrb (octa)</option>
-				<option>rgrgrgrgrg,gbgbgb,rbrb (dodecahedron)</option>
-				<option>rgrgrg,gbgbgbgbgb,rbrb (icosahedron)</option>
-			</select>
-			Subgroup:
-			<select class="fancy" onchange="updateToddCoxeter()" id="s2" style="width: 150px">
-				<option>none</option>
-				<option>r,g</option>
-				<option>g,b</option>
-				<option selected="selected">r,b</option>
-			</select>
-			<a href="javascript:doStep()" class="interactive">Step</a>
+				<div id="output"></div>
 
-			<div id="output"></div>
-
-			<script>
-
-				var tcStep;
-				var doIteration;
-				var iter = 0;
-
-				function doStep() {
-					if (tcStep == undefined) {
-						tcStep = getTC();
-						doIteration = tcStep.initSolver();
-						iter = 0;
-					}
-					if (!doIteration()) {
-						var d = document.getElementById("output");
-						d.innerHTML = "<p>Number of cosets:" + tcStep.cosetTable.rows.length + "</p>" + tcStep.getTables();
-						tcStep = undefined; // reset
-
-						return;
-					}
-					var d = document.getElementById("output");
-					d.innerHTML = "<p><b>In progress (step " + (++iter) + ")</b><p>" + tcStep.getTables();
-
-				}
-
-				function getTC() {
-
-					var e = document.getElementById("s1");
-					var group = e.options[e.selectedIndex].value.split(" ")[0];
-
-					var e = document.getElementById("s2");
-					var subgroup = e.options[e.selectedIndex].value;
-					if (subgroup == "none") subgroup = undefined;
-
-					var tc = new ToddCoxeter(group, subgroup);
-					return tc;
-				}
-
-				function updateToddCoxeter() {
-					tcStep = undefined; // reset
-					var tc = getTC();
-					tc.solve();
-					var d = document.getElementById("output");
-					d.innerHTML = "<p>Number of cosets:" + tc.getCosetCounts() + "<p>" + tc.getTables();
-				}
-
-				updateToddCoxeter();
-
-
-			</script>
-</div>
-
-			<p>Let us look at the various cosets you get when you use Todd-Coxeter on the symmetry groups, using different subsets of
-				the generators to specify a subgroup:</p>
-			<div class="fullwidth">
-
-				<table class="blueTable inlineCoxeter">
-					<thead>
-						<tr>
-							<th colspan=4 style="visibility: hidden; border: 0px"></th>
-							<th colspan=3>Subgroup cosets</th>
-						</tr>
-					</thead>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Diagram</th>
-							<th>Generator relations</th>
-							<th>Automorphisms</th>
-							<th>g,b</th>
-							<th>r,b</th>
-							<th>r,g</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Tetrahedron</td>
-							<td>COX(3,3)</td>
-							<td>\((rg)^3\),\((gb)^3\);\((rb)^2\)</td>
-							<td>24</td>
-							<td>4</td>
-							<td>6</td>
-							<td>4</td>
-						</tr>
-						<tr>
-							<td>Cube</td>
-							<td>COX(4,3)</td>
-							<td>\((rg)^4\),\((gb)^3\),\((rb)^2\)</td>
-							<td>48</td>
-							<td>8</td>
-							<td>12</td>
-							<td>6</td>
-						</tr>
-						<tr>
-							<td>Octahedron</td>
-							<td>COX(3,4)</td>
-							<td>\((rg)^3\),\((gb)^4\),\((rb)^2\)</td>
-							<td>48</td>
-							<td>6</td>
-							<td>12</td>
-							<td>8</td>
-						</tr>
-						<tr>
-							<td>Dodecahedron</td>
-							<td>COX(5,3)</td>
-							<td>\((rg)^5\),\((gb)^3\),\((rb)^2\)</td>
-							<td>120</td>
-							<td>20</td>
-							<td>30</td>
-							<td>12</td>
-						</tr>
-						<tr>
-							<td>Icosahedron</td>
-							<td>COX(3,5)</td>
-							<td>\((rg)^3\),\((gb)^5\),\((rb)^2\)</td>
-							<td>120</td>
-							<td>12</td>
-							<td>30</td>
-							<td>20</td>
-						</tr>
-						<tr>
-							<th colspan=4 style="visibility: hidden;  border: 0px"></th>
-							<th>Vertices</th>
-							<th>Edges</th>
-							<th>Faces</th>
-						</tr>
-					</tbody>
-				</table>
-
-
-				<table class="blueTable inlineCoxeter">
-					<thead>
-						<tr>
-							<th colspan=4 style="visibility: hidden; border: 0px"></th>
-							<th colspan=4>Subgroup cosets</th>
-						</tr>
-					</thead>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Diagrams</th>
-							<th>Generator relations</th>
-							<th>Automorphisms</th>
-							<th>g,b,a</th>
-							<th>r,b,a</th>
-							<th>r,g,a</th>
-							<th>r,g,b</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>5-cell</td>
-							<td>COX(3,3,3)</td>
-							<td>\((rg)^3\),\((gb)^3\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
-							<td>120</td>
-							<td>5</td>
-							<td>10</td>
-							<td>10</td>
-							<td>5</td>
-						</tr>
-						<tr>
-							<td>8-cell</td>
-							<td>COX(4,3,3)</td>
-							<td>\((rg)^4\),\((gb)^3\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
-							<td>384</td>
-							<td>16</td>
-							<td>32</td>
-							<td>24</td>
-							<td>8</td>
-						</tr>
-						<tr>
-							<td>16-cell</td>
-							<td>COX(3,3,4)</td>
-							<td>\((rg)^3\),\((gb)^3\),\((ba)^4\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
-							<td>384</td>
-							<td>8</td>
-							<td>24</td>
-							<td>32</td>
-							<td>16</td>
-						</tr>
-						<tr>
-							<td>24-cell</td>
-							<td>COX(3,4,3)</td>
-							<td>\((rg)^3\),\((gb)^4\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
-							<td>1152</td>
-							<td>24</td>
-							<td>96</td>
-							<td>96</td>
-							<td>24</td>
-						</tr>
-						<tr>
-							<td>120-cell</td>
-							<td>COX(5,3,3)</td>
-							<td>\((rg)^5\),\((gb)^3\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
-							<td>14400</td>
-							<td>600</td>
-							<td>1200</td>
-							<td>720</td>
-							<td>120</td>
-						</tr>
-						<tr>
-							<td>600-cell</td>
-							<td>COX(3,3,5)</td>
-							<td>\((rg)^3\),\((gb)^3\),\((ba)^5\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
-							<td>14400</td>
-							<td>120</td>
-							<td>720</td>
-							<td>1200</td>
-							<td>600</td>
-						</tr>
-						<tr>
-							<th colspan=4 style="visibility: hidden;  border: 0px"></th>
-							<th>Vertices</th>
-							<th>Edges</th>
-							<th>Faces</th>
-							<th>Cells</th>
-						</tr>
-					</tbody>
-				</table>
-</div>
 				<script>
-					var tables = document.getElementsByClassName("inlineCoxeter");
-					for (var t = 0, table; table = tables[t]; t++)
 
-						for (var i = 0, row; row = table.rows[i]; i++) {
-							for (var j = 0, c; c = row.cells[j]; j++) {
-								if (c.innerText && c.innerText.indexOf("COX") != -1) {
+					var tcStep;
+					var doIteration;
+					var iter = 0;
 
-									var reg = /COX\((.*)\)/g;
-									var match = reg.exec(c.innerText);
-									c.innerText = "";
-									insertCoxeter(c, match[1].split(","));
-								}
-							}
+					function doStep() {
+						if (tcStep == undefined) {
+							tcStep = getTC();
+							doIteration = tcStep.initSolver();
+							iter = 0;
 						}
+						if (!doIteration()) {
+							var d = document.getElementById("output");
+							d.innerHTML = "<p>Number of cosets:" + tcStep.cosetTable.rows.length + "</p>" + tcStep.getTables();
+							tcStep = undefined; // reset
 
+							return;
+						}
+						var d = document.getElementById("output");
+						d.innerHTML = "<p><b>In progress (step " + (++iter) + ")</b><p>" + tcStep.getTables();
+					}
+
+					function getTC() {
+						var e = document.getElementById("s1");
+						var group = e.options[e.selectedIndex].value.split(" ")[0];
+
+						var e = document.getElementById("s2");
+						var subgroup = e.options[e.selectedIndex].value;
+						if (subgroup == "none") subgroup = undefined;
+
+						var tc = new ToddCoxeter(group, subgroup);
+						return tc;
+					}
+
+					function updateToddCoxeter() {
+						tcStep = undefined; // reset
+						var tc = getTC();
+						tc.solve();
+						var d = document.getElementById("output");
+						d.innerHTML = "<p>Number of cosets:" + tc.getCosetCounts() + "<p>" + tc.getTables();
+					}
+
+					updateToddCoxeter();
 				</script>
+		</div>
 
+		<p>Let us look at the various cosets you get when you use Todd-Coxeter on the symmetry groups, using different subsets of
+			the generators to specify a subgroup:</p>
+		<div class="fullwidth">
 
+			<table class="blueTable inlineCoxeter">
+				<thead>
+					<tr>
+						<th colspan=4 style="visibility: hidden; border: 0px"></th>
+						<th colspan=3>Subgroup cosets</th>
+					</tr>
+				</thead>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Diagram</th>
+						<th>Generator relations</th>
+						<th>Automorphisms</th>
+						<th>g,b</th>
+						<th>r,b</th>
+						<th>r,g</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Tetrahedron</td>
+						<td>COX(3,3)</td>
+						<td>\((rg)^3\),\((gb)^3\);\((rb)^2\)</td>
+						<td>24</td>
+						<td>4</td>
+						<td>6</td>
+						<td>4</td>
+					</tr>
+					<tr>
+						<td>Cube</td>
+						<td>COX(4,3)</td>
+						<td>\((rg)^4\),\((gb)^3\),\((rb)^2\)</td>
+						<td>48</td>
+						<td>8</td>
+						<td>12</td>
+						<td>6</td>
+					</tr>
+					<tr>
+						<td>Octahedron</td>
+						<td>COX(3,4)</td>
+						<td>\((rg)^3\),\((gb)^4\),\((rb)^2\)</td>
+						<td>48</td>
+						<td>6</td>
+						<td>12</td>
+						<td>8</td>
+					</tr>
+					<tr>
+						<td>Dodecahedron</td>
+						<td>COX(5,3)</td>
+						<td>\((rg)^5\),\((gb)^3\),\((rb)^2\)</td>
+						<td>120</td>
+						<td>20</td>
+						<td>30</td>
+						<td>12</td>
+					</tr>
+					<tr>
+						<td>Icosahedron</td>
+						<td>COX(3,5)</td>
+						<td>\((rg)^3\),\((gb)^5\),\((rb)^2\)</td>
+						<td>120</td>
+						<td>12</td>
+						<td>30</td>
+						<td>20</td>
+					</tr>
+					<tr>
+						<th colspan=4 style="visibility: hidden;  border: 0px"></th>
+						<th>Vertices</th>
+						<th>Edges</th>
+						<th>Faces</th>
+					</tr>
+				</tbody>
+			</table>
 
-				<p>An interesting structure emerges here: looking at the cosets for the subgroups generated by leaving out one of the generators,
-					<em>the number of cosets</em> matches the number of vertices, edges, or faces! It seems we can fully describe the geometric
-					structure by forming various quotient sets.</p>
-				<p>
-					Also notice, that the ordering matter here: the cube and octahedron have the same generators (just switch 'r' and 'b'), and
-					same symmetry group, but the number of faces and vertices are swapped. These shapes are said to be
-					<b>dual</b>. The Dodecahedron/Icosahedron, the 8-cell/16-cell, and 120-cell/600-cell all form dual pairs. So what differentiates
-					a cube from an octahedron? The answer is, that it depends on how the initial vertex is placed. Notice the outer circle
-					on the first reflector, r, in the Coxeter diagram: this means that the initial vertex should be placed somewhere
-					<em>off</em> the reflection plane for r, but on both the reflection planes for g and b. (This also means that the initial
-					vertex would be taken to itself when applying g and b).
+			<table class="blueTable inlineCoxeter">
+				<thead>
+					<tr>
+						<th colspan=4 style="visibility: hidden; border: 0px"></th>
+						<th colspan=4>Subgroup cosets</th>
+					</tr>
+				</thead>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Diagrams</th>
+						<th>Generator relations</th>
+						<th>Automorphisms</th>
+						<th>g,b,a</th>
+						<th>r,b,a</th>
+						<th>r,g,a</th>
+						<th>r,g,b</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>5-cell</td>
+						<td>COX(3,3,3)</td>
+						<td>\((rg)^3\),\((gb)^3\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
+						<td>120</td>
+						<td>5</td>
+						<td>10</td>
+						<td>10</td>
+						<td>5</td>
+					</tr>
+					<tr>
+						<td>8-cell</td>
+						<td>COX(4,3,3)</td>
+						<td>\((rg)^4\),\((gb)^3\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
+						<td>384</td>
+						<td>16</td>
+						<td>32</td>
+						<td>24</td>
+						<td>8</td>
+					</tr>
+					<tr>
+						<td>16-cell</td>
+						<td>COX(3,3,4)</td>
+						<td>\((rg)^3\),\((gb)^3\),\((ba)^4\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
+						<td>384</td>
+						<td>8</td>
+						<td>24</td>
+						<td>32</td>
+						<td>16</td>
+					</tr>
+					<tr>
+						<td>24-cell</td>
+						<td>COX(3,4,3)</td>
+						<td>\((rg)^3\),\((gb)^4\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
+						<td>1152</td>
+						<td>24</td>
+						<td>96</td>
+						<td>96</td>
+						<td>24</td>
+					</tr>
+					<tr>
+						<td>120-cell</td>
+						<td>COX(5,3,3)</td>
+						<td>\((rg)^5\),\((gb)^3\),\((ba)^3\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
+						<td>14400</td>
+						<td>600</td>
+						<td>1200</td>
+						<td>720</td>
+						<td>120</td>
+					</tr>
+					<tr>
+						<td>600-cell</td>
+						<td>COX(3,3,5)</td>
+						<td>\((rg)^3\),\((gb)^3\),\((ba)^5\),\((rb)^2\),\((ra)^2\),\((ga)^2\)</td>
+						<td>14400</td>
+						<td>120</td>
+						<td>720</td>
+						<td>1200</td>
+						<td>600</td>
+					</tr>
+					<tr>
+						<th colspan=4 style="visibility: hidden;  border: 0px"></th>
+						<th>Vertices</th>
+						<th>Edges</th>
+						<th>Faces</th>
+						<th>Cells</th>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<script>
+			var tables = document.getElementsByClassName("inlineCoxeter");
+			for (var t = 0, table; table = tables[t]; t++)
+				for (var i = 0, row; row = table.rows[i]; i++) {
+					for (var j = 0, c; c = row.cells[j]; j++) {
+						if (c.innerText && c.innerText.indexOf("COX") != -1) {
 
-				</p>
+							var reg = /COX\((.*)\)/g;
+							var match = reg.exec(c.innerText);
+							c.innerText = "";
+							insertCoxeter(c, match[1].split(","));
+						}
+					}
+				}
+		</script>
 
-				<p>
-					Let us explore the quotient sets a bit more - for instance, how do we know how to associate edges with vertices?
-				</p>
-				<h2>Generating geometry from group structure</h2>
-				<p>
-					Let us see how to recreate the euclidean geometry from the abstract Coxeter group description.
-				</p>
-				<p>
-					Given the generator relations, we now the angle between the reflector planes (e.g. 90, 120, 180 for the cube). The first
-					step is to create a set of vectors with these angles between. This can be done iteratively, by start with an arbitrary
-					unit vector, and adding vectors that fullfill the relation, e.g.:
+		<p>An interesting structure emerges here: looking at the cosets for the subgroups generated by leaving out one of the generators,
+			<em>the number of cosets</em> matches the number of vertices, edges, or faces! It seems we can fully describe the geometric
+			structure by forming various quotient sets.</p>
+		<p>
+			Also notice, that the ordering matter here: the cube and octahedron have the same generators (just switch 'r' and 'b'), and
+			same symmetry group, but the number of faces and vertices are swapped. These shapes are said to be
+			<b>dual</b>. The Dodecahedron/Icosahedron, the 8-cell/16-cell, and 120-cell/600-cell all form dual pairs. So what differentiates
+			a cube from an octahedron? The answer is, that it depends on how the initial vertex is placed. Notice the outer circle
+			on the first reflector, r, in the Coxeter diagram: this means that the initial vertex should be placed somewhere
+			<em>off</em> the reflection plane for r, but on both the reflection planes for g and b. (This also means that the initial
+			vertex would be taken to itself when applying g and b).
+		</p>
+		<p>
+			Let us explore the quotient sets a bit more - for instance, how do we know how to associate edges with vertices?
+		</p>
+		<div class="fullwidth">
+				<img src="img1.jpg" width="100%" />	
+			</div>	
+	
+		<h2>Generating geometry from group structure</h2>
+		<p>
+			Let us see how to recreate the euclidean geometry from the abstract Coxeter group description.
+		</p>
+		<p>
+			Given the generator relations, we now the angle between the reflector planes (e.g. 90, 120, 180 for the cube). The first
+			step is to create a set of vectors with these angles between. This can be done iteratively, by start with an arbitrary
+			unit vector, and adding vectors that fullfill the relation, e.g.:
 
-				</p>
-				<p>
-					$$ \begin{pmatrix} & 1 \\ & 0 \\ & 0 \end{pmatrix}, \begin{pmatrix} & cos(\theta_{12}) \\ & N_1 \\ & 0 \end{pmatrix}, \begin{pmatrix}
-					& cos(\theta_{13}) \\ & \frac{cos(\theta_{23})-cos(\theta_{12})cos(\theta_{13}) }{N_1} \\ & N_2 \end{pmatrix} $$
-				</p>
-				<p>Here the columns represent the normals of the reflecting planes (The N's are normalization constants that can be trivially
-					calculated - all the normals must be unit length)</p>
-				<p>
-					We also need to figure out a starting point. As previously mentioned the cube and octahedron 
-					share the same generator relations (they are dual). So why are they different? Looking at their coxeter diagram in the table above, this has to do with the special outer circle:
-					this outer circle has a special meaning: the initial starting point should be located on the two other reflection planes (the blue and the green), but not on the red one.</p>
-					<p>
-					We can use Gram-Schmidt to create a vector that is contained in the blue and the green plan, but not in the red. We do this by starting out with the three reflection plane normal vectors:
-					[nB, nG, nR]. After applying Gram-Schmidt to this set of vectors, the last vector in the transformed set will be orthogonal to the blue and green reflection plane normal vectors (and thus be located 
-					on the intersection of these two planes).
-				</p>
-			
+		</p>
+		<p>
+			$$ \begin{pmatrix} & 1 \\ & 0 \\ & 0 \end{pmatrix}, \begin{pmatrix} & cos(\theta_{12}) \\ & N_1 \\ & 0 \end{pmatrix}, \begin{pmatrix}
+			& cos(\theta_{13}) \\ & \frac{cos(\theta_{23})-cos(\theta_{12})cos(\theta_{13}) }{N_1} \\ & N_2 \end{pmatrix} $$
+		</p>
+		<p>Here the columns represent the normals of the reflecting planes (The N's are normalization constants that can be trivially
+			calculated - all the normals must be unit length)</p>
+		<p>
+			We also need to figure out a starting point. As previously mentioned the cube and octahedron share the same generator relations
+			(they are dual). So why are they different? Looking at their coxeter diagram in the table above, this has to do with the
+			special outer circle: this outer circle has a special meaning: the initial starting point should be located on the two
+			other reflection planes (the blue and the green), but not on the red one.</p>
+		<p>
+			We can use Gram-Schmidt to create a vector that is contained in the blue and the green plan, but not in the red. We do this
+			by starting out with the three reflection plane normal vectors: [nB, nG, nR]. After applying Gram-Schmidt to this set
+			of vectors, the last vector in the transformed set will be orthogonal to the blue and green reflection plane normal vectors
+			(and thus be located on the intersection of these two planes).
+		</p>
+		<div class="fullwidth" id="largeContainer">
+			<script>
+				function dumpTable(tc) {
+					var table = tc.cosetTable;
+					var genSymbols = tc.rels.generators;
 
-<div class="fullwidth" id="largeContainer">
+					var mapper = function (e) { return self.rels.generators[e]; };
+					var s = '<div id="table-scroll" style="vertical-align: top; height: 600px">';
 
-				<script>
+					s += "<table class='blueTable' style='height: 600px' id='mainTable'><thead><th></th><th>Element</th>";
+					for (var i = 0; i < table.genList.length; i++) {
+						s += "<th>" + genSymbols[table.genList[i]] + "</th>";
+					}
+					if (table.extraColumns) {
+						for (var i = 0; i < table.extraColumns.length; i++) {
+							s += "<th> " + table.extraColumnNames[i][0] + "</th>";
+						}
+					}
+					s += "</thead>";
+					for (var i = 0; i < table.rows.length; i++) {
+						s += "<tr><td>" + table.rowCosets[i] + "</td>";
+						var el = tc.getRepresentiveString(tc.getRepresentiveForCoset(i));
+						s += "<td>" + (el == "" ? "I" : el) + "</td>";
 
-
-
-					function dumpTable(tc) {
-						var table = tc.cosetTable;
-						var genSymbols = tc.rels.generators;
-
-						var mapper = function (e) { return self.rels.generators[e]; };
-						var s = '<div id="table-scroll" style="vertical-align: top; height: 600px">';
-
-						s += "<table class='blueTable' style='height: 600px' id='mainTable'><thead><th></th><th>Element</th>";
-						for (var i = 0; i < table.genList.length; i++) {
-							s += "<th>" + genSymbols[table.genList[i]] + "</th>";
+						for (var j = 0; j < table.genList.length; j++) {
+							var o = table.rows[i][j];
+							s += "<td>" + (o == undefined ? "" : o) + "</td>";
 						}
 						if (table.extraColumns) {
-							for (var i = 0; i < table.extraColumns.length; i++) {
-								s += "<th> " + table.extraColumnNames[i][0] + "</th>";
+							for (var j = 0; j < table.extraColumns.length; j++) {
+								s += "<td><a class='interactive' onmouseover='selectRow(" + j + "," + i + ")' onmouseout='selectRow(" + j + ")'>" + table.extraColumnNames[j][1] + table.extraColumns[j][i] + "</a></td>";
 							}
 						}
-						s += "</thead>";
-						for (var i = 0; i < table.rows.length; i++) {
-							s += "<tr><td>" + table.rowCosets[i] + "</td>";
-							var el = tc.getRepresentiveString(tc.getRepresentiveForCoset(i));
-							s += "<td>" + (el == "" ? "I" : el) + "</td>";
-
-							for (var j = 0; j < table.genList.length; j++) {
-								var o = table.rows[i][j];
-								s += "<td>" + (o == undefined ? "" : o) + "</td>";
-							}
-							if (table.extraColumns) {
-								for (var j = 0; j < table.extraColumns.length; j++) {
-									s += "<td><a class='interactive' onmouseover='selectRow(" + j + "," + i + ")' onmouseout='selectRow(" + j + ")'>" + table.extraColumnNames[j][1] + table.extraColumns[j][i] + "</a></td>";
-								}
-							}
-							s += "</tr>";
-						}
-						s += "</table></div>";
-						return s;
-					};
-
-				
-					var freeGroup = getCoxeterGroup(5,3,2);
-
-
-
-
-					// Find vertices
-					function getVertixMatrices(vertexOperators, reflectionMatrices) {
-						var ms = new Array(vertexOperators.length);
-						for (var i = 0; i < vertexOperators.length; i++) {
-							var operatorList = vertexOperators[i];
-
-							var m = new THREE.Matrix3();
-							for (var j = 0; j < operatorList.length; j++) {
-								m.premultiply(reflectionMatrices[operatorList[j]]);
-							}
-							ms[i] = m;
-						}
-						return ms;
+						s += "</tr>";
 					}
+					s += "</table></div>";
+					return s;
+				};
 
-					var container = document.createElement('span');
+				var freeGroup = getCoxeterGroup(5, 3, 2);
+
+				// Find vertices
+				function getVertixMatrices(vertexOperators, reflectionMatrices) {
+					var ms = new Array(vertexOperators.length);
+					for (var i = 0; i < vertexOperators.length; i++) {
+						var operatorList = vertexOperators[i];
+
+						var m = new THREE.Matrix3();
+						for (var j = 0; j < operatorList.length; j++) {
+							m.premultiply(reflectionMatrices[operatorList[j]]);
+						}
+						ms[i] = m;
+					}
+					return ms;
+				}
+
+				var container = document.createElement('span');
+				document.getElementById("largeContainer").appendChild(container);
+
+				container.innerHTML += dumpTable(freeGroup);
+			</script>
+			<script>
+				var setInitialVertex;
+				values = {};
+				var cayley;
+				var structure = freeGroup.getStructure();
+
+				function createOrtho(v1) {
+					var v2;
+					if (v1.x == 0 && v1.y == 0) {
+						v2 = new THREE.Vector3(1, 0, 0);
+					} else {
+						v2 = new THREE.Vector3(v1.y, -v1.x, 0); v2.normalize();
+					}
+					return [v2, new THREE.Vector3().cross(v1, v2).normalize()];
+				}
+
+				function init() {
+					var container = document.createElement('div');
+					container.style.display = "inline";
 					document.getElementById("largeContainer").appendChild(container);
 
+					var scene = getStandard3DView(container, 600, 600);
+					var nG;
+					var nB;
+					var nR;
 
-					container.innerHTML +=  dumpTable(freeGroup);
+					var a12 = Math.PI / freeGroup.powers[0];
+					var a23 = Math.PI / freeGroup.powers[1];
+					var a13 = Math.PI / freeGroup.powers[2];
 
-				</script>
-				<script>
+					nR = new THREE.Vector3(1, 0, 0);
+					nG = new THREE.Vector3(Math.cos(a12), Math.sqrt(1 - Math.cos(a12) * Math.cos(a12)), 0);
+					var nb1 = Math.cos(a13);
+					var nb2 = (Math.cos(a23) - nG.x * nb1) / nG.y;
+					var nb3 = Math.sqrt(1 - nb1 * nb1 - nb2 * nb2);
 
+					nB = new THREE.Vector3(nb1, nb2, nb3);
+					var O = new THREE.Vector3(0, 0, 0);
 
+					var frame = [];
+					var orthoFrame = createOrtho(nR);
+					var obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0xff0000);
+					scene.add(obj); frame.push(obj);
 
-					var setInitialVertex;
+					scene.add(obj); frame.push(obj);
+					orthoFrame = createOrtho(nG);
+					obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x00ff00);
+					scene.add(obj); frame.push(obj);
 
-					values = {};
+					orthoFrame = createOrtho(nB);
+					obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x0000ff);
+					scene.add(obj); frame.push(obj);
 
-					var cayley;
-					var structure = freeGroup.getStructure();
+					console.log("nR.nG: " + Math.acos(nR.dot(nG)) * (360 / (2 * Math.PI)));
+					console.log("nG.nB: " + Math.acos(nG.dot(nB)) * (360 / (2 * Math.PI)));
+					console.log("nR.nB: " + Math.acos(nR.dot(nB)) * (360 / (2 * Math.PI)));
 
+					var nBp = gramSchmidt([nG, nR, nB])[2];
+					var nRp = gramSchmidt([nB, nG, nR])[2];
+					var nGp = gramSchmidt([nR, nB, nG])[2];
+					if (nRp.dot(nBp) < 0) nRp.multiplyScalar(-1);
+					if (nGp.dot(nBp) < 0) nGp.multiplyScalar(-1);
 
-					function createOrtho(v1) {
-						var v2;
-						if (v1.x == 0 && v1.y == 0) {
-							v2 = new THREE.Vector3(1, 0, 0);
-						} else {
-							v2 = new THREE.Vector3(v1.y, -v1.x, 0); v2.normalize();
+					var w = 0.01;
+					var arrowWidth = 0.03;
+					var arrowLength = 0.1;
+
+					obj = createLine(O, nGp.clone().multiplyScalar(2.0), w, 0x00ff00, arrowWidth, arrowLength);
+					scene.add(obj); frame.push(obj);
+					obj = createLine(O, nBp.clone().multiplyScalar(2.0), w, 0x0000ff, arrowWidth, arrowLength);
+					scene.add(obj); frame.push(obj);
+					obj = createLine(O, nRp.clone().multiplyScalar(2.0), w, 0xff0000, arrowWidth, arrowLength);
+					scene.add(obj); frame.push(obj);
+
+					// Get vertices
+					var reflectionMatrices = [];
+					reflectionMatrices.push(getReflectionMatrix(nR.x, nR.y, nR.z));
+					reflectionMatrices.push(getReflectionMatrix(nG.x, nG.y, nG.z));
+					reflectionMatrices.push(getReflectionMatrix(nB.x, nB.y, nB.z));
+
+					var ms = getVertixMatrices(structure.vertexOperators, reflectionMatrices);
+
+					var spheres = [];
+					var cayley = [];
+					cayley.clear = function () {
+						var a;
+						while (a = cayley.pop()) {
+							scene.remove(a);
+							a.geometry.dispose();
 						}
-						return [v2, new THREE.Vector3().cross(v1, v2).normalize()];
 					}
 
-					function init() {
-					
+					showCayley = function (generators) {
+						cayley.clear();
 
-						var container = document.createElement('div');
-						container.style.display = "inline";
-						//container.style.position = "absolute";
-						document.getElementById("largeContainer").appendChild(container);
-					
-						var scene = getStandard3DView(container, 600, 600);
-						var nG;
-						var nB;
-						var nR;
-
-						var a12 = Math.PI / freeGroup.powers[0];
-						var a23 = Math.PI / freeGroup.powers[1];
-						var a13 = Math.PI / freeGroup.powers[2];
-
-						nR = new THREE.Vector3(1, 0, 0);
-						nG = new THREE.Vector3(Math.cos(a12), Math.sqrt(1 - Math.cos(a12) * Math.cos(a12)), 0);
-						var nb1 = Math.cos(a13);
-						var nb2 = (Math.cos(a23) - nG.x * nb1) / nG.y;
-						var nb3 = Math.sqrt(1 - nb1 * nb1 - nb2 * nb2);
-
-						nB = new THREE.Vector3(nb1, nb2, nb3);
-						var O = new THREE.Vector3(0, 0, 0);
-
-						var frame = [];
-						var orthoFrame = createOrtho(nR);
-						var obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0xff0000);
-						scene.add(obj); frame.push(obj);
-
-						scene.add(obj); frame.push(obj);
-						orthoFrame = createOrtho(nG);
-						obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x00ff00);
-						scene.add(obj); frame.push(obj);
-
-						orthoFrame = createOrtho(nB);
-						obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x0000ff);
-						scene.add(obj); frame.push(obj);
-
-						console.log("nR.nG: " + Math.acos(nR.dot(nG)) * (360 / (2 * Math.PI)));
-						console.log("nG.nB: " + Math.acos(nG.dot(nB)) * (360 / (2 * Math.PI)));
-						console.log("nR.nB: " + Math.acos(nR.dot(nB)) * (360 / (2 * Math.PI)));
-
-						var nBp = gramSchmidt([nG, nR, nB])[2];
-						var nRp = gramSchmidt([nB, nG, nR])[2];
-						var nGp = gramSchmidt([nR, nB, nG])[2];
-						if (nRp.dot(nBp) < 0) nRp.multiplyScalar(-1);
-						if (nGp.dot(nBp) < 0) nGp.multiplyScalar(-1);
-
-						var w = 0.01;
-						var arrowWidth = 0.03;
-						var arrowLength = 0.1;
-
-						obj = createLine(O, nGp.clone().multiplyScalar(2.0), w, 0x00ff00, arrowWidth, arrowLength);
-						scene.add(obj); frame.push(obj);
-						obj = createLine(O, nBp.clone().multiplyScalar(2.0), w, 0x0000ff, arrowWidth, arrowLength);
-						scene.add(obj); frame.push(obj);
-						obj = createLine(O, nRp.clone().multiplyScalar(2.0), w, 0xff0000, arrowWidth, arrowLength);
-						scene.add(obj); frame.push(obj);
-
-						// Get vertices
-						var reflectionMatrices = [];
-						reflectionMatrices.push(getReflectionMatrix(nR.x, nR.y, nR.z));
-						reflectionMatrices.push(getReflectionMatrix(nG.x, nG.y, nG.z));
-						reflectionMatrices.push(getReflectionMatrix(nB.x, nB.y, nB.z));
-
-						var ms = getVertixMatrices(structure.vertexOperators, reflectionMatrices);
-
-						var spheres = [];
-						var cayley = [];
-						cayley.clear = function () {
-							var a;
-							while (a = cayley.pop()) {
-								scene.remove(a);
-								a.geometry.dispose();
-							}
-						}
-
-						showCayley = function (generators) {
-							cayley.clear();
-
-							if (generators == undefined) {
-								frame.forEach(function (e) { e.visible = true; });
-								scene.doRender();
-								return;
-							}
-							frame.forEach(function (e) { e.visible = false; });
-							console.log(spheres[0].position);
-
-							var posX = spheres[0].position.clone();
-							var m = THREE.matrix3;
-							var prev;
-
-							var colors = [0xff0000, 0x00ff00, 0x0000ff];
-
-							for (var i = -1; i < generators.length; i++) {
-
-								if (i != -1) {
-									posX.applyMatrix3(reflectionMatrices[generators[i]]);
-								}
-
-								if (i == generators.length - 1) {
-									var geometry = new THREE.SphereGeometry(0.05, 32, 32);
-									var material = new THREE.MeshStandardMaterial({ color: 0x000000 });
-									var sphere = new THREE.Mesh(geometry, material);
-									sphere.position.copy(posX);
-									scene.add(sphere);
-									cayley.push(sphere);
-								}
-
-								if (prev != undefined) {
-									var arrowWidth = 0.06;
-									var arrowLength = 0.2;
-
-									var s = createLine(prev, posX, 0.022, colors[generators[i]], arrowWidth, arrowLength);
-									if (s != undefined) {
-										scene.add(s);
-										cayley.push(s);
-									}
-								}
-								prev = posX.clone();
-
-								scene.doRender();
-							}
-						}
-
-						showEdge = function (edge) {
-							cayley.clear();
-
-							if (edge == undefined) {
-								frame.forEach(function (e) { e.visible = true; });
-								scene.doRender();
-								return;
-							}
-							frame.forEach(function (e) { e.visible = false; });
-
-							var arrowWidth = 0.06;
-							var arrowLength = 0.2;
-
-							var s = createLine(spheres[edge[0]].position, spheres[edge[1]].position, 0.022, 0x000000, arrowWidth, arrowLength);
-							cayley.push(s);
-							scene.add(s);
-							s = createLine(spheres[edge[1]].position, spheres[edge[0]].position, 0.022, 0x000000, arrowWidth, arrowLength);
-							cayley.push(s);
-							scene.add(s);
+						if (generators == undefined) {
+							frame.forEach(function (e) { e.visible = true; });
 							scene.doRender();
+							return;
 						}
+						frame.forEach(function (e) { e.visible = false; });
+						console.log(spheres[0].position);
 
-						showFace = function (face, edgeList) {
-							cayley.clear();
+						var posX = spheres[0].position.clone();
+						var m = THREE.matrix3;
+						var prev;
 
-							if (face == undefined) {
-								frame.forEach(function (e) { e.visible = true; });
-								scene.doRender();
-								return;
-							}
-							frame.forEach(function (e) { e.visible = false; });
+						var colors = [0xff0000, 0x00ff00, 0x0000ff];
 
-							var arrowWidth = 0.06;
-							var arrowLength = 0.2;
+						for (var i = -1; i < generators.length; i++) {
 
-
-							for (var i = 0; i < face.length; i++) {
-								var edge = edgeList[face[i]];
-								var s = createLine(spheres[edge[0]].position, spheres[edge[1]].position, 0.022, 0x000000);
-								cayley.push(s);
-								scene.add(s);
-								s = createLine(spheres[edge[1]].position, spheres[edge[0]].position, 0.022, 0x000000);
-								cayley.push(s);
-								scene.add(s);
+							if (i != -1) {
+								posX.applyMatrix3(reflectionMatrices[generators[i]]);
 							}
 
-							scene.doRender();
-						}
-
-						setInitialVertex = function (v1, v2, v3) {
-							var pos = new THREE.Vector3(0, 0, 0);
-							pos.addScaledVector(nRp, v1);
-							pos.addScaledVector(nGp, v2);
-							pos.addScaledVector(nBp, v3);
-
-							for (var i = 0; i < spheres.length; i++) {
-								scene.remove(spheres[i]);
-								spheres[i].geometry.dispose();
-							}
-							spheres = [];
-
-							for (var i = 0; i < ms.length; i++) {
-								var geometry = new THREE.SphereGeometry(0.034, 32, 32);
-								var material = new THREE.MeshStandardMaterial({ color: (i != 0 ? 0xffffff : 0x000000) });
+							if (i == generators.length - 1) {
+								var geometry = new THREE.SphereGeometry(0.05, 32, 32);
+								var material = new THREE.MeshStandardMaterial({ color: 0x000000 });
 								var sphere = new THREE.Mesh(geometry, material);
-								sphere.position.copy(pos.clone().applyMatrix3(ms[i]));
+								sphere.position.copy(posX);
 								scene.add(sphere);
-								spheres.push(sphere);
-
+								cayley.push(sphere);
 							}
-							console.log(spheres[0].position);
 
-							for (var i = 0; i < structure.edgeList.length; i++) {
-								var v1 = structure.edgeList[i][0];
-								var v2 = structure.edgeList[i][1];
-								var s = createLine(spheres[v1].position, spheres[v2].position, 0.02, 0xffffff);
+							if (prev != undefined) {
+								var arrowWidth = 0.06;
+								var arrowLength = 0.2;
+
+								var s = createLine(prev, posX, 0.022, colors[generators[i]], arrowWidth, arrowLength);
 								if (s != undefined) {
 									scene.add(s);
-									spheres.push(s);
+									cayley.push(s);
 								}
 							}
-							console.log(spheres[0].position);
+							prev = posX.clone();
 
 							scene.doRender();
 						}
-
-						setInitialVertex(1, 0, 0);
 					}
 
+					showEdge = function (edge) {
+						cayley.clear();
 
-					init();
-					//https://math.berkeley.edu/~kmill/tools/tc.html rr; gg; bb; rbrbrbrb; grgrgr; gbgb; GRGRGR = I GR = I
+						if (edge == undefined) {
+							frame.forEach(function (e) { e.visible = true; });
+							scene.doRender();
+							return;
+						}
+						frame.forEach(function (e) { e.visible = false; });
 
-				
-					var gui = new dat.GUI({ autoPlace: false });
-					
-					var staticContainer = document.createElement('div');
-					staticContainer.style.width = "300px";
-					staticContainer.style.display = "inline";
-					staticContainer.style.position = "absolute";
-					staticContainer.style.whitespace= "nowrap";
-					
-					staticContainer.appendChild(gui.domElement);
-					document.getElementById("largeContainer").appendChild(staticContainer);
-					var f = gui.addFolder("Initial vertex");
-					f.open();
-					var pp = {
-						nR: 1,
-						nG: 0,
-						nB: 0,
-					};
+						var arrowWidth = 0.06;
+						var arrowLength = 0.2;
 
-					f.add(pp, "nR", 0, 2).name("nR").onChange(function (v) {
-						setInitialVertex(pp.nR, pp.nG, pp.nB);
-					});
-					f.add(pp, "nG", 0, 2).name("nG").onChange(function (v) {
-						setInitialVertex(pp.nR, pp.nG, pp.nB);
-					});
-					f.add(pp, "nB", 0, 2).name("nB").onChange(function (v) {
-						setInitialVertex(pp.nR, pp.nG, pp.nB);
-					});
-					
-					function selectRow(col, r) {
-						var table = document.getElementById("mainTable");
+						var s = createLine(spheres[edge[0]].position, spheres[edge[1]].position, 0.022, 0x000000, arrowWidth, arrowLength);
+						cayley.push(s);
+						scene.add(s);
+						s = createLine(spheres[edge[1]].position, spheres[edge[0]].position, 0.022, 0x000000, arrowWidth, arrowLength);
+						cayley.push(s);
+						scene.add(s);
+						scene.doRender();
+					}
 
-						var ct = freeGroup.cosetTable;
-						var selected = (col == undefined ? -1 : ct.extraColumns[col][r]);
+					showFace = function (face, edgeList) {
+						cayley.clear();
 
-						for (var i = 1, row; row = table.rows[i]; i++) {
-							var val = ct.extraColumns[col][i - 1];
-							row.className = (val == selected ? "highlight" : "");
+						if (face == undefined) {
+							frame.forEach(function (e) { e.visible = true; });
+							scene.doRender();
+							return;
+						}
+						frame.forEach(function (e) { e.visible = false; });
+
+						var arrowWidth = 0.06;
+						var arrowLength = 0.2;
+
+
+						for (var i = 0; i < face.length; i++) {
+							var edge = edgeList[face[i]];
+							var s = createLine(spheres[edge[0]].position, spheres[edge[1]].position, 0.022, 0x000000);
+							cayley.push(s);
+							scene.add(s);
+							s = createLine(spheres[edge[1]].position, spheres[edge[0]].position, 0.022, 0x000000);
+							cayley.push(s);
+							scene.add(s);
 						}
 
-						if (col == 0) {
-							showCayley(ct.reps[r]);
-						} else
-							if (col == 1) {
-								var edge = ct.extraColumns[col][r];
-								showEdge(structure.edgeList[edge]);
-							} else
-								if (col == 2) {
-									var face = ct.extraColumns[col][r];
-									showFace(structure.faceList[face], structure.edgeList);
-								}
-
+						scene.doRender();
 					}
 
-				
-				</script>
-				
-</div>
-				<p>
-					Notice how the different cosets connect vertices, edges, and faces.
-				</p>
-				<p>
-					For instance, see how vertex
-					<a class='interactive' onmouseover='selectRow(0,0)' onmouseout='selectRow(0)'>V0</a> connects to three edges (E0,E1,E3) and three faces (F0,F1,F2). Likewise, edge
-					<a class='interactive' onmouseover='selectRow(1,0)' onmouseout='selectRow(0)'>E0</a> connects two vertices (V0,V1) and two faces (F0, F1). The face
-					<a class='interactive' onmouseover='selectRow(2,0)' onmouseout='selectRow(0)'>F0</a> connects four vertices (V0,V1,V2,V3) and four edges (E0,E1,E2,E4)
-				</p>
+					setInitialVertex = function (v1, v2, v3) {
+						var pos = new THREE.Vector3(0, 0, 0);
+						pos.addScaledVector(nRp, v1);
+						pos.addScaledVector(nGp, v2);
+						pos.addScaledVector(nBp, v3);
 
-				<h2>Raytracing reflection groups</h2>
-				<p>I have been a long time fan of ray marching, and
-					<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">distance estimation techniques.</a>
-				</p>
-				<p>
-					The previous section showed how to construct geometry by explicitly calculating vertices, edges, and faces, and the displaying
-					the structures using polygonized raster graphics (in this case WebGL).
-				</p>
-				<p>
-					But it is possible to construct very efficient distance estimators for the reflection group polytopes - including the four-dimensional
-					ones. Utilizing modern GPUs, this makes it possible to ray trace high-quality images in real-time.
-				</p>
-				<p>
-					This technique was originally described by Knighty in
-					<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
-				</p>
-				<p>The basic idea is delightfully simple: instead of trying to calculate the positions of all vertices and edges, we will
-					first transform (using the group reflections) all points in space into the same 'fundamental' region. Once we are in
-					this region, we can more easily test whether we are inside a vertex, edge, or plane (at least after assigning a width
-					to these objects).
-				</p>
-				<p>
-					This works, because of the simplicity of distance estimators: in order to draw something, we only need a single function
-					that for every point in space will give us the distance to the closest part of the structure we are depicting. This
-					function is the distance estimator. It is even perfectly fine for the distance estimator to be conservative and return
-					a number that is smaller than the actual distance to the object. I previously described the technique
-					<a href="http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/">here</a> for a recursive tetrahedron.
+						for (var i = 0; i < spheres.length; i++) {
+							scene.remove(spheres[i]);
+							spheres[i].geometry.dispose();
+						}
+						spheres = [];
 
-				</p>
+						for (var i = 0; i < ms.length; i++) {
+							var geometry = new THREE.SphereGeometry(0.034, 32, 32);
+							var material = new THREE.MeshStandardMaterial({ color: (i != 0 ? 0xffffff : 0x000000) });
+							var sphere = new THREE.Mesh(geometry, material);
+							sphere.position.copy(pos.clone().applyMatrix3(ms[i]));
+							scene.add(sphere);
+							spheres.push(sphere);
 
+						}
+						console.log(spheres[0].position);
 
-				<p>
-				Example of raytracing a system of three generators:
-				</p>
+						for (var i = 0; i < structure.edgeList.length; i++) {
+							var v1 = structure.edgeList[i][0];
+							var v2 = structure.edgeList[i][1];
+							var s = createLine(spheres[v1].position, spheres[v2].position, 0.02, 0xffffff);
+							if (s != undefined) {
+								scene.add(s);
+								spheres.push(s);
+							}
+						}
+						console.log(spheres[0].position);
+
+						scene.doRender();
+					}
+
+					setInitialVertex(1, 0, 0);
+				}
+
+				init();
+			
+				var gui = new dat.GUI({ autoPlace: false });
+
+				var staticContainer = document.createElement('div');
+				staticContainer.style.width = "300px";
+				staticContainer.style.display = "inline";
+				staticContainer.style.position = "absolute";
+				staticContainer.style.whitespace = "nowrap";
+
+				staticContainer.appendChild(gui.domElement);
+				document.getElementById("largeContainer").appendChild(staticContainer);
+				var f = gui.addFolder("Initial vertex");
+				f.open();
+				var pp = {
+					nR: 1,
+					nG: 0,
+					nB: 0,
+				};
+
+				f.add(pp, "nR", 0, 2).name("nR").onChange(function (v) {
+					setInitialVertex(pp.nR, pp.nG, pp.nB);
+				});
+				f.add(pp, "nG", 0, 2).name("nG").onChange(function (v) {
+					setInitialVertex(pp.nR, pp.nG, pp.nB);
+				});
+				f.add(pp, "nB", 0, 2).name("nB").onChange(function (v) {
+					setInitialVertex(pp.nR, pp.nG, pp.nB);
+				});
+
+				function selectRow(col, r) {
+					var table = document.getElementById("mainTable");
+
+					var ct = freeGroup.cosetTable;
+					var selected = (col == undefined ? -1 : ct.extraColumns[col][r]);
+
+					for (var i = 1, row; row = table.rows[i]; i++) {
+						var val = ct.extraColumns[col][i - 1];
+						row.className = (val == selected ? "highlight" : "");
+					}
+
+					if (col == 0) {
+						showCayley(ct.reps[r]);
+					} else
+						if (col == 1) {
+							var edge = ct.extraColumns[col][r];
+							showEdge(structure.edgeList[edge]);
+						} else
+							if (col == 2) {
+								var face = ct.extraColumns[col][r];
+								showFace(structure.faceList[face], structure.edgeList);
+							}
+				}
+			</script>
+
+		</div>
+		<p>
+			Notice how the different cosets connect vertices, edges, and faces.
+		</p>
+		<p>
+			For instance, see how vertex
+			<a class='interactive' onmouseover='selectRow(0,0)' onmouseout='selectRow(0)'>V0</a> connects to three edges (E0,E1,E3) and three faces (F0,F1,F2). Likewise, edge
+			<a class='interactive' onmouseover='selectRow(1,0)' onmouseout='selectRow(0)'>E0</a> connects two vertices (V0,V1) and two faces (F0, F1). The face
+			<a class='interactive' onmouseover='selectRow(2,0)' onmouseout='selectRow(0)'>F0</a> connects four vertices (V0,V1,V2,V3) and four edges (E0,E1,E2,E4)
+		</p>
+
+		<div class="fullwidth">
+				<img src="img4.jpg" width="100%" />	
+			</div>	
+		<h2>Raytracing reflection groups</h2>
+		<p>I have been a long time fan of ray marching, and
+			<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">distance estimation techniques.</a>
+		</p>
+		<p>
+			The previous section showed how to construct geometry by explicitly calculating vertices, edges, and faces, and the displaying
+			the structures using polygonized raster graphics (in this case WebGL).
+		</p>
+		<p>
+			But it is possible to construct very efficient distance estimators for the reflection group polytopes - including the four-dimensional
+			ones. Utilizing modern GPUs, this makes it possible to ray trace high-quality images in real-time.
+		</p>
+		<p>
+			This technique was originally described by Knighty in
+			<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
+		</p>
+		<p>The basic idea is delightfully simple: instead of trying to calculate the positions of all vertices and edges, we will
+			first transform (using the group reflections) all points in space into the same 'fundamental' region. Once we are in this
+			region, we can more easily test whether we are inside a vertex, edge, or plane (at least after assigning a width to these
+			objects).
+		</p>
+		<p>
+			This works, because of the simplicity of distance estimators: in order to draw something, we only need a single function
+			that for every point in space will give us the distance to the closest part of the structure we are depicting. This function
+			is the distance estimator. It is even perfectly fine for the distance estimator to be conservative and return a number
+			that is smaller than the actual distance to the object. I previously described the technique
+			<a href="http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/">here</a> for a recursive tetrahedron.
+		</p>
+
+		<p>
+			Example of raytracing a system of three generators:
+		</p>
 		<div class="rightBox" id="datGui1">
 		</div>
 
-				<script>
-					var gui = new dat.GUI({ autoPlace: false });
-					var staticContainer = document.getElementById("datGui1");
-					//staticContainer.style.width = "300px";
-					staticContainer.appendChild(gui.domElement);
+		<script>
+			var gui = new dat.GUI({ autoPlace: false });
+			var staticContainer = document.getElementById("datGui1");
+			staticContainer.appendChild(gui.domElement);
 
-					var containerZ = document.createElement('div');
-					containerZ.style.display = "inline";
-					document.getElementById("main").appendChild(containerZ);
-					var polyhedronScene;
+			var containerZ = document.createElement('div');
+			containerZ.style.display = "inline";
+			document.getElementById("main").appendChild(containerZ);
+			var polyhedronScene;
 
-					loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
-						polyhedronScene = createFragmentShader(containerZ, 650, 700, s[0], s[1] + s[2], gui);
-						
-						polyhedronScene.params.default = "Cube";
-						gui.add(polyhedronScene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"] ).name("Preset");
-						
-						polyhedronScene.getCamera().position.set(-1, 2, -0.5);
-						polyhedronScene.controls.update();
-					});
-				</script>
-			
-				<h2>The fourth dimension</h2>
-				<p>To get to the fourth dimension, we need one additional trick: the stereographic projection</p>
-				<p>
-				
-				</p>
+			loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
+				polyhedronScene = createFragmentShader(containerZ, 650, 700, s[0], s[1] + s[2], gui);
+				polyhedronScene.params.default = "Cube";
+				gui.add(polyhedronScene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"]).name("Preset").onChange(function (v) {
+					function set(name, val) {
+						polyhedronScene.params[name] = val;
+						polyhedronScene.uniforms[name] = { value: val };
 
-			
-		<div id="rboxSimple3">
+					}
+
+					if (polyhedronScene.params.default == "Tetrahedron") {
+						set("Degree", 3);
+						set("U", 0.0);
+						set("V", 1.0);
+						set("W", 0.0);
+						polyhedronScene.doRender();
+					} else if (polyhedronScene.params.default == "Cube") {
+						set("Degree", 4);
+						set("U", 0.0);
+						set("V", 0.0);
+						set("W", 1.0);
+						polyhedronScene.doRender();
+					} else if (polyhedronScene.params.default == "Octahedron") {
+						set("Degree", 3);
+						set("U", 1.0);
+						set("V", 0.0);
+						set("W", 0.0);
+						polyhedronScene.doRender();
+					} else if (polyhedronScene.params.default == "Dodecahedron") {
+						set("Degree", 5);
+						set("U", 0.0);
+						set("V", 0.0);
+						set("W", 1.0);
+						polyhedronScene.doRender();
+					} else if (polyhedronScene.params.default == "Icosahedron") {
+						set("Degree", 5);
+						set("U", 0.0);
+						set("V", 1.0);
+						set("W", 0.0);
+						polyhedronScene.doRender();
+					} 
+
+				});
+				polyhedronScene.getCamera().position.set(-1, 2, -0.5);
+				polyhedronScene.controls.update();
+			});
+		</script>
+		<p>In the example above, the U,V,W parameters control the position of the initial vertex as specified in the coordinate system where each axis lives on the intersection of two reflection planes (the Gram-Schmidt discussion above).</p>
+		<p>The Degree parameter controls on of the angles between reflection planes (e.g. 3 = 60 degrees, 4 = 45 degrees, 5 = 36 degrees). The two other angles are always 90 degrees and 60 degrees.</p>
+		<h2>The fourth dimension</h2>
+		<p>To get to the fourth dimension, we need one additional trick: the stereographic projection</p>
+		<p>
+		</p>
+
+		<div class="rightBox" id="rboxSimple3">
 		</div>
 
-
 		<script>
-
-
 			function sceneAdd(scene, object, group) {
 				if (scene.groupings == undefined) {
 					scene.groupings = new Map();
@@ -1032,47 +1037,45 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 
 			function project(v) {
 				// Top is (0,Math.sqrt(3),0) - find line to plane a y=-Math.sqrt(3).
-				var dist = ( Math.sqrt(3)-v.y)/(2.0*Math.sqrt(3.0));
-				return new THREE.Vector3(v.x/dist,-Math.sqrt(3), v.z/dist);
+				var dist = (Math.sqrt(3) - v.y) / (2.0 * Math.sqrt(3.0));
+				return new THREE.Vector3(v.x / dist, -Math.sqrt(3), v.z / dist);
 			}
-			
+
 			var addProjection;
-			
-				var gui3 = new dat.GUI({ autoPlace: false });
-					var staticContainer3 = document.getElementById("rboxSimple3");
-					//staticContainer.style.width = "300px";
-					staticContainer3.appendChild(gui3.domElement);
 
-					var containerZ2 = document.createElement('div');
-					containerZ2.style.display = "inline";
-					document.getElementById("main").appendChild(containerZ2);
-			
-					var f = gui3.addFolder("Rotation");
-					f.open();
-					var pp = {
-						rX: 0,
-						rY: 0,
-						rZ: 0,
-					};
+			var gui3 = new dat.GUI({ autoPlace: false });
+			var staticContainer3 = document.getElementById("rboxSimple3");
+			staticContainer3.appendChild(gui3.domElement);
 
-					f.add(pp, "rX", 0, 6.14).name("Rotate X").onChange(function (v) {
-						addProjection();	
-					});
-					f.add(pp, "rY", 0, 6.14).name("Rotate Y").onChange(function (v) {
-						addProjection();	
-					});
-					f.add(pp, "rZ", 0, 6.14).name("Rotate Z").onChange(function (v) {
-					addProjection();	
-						});
-					init();
-		
-			
+			var containerZ2 = document.createElement('div');
+			containerZ2.style.display = "inline";
+			document.getElementById("main").appendChild(containerZ2);
+
+			var f = gui3.addFolder("Rotation");
+			f.open();
+			var rotationParams = {
+				rX: 0,
+				rY: 0,
+				rZ: 0,
+			};
+
+			f.add(rotationParams, "rX", 0, 6.14).name("Rotate X").onChange(function (v) {
+				addProjection();
+			});
+			f.add(rotationParams, "rY", 0, 6.14).name("Rotate Y").onChange(function (v) {
+				addProjection();
+			});
+			f.add(rotationParams, "rZ", 0, 6.14).name("Rotate Z").onChange(function (v) {
+				addProjection();
+			});
+			init();
+
 			function init() {
-				var d = document.getElementById("rboxSimple3");
-				
-				var scene = getStandard3DView(d, 500,500);
+				var containerX = document.createElement('div');
+				containerX.style.display = "inline";
+				document.getElementById("main").appendChild(containerX);
 
-			
+				var scene = getStandard3DView(containerX, 650, 700);
 				var v = getVertices();
 				var e = getEdges();
 
@@ -1083,128 +1086,181 @@ At that time I did not fully understand the mathematics, but wanted to revisit t
 				});
 				var geometry = new THREE.SphereGeometry(Math.sqrt(3), 32, 32);
 				var sphere = new THREE.Mesh(geometry, m);
-				//sphere.position.copy(v[i]);
 				scene.add(sphere);
-				
-				var geometry = new THREE.TorusGeometry( Math.sqrt(3), 0.01, 16, 100 );
-				
-				 var  rotObjectMatrix = new THREE.Matrix4();
-                 rotObjectMatrix.makeRotationAxis(new THREE.Vector3(1,0,0), Math.PI/2.0);
 
-			
-				
-				var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-				var torus = new THREE.Mesh( geometry, material );
+				var geometry = new THREE.TorusGeometry(Math.sqrt(3), 0.01, 16, 100);
 
-					torus.matrix.multiply(rotObjectMatrix);
-								torus.rotation.setFromRotationMatrix(torus.matrix);
-								
-				var geometry = new THREE.PlaneGeometry(20, 20, 32 );
-				var material = new THREE.MeshBasicMaterial( {color: 0xeeeeee, side: THREE.DoubleSide} );
-				var plane = new THREE.Mesh( geometry, material );
-				plane.position.copy(new THREE.Vector3(0,-Math.sqrt(3)-0.01,0));
+				var rotObjectMatrix = new THREE.Matrix4();
+				rotObjectMatrix.makeRotationAxis(new THREE.Vector3(1, 0, 0), Math.PI / 2.0);
+
+				var material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+				var torus = new THREE.Mesh(geometry, material);
+
+				torus.matrix.multiply(rotObjectMatrix);
+				torus.rotation.setFromRotationMatrix(torus.matrix);
+
+				var geometry = new THREE.PlaneGeometry(20, 20, 32);
+				var material = new THREE.MeshBasicMaterial({ color: 0xeeeeee, side: THREE.DoubleSide });
+				var plane = new THREE.Mesh(geometry, material);
+				plane.position.copy(new THREE.Vector3(0, -Math.sqrt(3) - 0.01, 0));
 				plane.matrix.multiply(rotObjectMatrix);
-												plane.rotation.setFromRotationMatrix(torus.matrix);
-				scene.add( plane );
+				plane.rotation.setFromRotationMatrix(torus.matrix);
+				scene.add(plane);
 
-				scene.add( torus );
+				scene.add(torus);
 				scene.groupings = new Map();
 				scene.groupings["dynamic"] = [];
-				
-				addProjection = function() {
-				if (scene.groupings.get("dynamic")!==undefined) {
-					scene.groupings.get("dynamic").forEach(function (obj) { scene.remove(obj);obj.geometry.dispose();obj.material.dispose();  });
-					var a = scene.groupings.get("dynamic");
-					while(a.length > 0) {
-					a.pop();
-					}	
+
+				addProjection = function () {
+					if (scene.groupings.get("dynamic") !== undefined) {
+						scene.groupings.get("dynamic").forEach(function (obj) { scene.remove(obj); obj.geometry.dispose(); obj.material.dispose(); });
+						var a = scene.groupings.get("dynamic");
+						while (a.length > 0) {
+							a.pop();
+						}
 					}
-				var euler = new THREE.Euler( pp.rX,pp.rY,pp.rZ );
-					
+					var euler = new THREE.Euler(rotationParams.rX, rotationParams.rY, rotationParams.rZ);
+
 					var vv = [];
 					for (var i = 0; i < v.length; i++) {
 						vv.push(v[i].clone().applyEuler(euler));
 					}
-					
+
 					var ee = [];
 					for (var i = 0; i < e.length; i++) {
 						ee.push(e[i].clone().applyEuler(euler));
 					}
-					
-					var zenith = new THREE.Vector3(0,Math.sqrt(3),0);
+
+					var zenith = new THREE.Vector3(0, Math.sqrt(3), 0);
 					spheres = [];
 					for (var i = 0; i < vv.length; i++) {
-						sceneAdd(scene,createLine(zenith,project(vv[i]), 0.0152, 0xaa0000), "dynamic");
+						sceneAdd(scene, createLine(zenith, project(vv[i]), 0.0152, 0xaa0000), "dynamic");
 					}
-									
+
 					var divs = 20;
-					for (var i = 0; i < ee.length; i+=2) {				
-						sceneAdd(scene,createLine(ee[i],ee[i+1], 0.02, 0x444444), "dynamic");
-						
-						var delta = ee[i+1].clone().sub(ee[i]).multiplyScalar(1.0/divs);
+					for (var i = 0; i < ee.length; i += 2) {
+						sceneAdd(scene, createLine(ee[i], ee[i + 1], 0.02, 0x444444), "dynamic");
+
+						var delta = ee[i + 1].clone().sub(ee[i]).multiplyScalar(1.0 / divs);
 						var f1 = ee[i].clone();
 						var f2 = f1.clone().add(delta);
 						for (var j = 0; j < divs; j++) {
 							var g1 = f1.clone().normalize().multiplyScalar(Math.sqrt(3));
 							var g2 = f2.clone().normalize().multiplyScalar(Math.sqrt(3));
-							
-							sceneAdd(scene,createLine(project(g1),project(g2),  0.0252, 0x444444), "dynamic");
+
+							sceneAdd(scene, createLine(project(g1), project(g2), 0.0252, 0x00ff00), "dynamic");
 							var t = f1;
 							f1 = f2;
 							f2 = t.add(delta).add(delta);
 						}
 					}
 					console.log(scene.children.length);
-							scene.doRender();
-			
+					scene.doRender();
+
 				}
 				addProjection();
 			}
 		</script>
 
+		<p>
+			Example of raytracing a system of four generators:
+		</p>
 
-			
-				<p>
-				Example of raytracing a system of four generators:
-				</p>
+		<div class="rightBox" id="datGui2">
+		</div>
+		<script>
+			var gui2 = new dat.GUI({ autoPlace: false });
+			var staticContainer = document.getElementById("datGui2");
+			staticContainer.appendChild(gui2.domElement);
 
-				<div class="rightBox" id="datGui2">
-				</div>
-				<script>
-					var gui2 = new dat.GUI({ autoPlace: false });
-					var staticContainer = document.getElementById("datGui2");
-					staticContainer.appendChild(gui2.domElement);
+			var containerX = document.createElement('div');
+			containerX.style.display = "inline";
+			document.getElementById("main").appendChild(containerX);
+			loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
+				var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
+				scene.params.default = "Cube";
+				gui2.add(scene.params, 'default', ["5-cell", "8-cell", "24-cell", "16-cell", "120-cell", "600-cell"]).name("Preset").onChange(function (v) {
+					function set(name, val) {
+						scene.params[name] = val;
+						scene.uniforms[name] = { value: val };
+					}
 
-					var containerX = document.createElement('div');
-					containerX.style.display = "inline";
-					document.getElementById("main").appendChild(containerX);
-					loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
-						var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
-					scene.params.default = "Cube";
-						gui2.add(scene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"] ).name("Preset");
-							scene.getCamera().position.set(-7, -0.3, -17);
-						scene.controls.update();
-					});
+					if (scene.params.default == "5-cell") {
+						set("Degree", 3);
+						set("U", 0.0);
+						set("V", 1.0);
+						set("W", 0.0);
+						set("T", 0.0);
+						scene.doRender();
+					} else if (scene.params.default == "8-cell") {
+						set("Degree", 4);
+						set("U", 0.0);
+						set("V", 1.0);
+						set("W", 0.0);
+						set("T", 0.0);
+						scene.doRender();
+					} else if (scene.params.default == "24-cell") {
+						set("Degree", 4);
+						set("U", 0.0);
+						set("V", 0.0);
+						set("W", 1.0);
+						set("T", 0.0);
+						scene.doRender();
+					} else if (scene.params.default == "16-cell") {
+						set("Degree", 4);
+						set("U", 0.0);
+						set("V", 0.0);
+						set("W", 0.0);
+						set("T", 1.0);
+						scene.doRender();
+					} else if (scene.params.default == "120-cell") {
+						set("Degree", 5);
+						set("U", 0.0);
+						set("V", 1.0);
+						set("W", 0.0);
+						set("T", 0.0);
+						scene.doRender();
+					} else if (scene.params.default == "600-cell") {
+						set("Degree", 5);
+						set("U", 0.0);
+						set("V", 0.0);
+						set("W", 0.0);
+						set("T", 1.0);
+						scene.doRender();
+					}
 
+				});
 
+				scene.getCamera().position.set(-7, -0.3, -17);
+				scene.controls.update();
+			});
+		</script>
 
-				</script>
-
-
-				<h2>Links</h2>
-				<p>
-					<a href="https://terrytao.wordpress.com/2010/07/10/cayley-graphs-and-the-geometry-of-groups/">Cayley graphs</a>
-					<br/>
-					<a href="https://math.berkeley.edu/~kmill/notes/todd_coxeter.html">Todd Coxeter</a>
-					<br/>
-					<a href="https://math.stackexchange.com/questions/259545/meaning-of-a-regular-polytope">Meaning of regular polytope</a>
-					<br/>
-					<a href="https://math.stackexchange.com/questions/735679/what-is-the-coxeter-diagram-for/764753">What is Coxeter diagram?</a>
-					<br/>
-					<a href="http://www.ams.org/notices/199706/seress.pdf2">An introduction to computational group theory</a>
-
-
-				</p>
+		<p>
+			TODO:
+			<ul>
+				<li>Folds</li>
+				<li>'fundamental' region demo?</li>
+				<li>Trace demo is octahedron, not cube. Make it possible to choose?</li>
+				<li>Slideshows for images</li>
+				<li>Magic formula</li>
+				<li>Text descriptions</li>
+				<li>https://en.wikipedia.org/wiki/Flag_(geometry)</li>
+				<li>
+			</ul>
+		</p>
+		<h2>Links</h2>
+		<p>
+			<a href="https://terrytao.wordpress.com/2010/07/10/cayley-graphs-and-the-geometry-of-groups/">Cayley graphs</a>
+			<br/>
+			<a href="https://math.berkeley.edu/~kmill/notes/todd_coxeter.html">Todd Coxeter</a>
+			<br/>
+			<a href="https://math.stackexchange.com/questions/259545/meaning-of-a-regular-polytope">Meaning of regular polytope</a>
+			<br/>
+			<a href="https://math.stackexchange.com/questions/735679/what-is-the-coxeter-diagram-for/764753">What is Coxeter diagram?</a>
+			<br/>
+			<a href="http://www.ams.org/notices/199706/seress.pdf2">An introduction to computational group theory</a>
+		</p>
 
 	</div>
 </body>

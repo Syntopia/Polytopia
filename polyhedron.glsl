@@ -9,6 +9,7 @@ uniform mat4 cameraWorldMatrix;
 uniform mat4 cameraProjectionMatrixInverse;
 
 // control-group: coordinate
+uniform int Degree; // control[5, 3-5]
 uniform float U; // control[1, 0-1]
 uniform float V; // control[0, 0-1]
 uniform float W; // control[0, 0-1]
@@ -25,8 +26,7 @@ uniform bool displayVertices; // control[true]
 
 
 #define PI 3.141592
-// Symmetry group type.
-uniform float Type; // control[5, 2-7]
+// Symmetry group Degree.
 
 
 
@@ -39,7 +39,7 @@ uniform float Type; // control[5, 2-7]
 vec3 nc,p,pab,pbc,pca;
 
 void init() {
-	float cospin=cos(PI/float(Type)), scospin=sqrt(0.75-cospin*cospin);
+	float cospin=cos(PI/float(Degree)), scospin=sqrt(0.75-cospin*cospin);
 	nc=vec3(-0.5,-cospin,scospin);
 	pab=vec3(0.,0.,1.);
 	pbc=normalize(vec3(scospin,0.,0.5));
@@ -49,7 +49,7 @@ void init() {
 }
 
 vec3 fold(vec3 pos) {
-	int max = int(Type);
+	int max = int(Degree);
 	for(int i=0;i<7;i++){
 		pos.xy=abs(pos.xy);
 		float t=-2.*min(0.,dot(pos,nc));

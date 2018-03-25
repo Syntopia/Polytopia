@@ -296,6 +296,7 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
     function extractUniforms( ) {
         const floatUniform = /uniform\s+float\s+(\S+)\s*;\s*\/\/\s+control\[(\S+)\,\s*(\S+)-(\S+)\]/g;
         const booleanUniform = /uniform\s+bool\s+(\S+)\s*;\s*\/\/\s+control\[(\S+)]/g;
+        const intUniform = /uniform\s+int\s+(\S+)\s*;\s*\/\/\s+control\[(\S+)\,\s*(\S+)-(\S+)\]/g;
         const controlGroup = /\/\/\s*control-group\s*:\s*(\S+)/g;
     
         var currentFolder = folder;
@@ -315,7 +316,7 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
                 currentFolder.add(scene.params, name, from, to).name(name).onChange(function (v) {
                     scene.uniforms[name] = { value: v };
                     scene.doRender();
-                });
+                }).listen();
             }
             while ((m = booleanUniform.exec(line)) !== null) {
                 var name = m[1];
@@ -325,7 +326,19 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
                 currentFolder.add(scene.params, name, from, to).name(name).onChange(function (v) {
                     scene.uniforms[name] = { value: v };
                     scene.doRender();
-                });
+                }).listen();
+            }
+            while ((m = intUniform.exec(line)) !== null) {
+                var name = m[1];
+                var initial = parseInt(m[2]);
+                var from = parseInt(m[3]);
+                var to = parseInt(m[4]);
+                scene.uniforms[name] = { value: initial };
+                scene.params[name] = initial;
+                currentFolder.add(scene.params, name, from, to).name(name).step(1).onChange(function (v) {
+                    scene.uniforms[name] = { value: v };
+                    scene.doRender();
+                }).listen();
             }
     
             while ((m = controlGroup.exec(line)) !== null) {

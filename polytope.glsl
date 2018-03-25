@@ -31,12 +31,18 @@ vec2 rotate(vec2 v, float a) {
 	return vec2(cos(a)*v.x + sin(a)*v.y, -sin(a)*v.x + cos(a)*v.y);
 }
 
-#define Type 5
 // control-group: coordinate
+uniform int Degree; // control[3, 3-5]
 uniform float U; // control[1, 0-1]
 uniform float V; // control[0, 0-1]
 uniform float W; // control[0, 0-1]
 uniform float T; // control[1, 0-1]
+
+// control-group: rotation
+uniform float RotationX; // control[1, 0-1]
+uniform float RotationY; // control[0, 0-1]
+uniform float RotationZ; // control[0, 0-1]
+uniform float Angle; // control[0, 0-360]
 
 // control-group: style
 uniform float VRadius; // control[0.04, 0-0.2]
@@ -46,16 +52,13 @@ uniform bool displaySegments; // control[true]
 uniform bool displayVertices; // control[true]
 
 
-vec3 RotVector = vec3(0.0,1.0,1.0);
-float RotAngle;
 
 
 mat3 rot;
 vec4 nc,nd,p;
 void init() {
-    RotAngle = 0.0;
-    
-	float cospin=cos(PI/float(Type)), isinpin=1./sin(PI/float(Type));
+
+	float cospin=cos(PI/float(Degree)), isinpin=1./sin(PI/float(Degree));
 	float scospin=sqrt(2./3.-cospin*cospin), issinpin=1./sqrt(3.-4.*cospin*cospin);
 
 	nc=0.5*vec4(0,-1,sqrt(3.),0.);
@@ -69,7 +72,7 @@ void init() {
 	
 	p=normalize(U*pabc+V*pbdc+W*pcda+T*pdba);
 
-	rot = rotationMatrix3(normalize(RotVector), RotAngle);//in reality we need a 4D rotation
+	rot = rotationMatrix3(normalize(vec3(RotationX,RotationY,RotationZ)), Angle);//in reality we need a 4D rotation
 }
 
 vec4 fold(vec4 pos) {
