@@ -56,7 +56,7 @@
 		<p>
 			We will also go one step further, and discuss how these structures can be raytraced in realtime. This can be done using a
 			clever (inverse) construction technique of
-			<em>folding</em> space into a fundamental domain. The technique was originally described by Knighty in
+			<em>folding</em> space into a fundamental domain. The technique was originally described by Knighty in a
 			<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
 		</p>
 
@@ -236,7 +236,7 @@
 		<div class="fullwidth">
 			<img src="img2.jpg" width="100%" />
 		</div>
-		<h2>The Todd-Coexeter Algorithm</h2>
+		<h2>The Todd-Coxeter Algorithm</h2>
 
 		<p>
 			Our example relations above form a special group, called a Coxeter group. That is a group where the generators have relations
@@ -538,7 +538,7 @@
 
 		<h2>Generating geometry from group structure</h2>
 		<p>
-			Let us see how to recreate the euclidean geometry from the abstract Coxeter group description.
+			Let us see how to recreate the Euclidean geometry from the abstract Coxeter group description.
 		</p>
 		<p>
 			Given the generator relations, we now the angle between the reflector planes (e.g. 90, 120, 180 for the cube). The first
@@ -1173,12 +1173,31 @@
 				addProjection();
 			}
 		</script>
+
+		<p>
+			Stereographic projection is a projection from the surface of a sphere (in 3D) to a plane in 2D.
+			In the example above, we have our cube embedded in a sphere in 3D. Notice, that the vertices will all be on the sphere surface - this is
+			true for all regular polyhedra, also in four dimensions.
+		</p>
+		<p>
+			The edges of the cube are black. These are projected (the red lines) by following a point on the top of sphere, through the vertex, and down on the plane.
+			The projection edges are drawn in green.
+		</p>
+		<p>
+			It is possible to rotate the cube using the controls. Notice, how the edges are curved when projected down onto the plane, even though they are straight in the cube.
+		</p>
+		<p>
+			The stereographic projection can be generalized to higher dimensions. This is how we will create our depictions of four dimensional polytopes.
+			We will start out with a 3-sphere in four-dimensional space. The vertices of the polytopes will be placed on the surface of the 3-sphere, and we will make 
+			a projection onto 3-dimensional space.
+		</p>
+
 		<div class="fullwidth">
 			<img src="img6.jpg" width="100%" />
 		</div>
 		<h2>Putting it all together</h2>
 		<p>
-			Example of raytracing a system of four generators:
+			Here is an example of raytracing a system of four generators (using the code originally formulated by Knighty):
 		</p>
 
 		<div class="rightBox" id="datGui2">
@@ -1254,10 +1273,12 @@
 				});
 			};
 
-			//initializeMe();
-
 		</script>
 
+<div class="fullwidth">
+		<img src="img7.jpg" width="100%" />
+	</div>
+<h2>Conclusions</h2>
 		<p>
 			TODO:
 			<ul>
@@ -1273,11 +1294,20 @@
 		</p>
 		<h2>Links</h2>
 		<p>
-			<a href="https://terrytao.wordpress.com/2010/07/10/cayley-graphs-and-the-geometry-of-groups/">Cayley graphs</a>
+			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a> (2001-2007) by Fritz Obermeyer.
 			<br/>
-			<a href="https://math.berkeley.edu/~kmill/notes/todd_coxeter.html">Todd Coxeter</a>
+			<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Knighty's fold method</a> (Fractal Forums thread from 2012).
 			<br/>
-			<a href="https://math.stackexchange.com/questions/259545/meaning-of-a-regular-polytope">Meaning of regular polytope</a>
+			<a href="http://blog.hvidtfeldts.net/index.php/2012/02/distance-estimated-polychora/">My own renderings</a> of polychora, 2012 (using above method).
+			<br/>
+			<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">My introduction to distance estimation</a>.
+			<br/>
+			
+			<a href="https://terrytao.wordpress.com/2010/07/10/cayley-graphs-and-the-geometry-of-groups/">Cayley graphs</a> short introduction to Cayley graphs.
+			<br/>
+			<a href="https://math.berkeley.edu/~kmill/notes/todd_coxeter.html">Todd Coxeter</a> algorithm using the Schreier graph approach (which is used by Jenn 3D).
+			<br/>
+			<a href="https://math.stackexchange.com/questions/259545/meaning-of-a-regular-polytope">Meaning of regular polytope</a> explains what <em>flags</em> and transitive symmetries are.
 			<br/>
 			<a href="https://math.stackexchange.com/questions/735679/what-is-the-coxeter-diagram-for/764753">What is Coxeter diagram?</a>
 			<br/>
