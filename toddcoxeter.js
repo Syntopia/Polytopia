@@ -118,7 +118,7 @@ function parseString(generatorMap, string) {
 
 function Relations(relationString) {
     relationString = relationString.replace(/\s/g, ''); // strip whitespace
-    console.log("Relations:", relationString);
+    // console.log("Relations:", relationString);
 
     this.generators = [];
     var self = this;
@@ -180,7 +180,7 @@ function ToddCoxeter(relationString, subgroupString) {
 
     if (subgroupString != undefined) {
         subgroupString = subgroupString.replace(/;/g, ',');
-        console.log("subgroupString:", subgroupString);
+        // console.log("subgroupString:", subgroupString);
         var subgroupList = parseString(this.rels.genMap, subgroupString);
 
         for (var i = 0; i < subgroupList.length; i++) {
@@ -242,7 +242,6 @@ ToddCoxeter.prototype = {
 
         console.log("Elapsed: " + (Date.now() - startTime) + " ms. Cosets: " + this.cosetTable.rows.length);
         this.cosetCounts = this.cosetTable.rows.length;
-        console.log(" ");
         return this.cosetCounts;
     },
 
@@ -428,7 +427,7 @@ ToddCoxeter.prototype = {
                         newRep.push(j);
 
                         this.cosetTable.reps[coset] = newRep;
-                        console.log("Settings coset " + coset + " to " + newRep + " = " + this.getRepresentiveString(newRep));
+                        // console.log("Settings coset " + coset + " to " + newRep + " = " + this.getRepresentiveString(newRep));
                     }
                 }
             };
@@ -529,7 +528,7 @@ ToddCoxeter.prototype = {
             var vertex = this.cosetTable.extraColumns[0][i];
             if (vxs[vertex] == undefined) {
                 vxs[vertex] = this.getRepresentiveForCoset(i);
-                console.log("Setting vertex " + vertex + " to " + vxs[vertex]);
+                // console.log("Setting vertex " + vertex + " to " + vxs[vertex]);
             }
         }
 
@@ -562,7 +561,7 @@ function getCoxeterGroup(rgPower, gbPower, rbPower) {
     function copyString(string, copies) {
         var s = "";
         for (var i = 0; i < copies; i++) {
-            s+= string;
+            s += string;
         }
         return s;
     }
@@ -589,15 +588,15 @@ function getCoxeterGroup(rgPower, gbPower, rbPower) {
     }
 
 
-    var relations = copyString("rg",rgPower)+","+copyString("gb",gbPower)+","+copyString("rb",rbPower);
+    var relations = copyString("rg", rgPower) + "," + copyString("gb", gbPower) + "," + copyString("rb", rbPower);
     var freeGroup = new ToddCoxeter(relations);
     var total = freeGroup.solve();
     freeGroup.cosetTable.extraColumns = [];
     freeGroup.cosetTable.extraColumnNames = [["Vertices", "V"], ["Edges", "E"], ["Faces", "F"], ["Cells", "C"]];
-    freeGroup.cosetTable.extraColumns.push(findSub(copyString("gb",gbPower), "g,b", "V"));
-    freeGroup.cosetTable.extraColumns.push(findSub(copyString("rb",rbPower), "r,b", "E"));
-    freeGroup.cosetTable.extraColumns.push(findSub(copyString("rg",rgPower), "r,g", "F"));
-    freeGroup.powers = [rgPower,gbPower,rbPower];
+    freeGroup.cosetTable.extraColumns.push(findSub(copyString("gb", gbPower), "g,b", "V"));
+    freeGroup.cosetTable.extraColumns.push(findSub(copyString("rb", rbPower), "r,b", "E"));
+    freeGroup.cosetTable.extraColumns.push(findSub(copyString("rg", rgPower), "r,g", "F"));
+    freeGroup.powers = [rgPower, gbPower, rbPower];
     return freeGroup;
 }
 

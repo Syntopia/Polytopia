@@ -1,2 +1,11 @@
-Trace demo is octahedron, not cube.
+- Trace demo is octahedron, not cube.
+- Slightly better mobile
+- Presets for 4D demo.
+- Test on browsers.
+
+Future:
+- Display names for uniforms
+- Refactor out 'Frag.js' API.
+- Wiggle figures on scroll (to indicate interactivity)
+
 

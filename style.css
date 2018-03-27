@@ -227,6 +227,9 @@ The CSS below is heavily inspired by https://distill.pub/guide/, in some cases e
 While distill.pub articles are MIT licenses, I'm not sure this also applies to the CSS below.
 */
 
+div.header>div,
+div.header>p,
+div.header>h1,
 .mainContent>div,
 .mainContent>p,
 .mainContent>h1,
@@ -297,8 +300,11 @@ div.header {
     font: 17px/1.45em Georgia, serif;
     font-weight: 500;
     background-image: url("back.jpg");
-    background-size: cover; -ms-background-size: cover; -o-background-size: cover; -moz-background-size: cover; -webkit-background-size: cover;
-
+    background-size: cover;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
 }
 
 div.author {
@@ -356,11 +362,19 @@ div.author a {
 }
 
 .mainContent .rightBox {
-    clear: both;
-    float: right;
     margin-top: 0;
     margin-left: 24px;
-    margin-right: calc((100vw - 1000px) / 2 + 168px);
-    /* vw is viewport width. TODO: Clean this up */
-    width: calc((1000px - 850px) / 2 - 24px);
+}
+
+
+@media(min-width: 1000px) {
+    .mainContent .rightBox {
+        clear: both;
+        float: right;
+        margin-top: 0;
+        margin-left: 24px;
+        margin-right: calc((100vw - 1000px) / 2 + 168px);
+        /* vw is viewport width. TODO: Clean this up */
+        width: calc((1000px - 850px) / 2 - 24px);
+    }
 }

@@ -304,8 +304,7 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
         var lines = fragmentShader.split('\n');
         lines.forEach(function (line) {
             let m;
-            console.log(line);
-
+         
             while ((m = floatUniform.exec(line)) !== null) {
                 var name = m[1];
                 var initial = parseFloat(m[2]);
