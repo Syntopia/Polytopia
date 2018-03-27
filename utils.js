@@ -33,7 +33,7 @@ function createOrigoPlane(v1, v2, color) {
 
 function createPlane(v1, v2, v4, color) {
     var m = new THREE.MeshStandardMaterial({
-        opacity: 0.8,
+        opacity: 0.5,
         transparent: true,
         side: THREE.DoubleSide,
         color: color,

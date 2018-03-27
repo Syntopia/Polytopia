@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Polytopes and Coxeter Groups</title>
+	<link rel='stylesheet' href='style.css' type='text/css' />
+	<link rel='stylesheet' href='datgui.css' type='text/css' />
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+</head>
+
+<body>
+	<script src="js/three.min.js" type="text/javascript"></script>
+	<script src="js/OrbitControls.js" type="text/javascript"></script>
+	<script src="js/Detector.js" type="text/javascript"></script>
+	<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.4/svg.js" integrity="sha256-Vfh4R0uOWH2tv2NrGrtTZUo+hRBMGtEczBeTz3CSvj4="
+	 crossorigin="anonymous"></script>
+	<script src="toddcoxeter.js" type="text/javascript"></script>
+	<script src="utils.js" type="text/javascript"></script>
+	<script src="js/dat.gui.min.js" type="text/javascript"></script>
+	<script>
+		var showSceneObjects;
+	</script>
+	<div class="header">
+		<h1>Building four dimensional polytopes</h1>
+		<div class="author">by Mikael Hvidtfeldt Christensen,
+			<a href="https://twitter.com/syntopiadk?lang=en">@SyntopiaDK</a>
+		</div>
+		<p>Several years ago I became aware of which is called the
+			<i>convex regular 4-polytopes</i> - basically four-dimensional analogs of the Platonic solids. At that time I did not fully
+			understand the mathematics, but wanted to revisit the topic at a later time.
+		</p>
+	</div>
+
+
+	<div class="mainContent" id="main">
+		<div id="distanceContainer"></div>
+		<script>
+			var freeGroup = getCoxeterGroup(5, 3, 2);
+
+			// Find vertices
+			function getVertixMatrices(vertexOperators, reflectionMatrices) {
+				var ms = new Array(vertexOperators.length);
+				for (var i = 0; i < vertexOperators.length; i++) {
+					var operatorList = vertexOperators[i];
+
+					var m = new THREE.Matrix3();
+					for (var j = 0; j < operatorList.length; j++) {
+						m.premultiply(reflectionMatrices[operatorList[j]]);
+					}
+					ms[i] = m;
+				}
+				return ms;
+			}
+		</script>
+		<script>
+			var setDistancePoint;
+			var structure = freeGroup.getStructure();
+
+			function createOrtho(v1) {
+				var v2;
+				if (v1.x == 0 && v1.y == 0) {
+					v2 = new THREE.Vector3(1, 0, 0);
+				} else {
+					v2 = new THREE.Vector3(v1.y, -v1.x, 0); v2.normalize();
+				}
+				return [v2, (new THREE.Vector3()).crossVectors(v1, v2).normalize()];
+			}
+
+			var domainCenter;
+			function init() {
+				var container = document.createElement('div');
+				container.style.display = "inline";
+				document.getElementById("distanceContainer").appendChild(container);
+
+				var scene = getStandard3DView(container, 600, 600);
+				var nG;
+				var nB;
+				var nR;
+
+				var a12 = Math.PI / freeGroup.powers[0];
+				var a23 = Math.PI / freeGroup.powers[1];
+				var a13 = Math.PI / freeGroup.powers[2];
+
+				nR = new THREE.Vector3(1, 0, 0);
+				nG = new THREE.Vector3(Math.cos(a12), Math.sqrt(1 - Math.cos(a12) * Math.cos(a12)), 0);
+				var nb1 = Math.cos(a13);
+				var nb2 = (Math.cos(a23) - nG.x * nb1) / nG.y;
+				var nb3 = Math.sqrt(1 - nb1 * nb1 - nb2 * nb2);
+				nB = new THREE.Vector3(nb1, nb2, nb3);
+
+				var O = new THREE.Vector3(0, 0, 0);
+
+				var frame = [];
+				var orthoFrame = createOrtho(nR);
+				var obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0xff0000);
+				scene.add(obj); frame.push(obj);
+
+				scene.add(obj); frame.push(obj);
+				orthoFrame = createOrtho(nG);
+				obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x00ff00);
+				scene.add(obj); frame.push(obj);
+
+				orthoFrame = createOrtho(nB);
+				obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x0000ff);
+				scene.add(obj); frame.push(obj);
+
+				var nBp = gramSchmidt([nG, nR, nB])[2];
+				var nRp = gramSchmidt([nB, nG, nR])[2];
+				var nGp = gramSchmidt([nR, nB, nG])[2];
+				if (nRp.dot(nBp) < 0) nRp.multiplyScalar(-1);
+				if (nGp.dot(nBp) < 0) nGp.multiplyScalar(-1);
+
+				domainCenter = new THREE.Vector3((nBp.x + nRp.x + nGp.x) / 3.0, (nBp.y + nRp.y + nGp.y) / 3.0, (nBp.z + nRp.z + nGp.z) / 3.0);
+
+				nR.multiplyScalar(-1.0);
+				nB.multiplyScalar(-1.0);
+
+				var w = 0.01;
+				var arrowWidth = 0.03;
+				var arrowLength = 0.1;
+
+				// Get vertices
+				var reflectionMatrices = [];
+				reflectionMatrices.push(getReflectionMatrix(nR.x, nR.y, nR.z));
+				reflectionMatrices.push(getReflectionMatrix(nG.x, nG.y, nG.z));
+				reflectionMatrices.push(getReflectionMatrix(nB.x, nB.y, nB.z));
+
+				var ms = getVertixMatrices(structure.vertexOperators, reflectionMatrices);
+
+				var sceneObjects = [];
+				sceneObjects.clear = function () {
+					var a;
+					while (a = sceneObjects.pop()) {
+						scene.remove(a);
+						a.geometry.dispose();
+					}
+				}
+
+				setDistancePoint = function (vx, vy, vz) {
+					var pos = nRp;
+					var colors = [0xff0000, 0x00ff00, 0x0000ff];
+
+					sceneObjects.clear();
+					var reflectors = [nR, nG, nB];
+
+					for (var i = 0; i < ms.length; i++) {
+						var geometry = new THREE.SphereGeometry(0.034, 32, 32);
+						var material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+						var sphere = new THREE.Mesh(geometry, material);
+						sphere.position.copy(pos.clone().applyMatrix3(ms[i]));
+						scene.add(sphere);
+						sceneObjects.push(sphere);
+					}
+
+					for (var i = 0; i < structure.edgeList.length; i++) {
+						var v1 = structure.edgeList[i][0];
+						var v2 = structure.edgeList[i][1];
+						var s = createLine(sceneObjects[v1].position, sceneObjects[v2].position, 0.02, 0xffffff);
+						if (s != undefined) {
+							scene.add(s);
+							sceneObjects.push(s);
+						}
+					}
+
+					var prev;
+					var pos = new THREE.Vector3(vx, vy, vz);
+					var fold = 0;
+
+					var geometry = new THREE.SphereGeometry( 0.034 , 8, 8);
+					var material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+					var sphere = new THREE.Mesh(geometry, material);
+					sphere.position.copy(pos);
+					scene.add(sphere);
+					sceneObjects.push(sphere);
+
+					for (var i = 0; i < 15; i++) {
+						// Fold
+						var r = reflectors[i % 3];
+						var dot = pos.dot(r);
+						if (dot > 0) {
+							fold++;
+							prev = pos.clone();
+							pos.sub(r.clone().multiplyScalar(dot * 2.0));
+
+							var arrowWidth = 0.02;
+							var arrowLength = 0.02;
+							var s = createLine(prev, pos, 0.006, colors[i % 3], arrowWidth, arrowLength);
+							if (s != undefined) {
+								scene.add(s);
+								sceneObjects.push(s);
+							}
+						}
+					}
+					var dist = nRp.distanceTo(pos);
+					var geometry = new THREE.SphereGeometry(dist, 28, 28);
+					var material = new THREE.MeshStandardMaterial({ color: 0xff0000, opacity: 0.5, transparent: true });
+					var sphere = new THREE.Mesh(geometry, material);
+					sphere.position.copy(new THREE.Vector3(vx, vy, vz));
+					scene.add(sphere);
+					sceneObjects.push(sphere);
+
+					var geometry = new THREE.SphereGeometry(0.034, 8, 8);
+					var material = new THREE.MeshStandardMaterial({ color: 0xffffff});
+					var sphere = new THREE.Mesh(geometry, material);
+					sphere.position.copy(pos.clone());
+					scene.add(sphere);
+					sceneObjects.push(sphere);
+
+					scene.doRender();
+				}
+
+				setDistancePoint(0.5, 0, 0);
+			}
+
+			init();
+
+			var distanceGUI = new dat.GUI({ autoPlace: false });
+
+			var distanceDemoContainer = document.createElement('div');
+			distanceDemoContainer.style.width = "300px";
+			distanceDemoContainer.style.display = "inline";
+			distanceDemoContainer.style.position = "absolute";
+			distanceDemoContainer.style.whitespace = "nowrap";
+
+			distanceDemoContainer.appendChild(distanceGUI.domElement);
+			document.getElementById("distanceContainer").appendChild(distanceDemoContainer);
+			var f = distanceGUI.addFolder("Position");
+			f.open();
+			var pp = {
+				x: 0.5,
+				y: 0.1,
+				z: 0.1,
+			};
+
+			f.add(pp, "x", -1.0, 1.0).name("x").onChange(function (v) {
+				setDistancePoint(pp.x, pp.y, pp.z);
+			}).listen();
+			f.add(pp, "y", -1.0, 1.0).name("y").onChange(function (v) {
+				setDistancePoint(pp.x, pp.y, pp.z);
+			}).listen();
+			f.add(pp, "z", -1.0, 1.0).name("z").onChange(function (v) {
+				setDistancePoint(pp.x, pp.y, pp.z);
+			}).listen();
+
+			// The longest path
+			function setToOpposite() {
+				pp.x = domainCenter.x * -1;
+				pp.y = domainCenter.y * -1;
+				pp.z = domainCenter.z * -1;
+				setDistancePoint(pp.x, pp.y, pp.z);
+			}
+
+			// A point on our domain
+			function setToDomain() {
+				pp.x = domainCenter.x;
+				pp.y = domainCenter.y;
+				pp.z = domainCenter.z;
+				setDistancePoint(pp.x, pp.y, pp.z);
+			}
+		</script>
+		<p>
+			The illustration above shows how to fold a point in space (the red ball) back into the fundamental domain (<a href="javascript:setToDomain()" class="interactive">move to this region</a>). You can position the point using the controls. The point will trace a piecewise linear path
+			back to the fundamental domain (the white ball shows the final point in the fundamental domain). Once in the fundamental domain, we will calculate the distance to the initial vertex.
+			Due to the symmetries, this gives us the distance to the closest vertex of the red ball! The distance is visualized as
+			the radius of the red sphere centered on the red ball.
+		</p>
+		<p>
+			How many folds do we need? It seems like the worst case is when the point is located in "mirrored" fundament domain (<a href="javascript:setToOpposite()" class="interactive">move to this region</a>). 
+			In this domain, 15 folds (3 generators x the max symmetry of 5) are required.</p>
+		<p>
+			It does not seem the advantage is that big: we could have explicitly calculated the 20 vertices and 30 edges and calculated
+			the distances to those. But for more complex structures, the advantage is huge: the number of regions that can be
+			folded back into a fundamental domain grows exponentially with the number of fold operations. And fold operations are cheap:
+			for instance, in the example above, two of the reflections are orthogonal and can be aligned with the coordinate system
+			axes. In that case, the fold operation may be implemented simply by taking the absolute value of the coordinates, e.g. pos.xy = abs(pos.xy).
+			A very fast operation!
+		</p>
+		<p>The folding approach also has another advantage: we do not require the eloborate coset structure of the symmetry group to figure out how the vertices are organized
+			into edges and faces. We only need to describe the fundamental domain, then symmetry will take care of the rest.
+		</p>
+
+
+
+
+
+		</p>
+	</div>
+</body>
+
+</html>

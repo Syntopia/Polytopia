@@ -59,6 +59,7 @@ a.interactive:hover {
     display: inline-block;
     width: auto;
     overflow-y: auto;
+    overflow-x: visible;
 }
 
 select .fancy {
@@ -265,7 +266,7 @@ div.header>h1 {
     font-size: 50px;
     white-space: nowrap;
     letter-spacing: -0.02em;
-    font-family: 'Cinzel Decorative', cursive;
+    font-family: 'Cinzel Decorative';
     color: white;
 }
 

@@ -22,9 +22,10 @@ vec3 lightDir2 = LightDir2;
 vec3 spotDir = LightDir2;
 
 // control-group: AO
-uniform float uD; // control[1, 0-16]
-uniform float uAO; // control[0.04, 0-1]
- 
+//xniform float uD; // control[1, 0-16]
+//xniform float uAO; // control[0.04, 0-1]
+#define uD 2.0
+#define uAO 0.04 
 
 // Two light sources plus specular 
 vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {

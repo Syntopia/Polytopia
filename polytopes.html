@@ -27,7 +27,7 @@
 			<a href="https://twitter.com/syntopiadk?lang=en">@SyntopiaDK</a>
 		</div>
 		<p>Years ago I stumbled upon the
-			<i>convex regular 4-polytopes</i> - four-dimensional analogs of the Platonic solids. I did not understand the mathematics
+			<a href="http://blog.hvidtfeldts.net/index.php/2012/02/distance-estimated-polychora/">convex regular 4-polytopes</a> - four-dimensional analogs of the Platonic solids. I did not understand the mathematics
 			behind these structures back then - but recently I found some time to implement and investigate the basic principles in
 			more detail. </p>
 		<p>
@@ -644,7 +644,7 @@
 					} else {
 						v2 = new THREE.Vector3(v1.y, -v1.x, 0); v2.normalize();
 					}
-					return [v2, new THREE.Vector3().cross(v1, v2).normalize()];
+					return [v2, new THREE.Vector3().crossVectors(v1, v2).normalize()];
 				}
 
 				function init() {
@@ -862,34 +862,7 @@
 
 				init();
 
-				var gui = new dat.GUI({ autoPlace: false });
-
-				var staticContainer = document.createElement('div');
-				staticContainer.style.width = "300px";
-				staticContainer.style.display = "inline";
-				staticContainer.style.position = "absolute";
-				staticContainer.style.whitespace = "nowrap";
-
-				staticContainer.appendChild(gui.domElement);
-				document.getElementById("largeContainer").appendChild(staticContainer);
-				var f = gui.addFolder("Initial vertex");
-				f.open();
-				var pp = {
-					nR: 1,
-					nG: 0,
-					nB: 0,
-				};
-
-				f.add(pp, "nR", 0, 2).name("nR").onChange(function (v) {
-					setInitialVertex(pp.nR, pp.nG, pp.nB);
-				});
-				f.add(pp, "nG", 0, 2).name("nG").onChange(function (v) {
-					setInitialVertex(pp.nR, pp.nG, pp.nB);
-				});
-				f.add(pp, "nB", 0, 2).name("nB").onChange(function (v) {
-					setInitialVertex(pp.nR, pp.nG, pp.nB);
-				});
-
+			
 				function selectRow(col, r) {
 					var table = document.getElementById("mainTable");
 
@@ -925,6 +898,7 @@
 			<a class='interactive' onmouseover='selectRow(1,0)' onmouseout='selectRow(0)'>E0</a> connects two vertices (V0,V1) and two faces (F0, F1). The face
 			<a class='interactive' onmouseover='selectRow(2,0)' onmouseout='selectRow(0)'>F0</a> connects four vertices (V0,V1,V2,V3) and four edges (E0,E1,E2,E4)
 		</p>
+		<p>Also notice the volume enclosed by the three arrows. This the <b>fundamental domain</b>, which will we will soon return to.</p>
 
 		<div class="fullwidth">
 			<img src="img4.jpg" width="100%" />
@@ -934,7 +908,7 @@
 			<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">distance estimation techniques.</a>
 		</p>
 		<p>
-			The previous section showed how to construct geometry by explicitly calculating vertices, edges, and faces, and the displaying
+			The previous section showed how to construct geometry by explicitly calculating vertices, edges, and faces, and then displaying
 			the structures using polygonized raster graphics (in this case WebGL).
 		</p>
 		<p>
@@ -946,20 +920,250 @@
 			<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Fractal Forums thread</a> from 2012.
 		</p>
 		<p>The basic idea is delightfully simple: instead of trying to calculate the positions of all vertices and edges, we will
-			first transform (using the group reflections) all points in space into the same 'fundamental' region. Once we are in this
-			region, we can more easily test whether we are inside a vertex, edge, or plane (at least after assigning a width to these
-			objects).
+			first transform (using the group reflections) all points in space into the same 'fundamental' region. 
+			We will refer to this as a <b>fold</b>: a simple conditional reflection - if we are on the wrong side of a reflection
+			plane, we will do the reflection - otherwise not.
+			Once we are in this	region, we can more easily test whether we are inside a vertex, edge, or plane (at least after assigning a width to these
+			objects). We can also calculate the distance to the nearest part of the structure this way. 
 		</p>
 		<p>
-			This works, because of the simplicity of distance estimators: in order to draw something, we only need a single function
-			that for every point in space will give us the distance to the closest part of the structure we are depicting. This function
-			is the distance estimator. It is even perfectly fine for the distance estimator to be conservative and return a number
+		 Being able to calculate the distance to the nearest part of a structure is very powerful. 
+		 Given this <b>distance estimator</b>, we can render to object using <b>ray marching</b>: 
+		 we can take steps along a ray from the camera, and stop once we are sufficiently close to the object. The distance estimator tells
+		 us how large steps we are allowed to march. And, since we now know how to determine how an arbitrary ray intersects our structure, we can ray trace it,
+		 including shadows and reflections.
+		 </p><p>
+		It is even perfectly fine for the distance estimator to be conservative and return a number
 			that is smaller than the actual distance to the object. I previously described the technique
 			<a href="http://blog.hvidtfeldts.net/index.php/2011/08/distance-estimated-3d-fractals-iii-folding-space/">here</a> for a recursive tetrahedron.
 		</p>
 
+				<div class="fullwidth" id="distanceContainer"></div>
+			
+				<script>
+					var setDistancePoint;
+					var structure = freeGroup.getStructure();
+		
+				
+					var domainCenter;
+					function init() {
+						var container = document.createElement('div');
+						container.style.display = "inline";
+						document.getElementById("distanceContainer").appendChild(container);
+		
+						var scene = getStandard3DView(container, 600, 600);
+						var nG;
+						var nB;
+						var nR;
+		
+						var a12 = Math.PI / freeGroup.powers[0];
+						var a23 = Math.PI / freeGroup.powers[1];
+						var a13 = Math.PI / freeGroup.powers[2];
+		
+						nR = new THREE.Vector3(1, 0, 0);
+						nG = new THREE.Vector3(Math.cos(a12), Math.sqrt(1 - Math.cos(a12) * Math.cos(a12)), 0);
+						var nb1 = Math.cos(a13);
+						var nb2 = (Math.cos(a23) - nG.x * nb1) / nG.y;
+						var nb3 = Math.sqrt(1 - nb1 * nb1 - nb2 * nb2);
+						nB = new THREE.Vector3(nb1, nb2, nb3);
+		
+						var O = new THREE.Vector3(0, 0, 0);
+		
+						var frame = [];
+						var orthoFrame = createOrtho(nR);
+						var obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0xff0000);
+						scene.add(obj); frame.push(obj);
+		
+						scene.add(obj); frame.push(obj);
+						orthoFrame = createOrtho(nG);
+						obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x00ff00);
+						scene.add(obj); frame.push(obj);
+		
+						orthoFrame = createOrtho(nB);
+						obj = createOrigoPlane(orthoFrame[0], orthoFrame[1], 0x0000ff);
+						scene.add(obj); frame.push(obj);
+		
+						var nBp = gramSchmidt([nG, nR, nB])[2];
+						var nRp = gramSchmidt([nB, nG, nR])[2];
+						var nGp = gramSchmidt([nR, nB, nG])[2];
+						if (nRp.dot(nBp) < 0) nRp.multiplyScalar(-1);
+						if (nGp.dot(nBp) < 0) nGp.multiplyScalar(-1);
+		
+						domainCenter = new THREE.Vector3((nBp.x + nRp.x + nGp.x) / 3.0, (nBp.y + nRp.y + nGp.y) / 3.0, (nBp.z + nRp.z + nGp.z) / 3.0);
+		
+						nR.multiplyScalar(-1.0);
+						nB.multiplyScalar(-1.0);
+		
+						var w = 0.01;
+						var arrowWidth = 0.03;
+						var arrowLength = 0.1;
+		
+						// Get vertices
+						var reflectionMatrices = [];
+						reflectionMatrices.push(getReflectionMatrix(nR.x, nR.y, nR.z));
+						reflectionMatrices.push(getReflectionMatrix(nG.x, nG.y, nG.z));
+						reflectionMatrices.push(getReflectionMatrix(nB.x, nB.y, nB.z));
+		
+						var ms = getVertixMatrices(structure.vertexOperators, reflectionMatrices);
+		
+						var sceneObjects = [];
+						sceneObjects.clear = function () {
+							var a;
+							while (a = sceneObjects.pop()) {
+								scene.remove(a);
+								a.geometry.dispose();
+							}
+						}
+		
+						setDistancePoint = function (vx, vy, vz) {
+							var pos = nRp;
+							var colors = [0xff0000, 0x00ff00, 0x0000ff];
+		
+							sceneObjects.clear();
+							var reflectors = [nR, nG, nB];
+		
+							for (var i = 0; i < ms.length; i++) {
+								var geometry = new THREE.SphereGeometry(0.034, 32, 32);
+								var material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+								var sphere = new THREE.Mesh(geometry, material);
+								sphere.position.copy(pos.clone().applyMatrix3(ms[i]));
+								scene.add(sphere);
+								sceneObjects.push(sphere);
+							}
+		
+							for (var i = 0; i < structure.edgeList.length; i++) {
+								var v1 = structure.edgeList[i][0];
+								var v2 = structure.edgeList[i][1];
+								var s = createLine(sceneObjects[v1].position, sceneObjects[v2].position, 0.02, 0xffffff);
+								if (s != undefined) {
+									scene.add(s);
+									sceneObjects.push(s);
+								}
+							}
+		
+							var prev;
+							var pos = new THREE.Vector3(vx, vy, vz);
+							var fold = 0;
+		
+							var geometry = new THREE.SphereGeometry( 0.034 , 8, 8);
+							var material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+							var sphere = new THREE.Mesh(geometry, material);
+							sphere.position.copy(pos);
+							scene.add(sphere);
+							sceneObjects.push(sphere);
+		
+							for (var i = 0; i < 15; i++) {
+								// Fold
+								var r = reflectors[i % 3];
+								var dot = pos.dot(r);
+								if (dot > 0) {
+									fold++;
+									prev = pos.clone();
+									pos.sub(r.clone().multiplyScalar(dot * 2.0));
+		
+									var arrowWidth = 0.02;
+									var arrowLength = 0.02;
+									var s = createLine(prev, pos, 0.006, colors[i % 3], arrowWidth, arrowLength);
+									if (s != undefined) {
+										scene.add(s);
+										sceneObjects.push(s);
+									}
+								}
+							}
+							var dist = nRp.distanceTo(pos);
+							var geometry = new THREE.SphereGeometry(dist, 28, 28);
+							var material = new THREE.MeshStandardMaterial({ color: 0xff0000, opacity: 0.5, transparent: true });
+							var sphere = new THREE.Mesh(geometry, material);
+							sphere.position.copy(new THREE.Vector3(vx, vy, vz));
+							scene.add(sphere);
+							sceneObjects.push(sphere);
+		
+							var geometry = new THREE.SphereGeometry(0.034, 8, 8);
+							var material = new THREE.MeshStandardMaterial({ color: 0xffffff});
+							var sphere = new THREE.Mesh(geometry, material);
+							sphere.position.copy(pos.clone());
+							scene.add(sphere);
+							sceneObjects.push(sphere);
+		
+							scene.doRender();
+						}
+		
+						setDistancePoint(0.5, 0, 0);
+					}
+		
+					init();
+		
+					var distanceGUI = new dat.GUI({ autoPlace: false });
+		
+					var distanceDemoContainer = document.createElement('div');
+					distanceDemoContainer.style.width = "300px";
+					distanceDemoContainer.style.display = "inline";
+					distanceDemoContainer.style.position = "absolute";
+					distanceDemoContainer.style.whitespace = "nowrap";
+		
+					distanceDemoContainer.appendChild(distanceGUI.domElement);
+					document.getElementById("distanceContainer").appendChild(distanceDemoContainer);
+					var f = distanceGUI.addFolder("Position");
+					f.open();
+					var pp = {
+						x: 0.5,
+						y: 0.1,
+						z: 0.1,
+					};
+		
+					f.add(pp, "x", -1.0, 1.0).name("x").onChange(function (v) {
+						setDistancePoint(pp.x, pp.y, pp.z);
+					}).listen();
+					f.add(pp, "y", -1.0, 1.0).name("y").onChange(function (v) {
+						setDistancePoint(pp.x, pp.y, pp.z);
+					}).listen();
+					f.add(pp, "z", -1.0, 1.0).name("z").onChange(function (v) {
+						setDistancePoint(pp.x, pp.y, pp.z);
+					}).listen();
+		
+					// The longest path
+					function setToOpposite() {
+						pp.x = domainCenter.x * -1;
+						pp.y = domainCenter.y * -1;
+						pp.z = domainCenter.z * -1;
+						setDistancePoint(pp.x, pp.y, pp.z);
+					}
+		
+					// A point on our domain
+					function setToDomain() {
+						pp.x = domainCenter.x;
+						pp.y = domainCenter.y;
+						pp.z = domainCenter.z;
+						setDistancePoint(pp.x, pp.y, pp.z);
+					}
+				</script>
+				<p>
+					The illustration above shows how to fold a point in space (the red ball) back into the fundamental domain (<a href="javascript:setToDomain()" class="interactive">move to this region</a>). You can position the point using the controls. The point will trace a piecewise linear path
+					back to the fundamental domain (the white ball shows the final point in the fundamental domain). Once in the fundamental domain, we will calculate the distance to the initial vertex.
+					Due to the symmetries, this gives us the distance to the closest vertex of the red ball! The distance is visualized as
+					the radius of the red sphere centered on the red ball.
+				</p>
+				<p>
+					How many folds do we need? It seems like the worst case is when the point is located in "mirrored" fundament domain (<a href="javascript:setToOpposite()" class="interactive">move to this region</a>). 
+					In this domain, 15 folds (3 generators x the max symmetry of 5) are required.</p>
+				<p>
+					It does not seem the advantage is that big: we could have explicitly calculated the 20 vertices and 30 edges and calculated
+					the distances to those. But for more complex structures (the 120-cell has 600 vertices and 1200 edges), the advantage is huge: the number of regions that can be
+					folded back into a fundamental domain grows exponentially with the number of fold operations. And fold operations are cheap:
+					for instance, in the example above, two of the reflections are orthogonal and can be aligned with the coordinate system
+					axes. In that case, the fold operation may be implemented simply by taking the absolute value of the coordinates, e.g. pos.xy = abs(pos.xy).
+					A very fast operation!
+				</p>
+				<p>The folding approach also has another advantage: we do not require the eloborate coset structure of the symmetry group to figure out how the vertices are organized
+					into edges and faces. We only need to describe the fundamental domain, then symmetry will take care of the rest.
+				</p>
+		
+		
+		
+
+
 		<p>
-			Example of raytracing a system of three generators:
+			Now we ready for a real example of ray tracing a system of three generators:
 		</p>
 		<div class="rightBox" id="datGui1">
 		</div>
@@ -1026,7 +1230,7 @@
 				});
 			};
 		</script>
-		<p>In the example above, the U,V,W parameters control the position of the initial vertex as specified in the coordinate system
+		<p>In the example above, the U,V, and W parameters control the position of the initial vertex as specified in a coordinate system
 			where each axis lives on the intersection of two reflection planes (the Gram-Schmidt discussion above).</p>
 		<p>The Degree parameter controls one of the angles between reflection planes (e.g. 3 = 60 degrees, 4 = 45 degrees, 5 = 36
 			degrees). The two other angles are always 90 degrees and 60 degrees.</p>
@@ -1324,9 +1528,16 @@
 			stereographical projection to reduce the number of dimensions from four to three.
 		</p>
 		<p>
+			All of the full width images were created using <a href="http://syntopia.github.io/Fragmentarium/">Fragmentarium</a>, which comes with several of Knighty's script.
+			The source for this page can be found on <a href="https://github.com/Syntopia/Polytopia">Github</a>.
 
 		</p>
 
+		<p>
+			Geometry and symmetry groups is a mature topic that has been extensively studied by the math community, but sadly, most of it 
+			is not very accessible unless you are a research mathematician. This page is barely scratching the surface. 
+			I still hope to get some time to look into hyperbolic geometries and <a href="https://en.wikipedia.org/wiki/Honeycomb_(geometry)">honeycombs</a>, both of which would fit naturally together with the regular polytopes.  
+		</p>
 		<script>
 			insertCoxeter(document.getElementById("cox"), [3, 5, 3]);
 		</script>
@@ -1339,8 +1550,6 @@
 			<a href="https://www.math.cmu.edu/~fho/jenn/">Jenn 3D</a> (2001-2007) by Fritz Obermeyer.
 			<br/>
 			<a href="http://www.fractalforums.com/fragmentarium/solids-many-many-solids/">Knighty's fold method</a> (Fractal Forums thread from 2012).
-			<br/>
-			<a href="http://blog.hvidtfeldts.net/index.php/2012/02/distance-estimated-polychora/">My own renderings</a> of polychora, 2012 (using above method).
 			<br/>
 			<a href="http://blog.hvidtfeldts.net/index.php/2011/06/distance-estimated-3d-fractals-part-i/">My introduction to distance estimation</a>.
 			<br/>
@@ -1358,11 +1567,13 @@
 			<br />
 			<a href="http://torus.math.uiuc.edu/jms/Papers/dodecaplex/new.pdf">Generating and Rendering Four-Dimensional Polytopes
 			</a> John M. Sullivan (1990).
+			<br />
+			<a href="http://roice3.org/">Roice Nelson</a> has some great visualization (several being used on Wikipedia).
 			</p><p>Wikipedia has lots of (good) information as well:
 			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd–Coxeter algorithm</a>,
 			<a href="https://en.wikipedia.org/wiki/Coxeter_group">Coxeter group</a>,
 			<a href="https://en.wikipedia.org/wiki/Coxeter%E2%80%93Dynkin_diagram">Coxeter–Dynkin diagram</a>,
-			<a href="https://en.wikipedia.org/wiki/Polyhedron">Polyhedron</a>
+			<a href="https://en.wikipedia.org/wiki/Polyhedron">Polyhedron</a>, <a href="https://en.wikipedia.org/wiki/Honeycomb_(geometry)">Honeycombs</a>
 			</p><p>
 			I have also heard good things about John Conway's <a href="https://www.amazon.com/Symmetries-Things-John-H-Conway/dp/1568812205">The symmetries of things</a>, but have
 			not read it myself.
