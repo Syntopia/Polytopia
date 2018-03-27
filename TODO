@@ -1,7 +1,5 @@
 - Trace demo is octahedron, not cube.
-- Slightly better mobile
 - Presets for 4D demo.
-- Test on browsers.
 
 Future:
 - Display names for uniforms
