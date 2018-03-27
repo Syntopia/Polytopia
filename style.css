@@ -21,20 +21,12 @@ table.blueTable th {
     padding: 3px 2px;
 }
 
-table.blueTable tbody td {
-    //font-size: 8px;
-}
-
 table.blueTable tr:nth-child(even) {
     background: #D0E4F5;
 }
 
 table.blueTable thead {
     background: rgb(231, 243, 253);
-}
-
-table.blueTable thead th {
-    //font-size: 10px;
 }
 
 a.interactive {
