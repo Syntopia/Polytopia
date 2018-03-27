@@ -28,7 +28,7 @@
 		</div>
 		<p>Years ago I stumbled upon the
 			<a href="http://blog.hvidtfeldts.net/index.php/2012/02/distance-estimated-polychora/">convex regular 4-polytopes</a> - four-dimensional analogues of the Platonic solids. I did not understand the mathematics
-			behind these structures back then - but recently I decided to spend some time on this topic.
+			behind these structures back then - but recently I decided to figure out how this works.
 	</p>
 		<p>
 			<em>This page is not mobile friendly. While some content might be viewable, the WebGL stuff will likely not work. The page
@@ -1419,7 +1419,7 @@
 		</div>
 		<h2>Putting it all together</h2>
 		<p>
-			Here is an example of ray tracing a system of four generators:
+			Here is the final example - ray tracing a system of four generators:
 		</p>
 
 		<div class="rightBox" id="datGui2">
@@ -1437,11 +1437,21 @@
 				containerX.innerHTML = "";
 				loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
 					var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
-					scene.params.default = "Cube";
+					scene.params.default = "16-cell";
 					gui2.add(scene.params, 'default', ["5-cell", "8-cell", "24-cell", "16-cell", "120-cell", "600-cell"]).name("Preset").onChange(function (v) {
 						function set(name, val) {
 							scene.params[name] = val;
 							scene.uniforms[name] = { value: val };
+						}
+						function setRotation(x,y,z,angle) {
+							scene.params["RotationX"] = x;
+							scene.uniforms["RotationX"] = { value: x };
+							scene.params["RotationY"] = y;
+							scene.uniforms["RotationY"] = { value: y };
+							scene.params["RotationZ"] = z;
+							scene.uniforms["RotationZ"] = { value: z };
+							scene.params["Angle"] = angle;
+							scene.uniforms["Angle"] = { value: angle };
 						}
 
 						if (scene.params.default == "5-cell") {
@@ -1450,6 +1460,7 @@
 							set("V", 1.0);
 							set("W", 0.0);
 							set("T", 0.0);
+							setRotation(1,0,0,0);
 							scene.doRender();
 						} else if (scene.params.default == "8-cell") {
 							set("Degree", 4);
@@ -1457,6 +1468,7 @@
 							set("V", 1.0);
 							set("W", 0.0);
 							set("T", 0.0);
+							setRotation(0,1,0,90);
 							scene.doRender();
 						} else if (scene.params.default == "24-cell") {
 							set("Degree", 4);
@@ -1464,6 +1476,7 @@
 							set("V", 0.0);
 							set("W", 1.0);
 							set("T", 0.0);
+							setRotation(0,1,0,90);
 							scene.doRender();
 						} else if (scene.params.default == "16-cell") {
 							set("Degree", 4);
@@ -1471,6 +1484,7 @@
 							set("V", 0.0);
 							set("W", 0.0);
 							set("T", 1.0);
+							setRotation(1,0,0,0);
 							scene.doRender();
 						} else if (scene.params.default == "120-cell") {
 							set("Degree", 5);
@@ -1478,6 +1492,7 @@
 							set("V", 1.0);
 							set("W", 0.0);
 							set("T", 0.0);
+							setRotation(0,1,0,90);
 							scene.doRender();
 						} else if (scene.params.default == "600-cell") {
 							set("Degree", 5);
@@ -1485,19 +1500,29 @@
 							set("V", 0.0);
 							set("W", 0.0);
 							set("T", 1.0);
+							setRotation(1,0,0,0);
 							scene.doRender();
 						}
 
 					});
 
-					scene.getCamera().position.set(-7, -0.3, -17);
+					scene.getCamera().position.set(7, 0, 0);
 					scene.controls.update();
 				});
 			};
 
 		</script>
 		<p>
-				Similar to the 3D example, the U, V, W, and T parameters control the position of the initial vertex and the Degree parameter controls one of the angles between the reflection planes.
+				Similar to the 3D example, the U, V, W, and T parameters control the position of the initial vertex and the 
+				Degree parameter controls one of the angles between the reflection planes.
+		</p>
+		<p>
+			There is a set of controls for rotating the 4D object - this is similar to rotating the
+			cube before projecting it down onto the plane in the previous illustration. Notice, that the rotation is not a true 4D rotation - only three coordinates get rotated.
+			For some rotational values, the image gets fuzzy - I think this is when a vertex is close to the projection point of the 3-sphere and gets blown up.
+		</p>
+		<p>
+			The presets can be used to quickly toggle between the regular 4D polychora. 
 		</p>
 		<p>
 			There is one technicality that has to be taken into account when ray marching 4D polytopes. We march the ray in three dimensions

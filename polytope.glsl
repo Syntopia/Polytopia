@@ -32,8 +32,8 @@ vec2 rotate(vec2 v, float a) {
 }
 
 // control-group: coordinate
-uniform int Degree; // control[3, 3-5]
-uniform float U; // control[1, 0-1]
+uniform int Degree; // control[4, 3-5]
+uniform float U; // control[0, 0-1]
 uniform float V; // control[0, 0-1]
 uniform float W; // control[0, 0-1]
 uniform float T; // control[1, 0-1]
