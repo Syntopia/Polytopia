@@ -1,5 +1,7 @@
 # Polytopes
 
-Work-in-progress.
+An interactive page about building 4D polytopes.
 
-May be tested at: https://syntopia.github.io/Polytopia/polytopes.html
+Try it at: https://syntopia.github.io/Polytopia/polytopes.html
+
+Keywords: Polytopes, 4D, Polychora, WebGL, Ray Marching, Distance Estimation, Todd-Coxeter, Jenn 3D, Stereographic Projection.
