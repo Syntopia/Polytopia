@@ -1176,9 +1176,12 @@
 			Now we are ready for a real example of ray tracing a system of three generators:
 		</p>
 		<div class="rightBox" id="datGui1">
+			Diagram: <span id="coxeter"></span>
 		</div>
-
+	
+	
 		<script>
+			
 			var gui = new dat.GUI({ autoPlace: false });
 			var staticContainer = document.getElementById("datGui1");
 			staticContainer.appendChild(gui.domElement);
@@ -1190,53 +1193,74 @@
 
 			containerZ.innerHTML = "<span style='width: 650px; height: 700px'><img src='inactive2.png' onclick='initializePolyhedron()'></span>";
 
+			function getModification(number) {
+				var names = ["Undefined", "Regular", "Rectified", "Truncated", "Dual", "Cantellated", "Bitruncated", "Cantitruncated"];
+				return names[number];
+			}
+			function getBasicForm(degree) {
+				var form = ["","","","Tetrahedron", "Cube", "Dodecahedron"];
+				return form[degree];
+			}
+
 			var initializePolyhedron = function () {
 				containerZ.innerHTML = "";
 				loadFiles(['vertex.glsl', 'polyhedron.glsl', 'simpleRaymarcher.glsl'], function (s) {
 					polyhedronScene = createFragmentShader(containerZ, 650, 700, s[0], s[1] + s[2], gui);
-					polyhedronScene.params.default = "Cube";
+					polyhedronScene.addUniformsChangedListener( function() {
+						document.getElementById("coxeter").innerHTML = "";
+						var active = [polyhedronScene.params["U"]>0,polyhedronScene.params["V"]>0,polyhedronScene.params["W"]>0];
+						insertCoxeter(document.getElementById("coxeter"), [polyhedronScene.params["Degree"],3],active);
+						var name = getModification(
+							(polyhedronScene.params["U"]>0 ? 1 : 0)+
+							(polyhedronScene.params["V"]>0 ? 2 : 0)+
+							(polyhedronScene.params["W"]>0 ? 4 : 0));
+						document.getElementById("coxeter").innerHTML += name + "&nbsp;" + getBasicForm(polyhedronScene.params["Degree"]);
+						
+					});
+
+					polyhedronScene.params.default = "Dodecahedron";
 					gui.add(polyhedronScene.params, 'default', ["Tetrahedron", "Cube", "Octahedron", "Dodecahedron", "Icosahedron"]).name("Preset").onChange(function (v) {
 						function set(name, val) {
 							polyhedronScene.params[name] = val;
 							polyhedronScene.uniforms[name] = { value: val };
-
 						}
 
 						if (polyhedronScene.params.default == "Tetrahedron") {
-							set("Degree", 3);
-							set("U", 0.0);
-							set("V", 1.0);
-							set("W", 0.0);
-							polyhedronScene.doRender();
-						} else if (polyhedronScene.params.default == "Cube") {
-							set("Degree", 4);
-							set("U", 0.0);
-							set("V", 0.0);
-							set("W", 1.0);
-							polyhedronScene.doRender();
-						} else if (polyhedronScene.params.default == "Octahedron") {
 							set("Degree", 3);
 							set("U", 1.0);
 							set("V", 0.0);
 							set("W", 0.0);
 							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Cube") {
+							set("Degree", 4);
+							set("U", 1.0);
+							set("V", 0.0);
+							set("W", 0.0);
+							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Octahedron") {
+							set("Degree", 4);
+							set("U", 0.0);
+							set("V", 0.0);
+							set("W", 1.0);
+							polyhedronScene.doRender();
 						} else if (polyhedronScene.params.default == "Dodecahedron") {
+							set("Degree", 5);
+							set("U", 1.0);
+							set("V", 0.0);
+							set("W", 0.0);
+							polyhedronScene.doRender();
+						} else if (polyhedronScene.params.default == "Icosahedron") {
 							set("Degree", 5);
 							set("U", 0.0);
 							set("V", 0.0);
 							set("W", 1.0);
 							polyhedronScene.doRender();
-						} else if (polyhedronScene.params.default == "Icosahedron") {
-							set("Degree", 5);
-							set("U", 0.0);
-							set("V", 1.0);
-							set("W", 0.0);
-							polyhedronScene.doRender();
 						}
-
+						polyhedronScene.uniformsChanged();
 					});
 					polyhedronScene.getCamera().position.set(-1, 2, -0.5);
 					polyhedronScene.controls.update();
+					polyhedronScene.uniformsChanged();
 				});
 			};
 		</script>
@@ -1426,11 +1450,28 @@
 		</p>
 
 		<div class="rightBox" id="datGui2">
+				Diagram: <span id="coxeter4d" style="display:inline"></span>
 		</div>
 		<script>
 			var gui2 = new dat.GUI({ autoPlace: false });
 			var staticContainer = document.getElementById("datGui2");
+			insertCoxeter(document.getElementById("coxeter"), [5,3,3]);
 			staticContainer.appendChild(gui2.domElement);
+
+			function getModification4d(number) {
+				// -, x---, -x--, xx--, --x-, x-x-, -xx-
+				var names = ["Undefined", "Regular", "Rectified", "Truncated", "Birectified", "Cantellated", "Bitruncated", 
+				//  xxx-, ---x, x--x, -x-x
+				"Cantitruncated","Dual","Runcinated","Bicantellated",
+				// xx-x, --xx, x-xx, -xxx, 
+				"Runcitruncated", "Tritruncated", "Runcicantellated", "Bicantitruncated", "Runcicantitruncated"
+				];
+				return names[number];
+			}
+			function getBasicForm4d(degree) {
+				var form = ["","","","5&#8209;Cell", "8&#8209;Cell", "120&#8209;Cell"];
+				return form[degree];
+			}
 
 			var containerX = document.createElement('div');
 			containerX.style.display = "inline";
@@ -1441,7 +1482,18 @@
 				loadFiles(['vertex.glsl', 'polytope.glsl', 'simpleRaymarcher.glsl'], function (s) {
 					var scene = createFragmentShader(containerX, 650, 700, s[0], s[1] + s[2], gui2);
 					scene.params.default = "16-cell";
-					gui2.add(scene.params, 'default', ["5-cell", "8-cell", "24-cell", "16-cell", "120-cell", "600-cell"]).name("Preset").onChange(function (v) {
+					scene.addUniformsChangedListener( function() {
+						document.getElementById("coxeter4d").innerHTML = "";
+						var active = [scene.params["U"]>0,scene.params["V"]>0,scene.params["W"]>0,scene.params["T"]>0];
+						insertCoxeter(document.getElementById("coxeter4d"), [scene.params["Degree"],3,3],active);
+						var name = getModification4d(
+							(scene.params["U"]>0 ? 1 : 0)+
+							(scene.params["V"]>0 ? 2 : 0)+
+							(scene.params["W"]>0 ? 4 : 0)+
+							(scene.params["T"]>0 ? 8 : 0));
+						document.getElementById("coxeter4d").innerHTML += name + "&nbsp;" + getBasicForm4d(scene.params["Degree"]);
+						
+					});gui2.add(scene.params, 'default', ["5-cell", "8-cell", "24-cell", "16-cell", "120-cell", "600-cell"]).name("Preset").onChange(function (v) {
 						function set(name, val) {
 							scene.params[name] = val;
 							scene.uniforms[name] = { value: val };
@@ -1459,16 +1511,16 @@
 
 						if (scene.params.default == "5-cell") {
 							set("Degree", 3);
-							set("U", 0.0);
-							set("V", 1.0);
+							set("U", 1.0);
+							set("V", 0.0);
 							set("W", 0.0);
 							set("T", 0.0);
 							setRotation(1,0,0,0);
 							scene.doRender();
 						} else if (scene.params.default == "8-cell") {
 							set("Degree", 4);
-							set("U", 0.0);
-							set("V", 1.0);
+							set("U", 1.0);
+							set("V", 0.0);
 							set("W", 0.0);
 							set("T", 0.0);
 							setRotation(0,1,0,90);
@@ -1491,8 +1543,8 @@
 							scene.doRender();
 						} else if (scene.params.default == "120-cell") {
 							set("Degree", 5);
-							set("U", 0.0);
-							set("V", 1.0);
+							set("U", 1.0);
+							set("V", 0.0);
 							set("W", 0.0);
 							set("T", 0.0);
 							setRotation(0,1,0,90);
@@ -1506,11 +1558,12 @@
 							setRotation(1,0,0,0);
 							scene.doRender();
 						}
-
+						scene.uniformsChanged();
 					});
 
 					scene.getCamera().position.set(7, 0, 0);
 					scene.controls.update();
+					scene.uniformsChanged();
 				});
 			};
 
@@ -1629,6 +1682,7 @@
 			<a href="http://roice3.org/">Roice Nelson</a> has some great visualizations (several being used on Wikipedia).
 		</p>
 		<p>Wikipedia has lots of (good) information:
+			<a href="https://en.wikipedia.org/wiki/Uniform_polytope">Uniform polytope</a>
 			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd–Coxeter algorithm</a>,
 			<a href="https://en.wikipedia.org/wiki/Coxeter_group">Coxeter group</a>,
 			<a href="https://en.wikipedia.org/wiki/Coxeter%E2%80%93Dynkin_diagram">Coxeter–Dynkin diagram</a>,

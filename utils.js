@@ -176,7 +176,7 @@ function getEdges() {
 };
 
 // Coxeter diagram. Cube will have relations=[4,3]
-function insertCoxeter(container, relations, col) {
+function insertCoxeter(container, relations, active, col) {
 
     //	var container = document.createElement('div');
     //	document.getElementById("main").appendChild(container);
@@ -191,11 +191,16 @@ function insertCoxeter(container, relations, col) {
     var colors = (col == undefined ? ['black', 'black', 'black', 'black'] : col);
     draw.line(cx, y + radius / 2, cx + (gens - 1) * spacingY, y + radius / 2).stroke({ width: 1 });
 
-    draw.circle(12).x(cx - 2).y(y - 2).stroke({ width: 1 }).fill('none');
-
+    if (active == undefined) {
+        active = [true];
+        for (var i = 1; i < gens; i++) { active.push(false) }; 
+    }
+   
 
     for (var i = 0; i < gens; i++) {
-        //s += '<circle cx="' + cx + '" cy="15" r="4" stroke="black" stroke-width="1" fill="' + colors[i] + '" />';
+        if (active[i]) {
+            draw.circle(12).x(cx - 2).y(y - 2).stroke({ width: 1 }).fill('none');
+        }
         draw.circle(8).x(cx).y(y).stroke({ width: 1 });
         cx += spacingY;
         if (i < gens - 1 && relations[i] > 3)
@@ -290,6 +295,16 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
     scene.doRender = function () {
         renderer.render(scene, camera)
     };
+    scene.uniformsChangedListeners = [];
+    scene.uniformsChanged = function() {
+        scene.uniformsChangedListeners.forEach(function(listener) {
+            listener();
+        });
+    }
+    
+    scene.addUniformsChangedListener = function(listener) {
+       this.uniformsChangedListeners.push(listener);
+    }
     scene.controls = controls;
     controls.addEventListener('change', function () { scene.doRender() });
 
@@ -319,6 +334,8 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
                 currentFolder.add(scene.params, name, from, to).name(name).onChange(function (v) {
                     scene.uniforms[name] = { value: v };
                     scene.doRender();
+                    scene.uniformsChanged();
+
                 }).listen();
             }
             while ((m = booleanUniform.exec(line)) !== null) {
@@ -329,6 +346,8 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
                 currentFolder.add(scene.params, name, from, to).name(name).onChange(function (v) {
                     scene.uniforms[name] = { value: v };
                     scene.doRender();
+                    scene.uniformsChanged();
+                    
                 }).listen();
             }
             while ((m = intUniform.exec(line)) !== null) {
@@ -341,6 +360,8 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
                 currentFolder.add(scene.params, name, from, to).name(name).step(1).onChange(function (v) {
                     scene.uniforms[name] = { value: v };
                     scene.doRender();
+                    scene.uniformsChanged();
+                    
                 }).listen();
             }
     

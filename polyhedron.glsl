@@ -45,7 +45,7 @@ void init() {
 	pbc=normalize(vec3(scospin,0.,0.5));
 	pca=normalize(vec3(0.,scospin,cospin));
 	
-	p=normalize((U*pab+V*pbc+W*pca));
+	p=normalize((V*pab+W*pbc+U*pca));
 }
 
 vec3 fold(vec3 pos) {

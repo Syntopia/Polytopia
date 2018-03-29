@@ -70,7 +70,7 @@ void init() {
 	pcda=isinpin*vec4(0.,0.5*sqrt(3.)*scospin,0.5*scospin,1./sqrt(3.));
 	pdba=issinpin*vec4(0.,0.,2.*scospin,1./sqrt(3.));
 	
-	p=normalize(U*pabc+V*pbdc+W*pcda+T*pdba);
+	p=normalize(V*pabc+U*pbdc+W*pcda+T*pdba);
 
 	rot = rotationMatrix3(normalize(vec3(RotationX,RotationY,RotationZ)), Angle);//in reality we need a 4D rotation
 }
