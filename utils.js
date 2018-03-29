@@ -68,6 +68,9 @@ function getStandard3DView(container, w, h) {
     var scene2 = new THREE.Scene({ antialias: true });
     //scene2.background = new THREE.Color(0xffffff);
     scene2.add(camera);
+    scene2.getCamera = function () {
+        return camera;
+    };
 
     var ambientLight = new THREE.AmbientLight(0xffffff);
     camera.add(ambientLight);
@@ -84,6 +87,7 @@ function getStandard3DView(container, w, h) {
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.addEventListener('change', function () { renderer.render(scene2, camera); });
     scene2.doRender = function () { renderer.render(scene2, camera) };
+    scene2.getControls = function() { return controls; }
     setTimeout(function () { renderer.render(scene2, camera) });
     return scene2;
 }

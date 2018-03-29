@@ -1163,7 +1163,7 @@
 			and can be aligned with the coordinate system axes. In that case, the fold operation may be implemented simply by taking
 			the absolute value of the coordinates, e.g. pos.xy = abs(pos.xy). A very fast operation!
 		</p>
-		<p>The folding approach also has another advantage: we do not require the eloborate coset structure of the symmetry group
+		<p>The folding approach also has another advantage: we do not require the elaborate coset structure of the symmetry group
 			to figure out how the vertices are organized into edges and faces. We only need to describe the fundamental domain, then
 			symmetry will take care of the rest.
 		</p>
@@ -1309,6 +1309,9 @@
 				document.getElementById("main").appendChild(containerX);
 
 				var scene = getStandard3DView(containerX, 650, 700);
+				scene.getCamera().position.set(-10, 22, -16);
+				scene.getControls().update();
+
 				var v = getVertices();
 				var e = getEdges();
 
