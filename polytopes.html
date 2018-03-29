@@ -198,6 +198,8 @@
 				var d = document.getElementById("rbox1");
 
 				var scene = getStandard3DView(d, getSideWidth(), getSideWidth());
+				scene.getCamera().position.set(2.0, 0.4, 1.4 * 3.5);
+				scene.getControls().update();
 
 				var v = getVertices();
 				var e = getEdges();
@@ -1682,10 +1684,10 @@
 			<a href="http://roice3.org/">Roice Nelson</a> has some great visualizations (several being used on Wikipedia).
 		</p>
 		<p>Wikipedia has lots of (good) information:
-			<a href="https://en.wikipedia.org/wiki/Uniform_polytope">Uniform polytope</a>
-			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd–Coxeter algorithm</a>,
+			<a href="https://en.wikipedia.org/wiki/Uniform_polytope">Uniform polytope</a>,
+			<a href="https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm">Todd-Coxeter algorithm</a>,
 			<a href="https://en.wikipedia.org/wiki/Coxeter_group">Coxeter group</a>,
-			<a href="https://en.wikipedia.org/wiki/Coxeter%E2%80%93Dynkin_diagram">Coxeter–Dynkin diagram</a>,
+			<a href="https://en.wikipedia.org/wiki/Coxeter%E2%80%93Dynkin_diagram">Coxeter-Dynkin diagram</a>,
 			<a href="https://en.wikipedia.org/wiki/Polyhedron">Polyhedron</a>,
 			<a href="https://en.wikipedia.org/wiki/Honeycomb_(geometry)">Honeycombs</a>
 		</p>
