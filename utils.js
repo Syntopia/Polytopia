@@ -86,6 +86,8 @@ function getStandard3DView(container, w, h) {
 
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.addEventListener('change', function () { renderer.render(scene2, camera); });
+    controls.enablePan = false;
+
     scene2.doRender = function () { renderer.render(scene2, camera) };
     scene2.getControls = function() { return controls; }
     setTimeout(function () { renderer.render(scene2, camera) });
@@ -307,7 +309,8 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
     }
     scene.controls = controls;
     controls.addEventListener('change', function () { scene.doRender() });
-
+    controls.enablePan = false;
+    
     setTimeout(function () { scene.doRender(); });
 
     scene.params = {};
