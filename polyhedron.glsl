@@ -43,10 +43,13 @@ void init() {
 	float cospin=cos(PI/float(Degree)), scospin=sqrt(0.75-cospin*cospin);
 	nc=vec3(-0.5,-cospin,scospin);
 	pab=vec3(0.,0.,1.);
-	pbc=normalize(vec3(scospin,0.,0.5));
-	pca=normalize(vec3(0.,scospin,cospin));
+	pbc=vec3(scospin,0.,0.5);
+	pca=vec3(0.,scospin,cospin);
 	
 	p=normalize((V*pab+W*pbc+U*pca));
+	pbc=normalize(pbc);
+	pca=normalize(pca);
+	
 }
 
 vec3 fold(vec3 pos) {
