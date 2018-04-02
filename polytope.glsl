@@ -106,7 +106,9 @@ float dist2Segment(vec4 z, vec4 n, float r){
 	vec4 pmin=normalize(alpha*p+min(0.,beta)*n);
 	//ca and sa are the cosine and sine of the angle between z and pmin. This is the spherical distance.
 	float ca=dot(z,pmin), sa=0.5*length(pmin-z)*length(pmin+z);//sqrt(1.-ca*ca);//
-	return DD(ca,sa,r)-SRadius;
+	float factor = 1.0;// DD(ca,sa,r)/DD(ca+0.01,sa,r);
+	return (DD(ca,sa,r)-SRadius*factor)*min(1.0/factor,1.0);
+	
 }
 //it is possible to compute the distance to a face just as for segments: pmin will be the orthogonal projection
 // of z onto the 3-plane defined by p and two n's (na and nb, na and nc, na and and, nb and nd... and so on).
@@ -132,4 +134,8 @@ float DE(vec3 pos) {
 	if(displayVertices ) d=min(d,dist2Vertex(z4,r));
 	if(displaySegments) d=min(d,dist2Segments(z4, r));
 	return d ;
+}
+
+vec4 baseColor(vec3 pos, vec3 normal){
+	return vec4(1.0);
 }

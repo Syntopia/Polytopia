@@ -21,11 +21,12 @@ vec3 lightDir = LightDir;
 vec3 lightDir2 = LightDir2;
 vec3 spotDir = LightDir2;
 
-// control-group: AO
-//xniform float uD; // control[1, 0-16]
-//xniform float uAO; // control[0.04, 0-1]
+// control-group: style
+uniform float Refraction; // control[1, 0.01-1]
+
 #define uD 2.0
 #define uAO 0.04 
+
 
 // Two light sources plus specular 
 vec3 getLight(in vec3 color, in vec3 normal, in vec3 dir) {
@@ -93,6 +94,16 @@ float ambientOcclusion(vec3 p, vec3 n) {
 	return clamp(ao/wSum, 0.0, 1.0);
 }
 
+
+vec4 getMyColor(in vec3 pos,in vec3 normal, vec3 dir) {
+	float ao = ambientOcclusion(pos,normal)*0.4;	
+	vec4 color = baseColor(pos,normal);
+	vec3 light = getLight(color.xyz, normal, dir);
+	color.xyz = mix(color.xyz*Ambient+light,vec3(0),ao);
+	return color;
+}
+
+
 vec4 rayMarch(in vec3 from, in vec3 dir) {
 	// Add some noise to prevent banding
 	float totalDistance = 0.;//Jitter*rand(fragCoord.xy+vec2(iTime));
@@ -103,10 +114,14 @@ vec4 rayMarch(in vec3 from, in vec3 dir) {
 	vec3 bestPos;
 	float bestDist = 1000.0;
 	float bestTotal = 0.0;
+	vec3 acc = vec3(0.0);
+	float rest = 1.0;
+	
+	float minDist = 0.0;
+	float ior = Refraction;
 	for (int i=0; i <= MaxSteps; i++) {
 		pos = from + totalDistance * dir;
-		distance = DE(pos)*FudgeFactor;
-		
+		distance = abs(DE(pos))*FudgeFactor;
 		if (distance<bestDist) {
 			bestDist = distance;
 			bestPos = pos;
@@ -114,33 +129,40 @@ vec4 rayMarch(in vec3 from, in vec3 dir) {
 		}
 		
 		totalDistance += distance;
-		if (distance < MinimumDistance) break;
+		
+		if (distance < MinimumDistance && distance>minDist) {
+		    minDist = distance;
+			vec3 normal = getNormal(pos-dir*normalDistance*3.0);
+			vec4 c = getMyColor(pos-dir*normalDistance*3.0,normal,dir);
+			
+			acc+=rest*c.xyz*c.w;
+			rest*=(1.0-c.w);
+			
+			if (rest<0.1) break;
+			
+			
+			totalDistance += 0.05;
+			
+			from = from + totalDistance * dir;
+			totalDistance = 0.0;
+			if (dot(dir,normal)>0.0) normal*=-1.0;
+			dir = refract(dir, normal, ior);
+			ior = 1.0/ior;
+			bestDist = 1000.0;	
+		}
+		
+		if (distance>minDist) minDist = 0.0;
 		steps = i;
 	}
 
 	if (steps == MaxSteps) {
 		pos = bestPos;
+		vec3 normal = getNormal(pos-dir*normalDistance*3.0);
+		vec4 c = getMyColor(pos,normal,dir);
+		acc += rest*mix(c.xyz,vec3(1),min(bestDist/bestTotal*400.,1.0));
 	}
 	
-	
-	// Since our distance field is not signed,
-	// backstep when calc'ing normal
-	vec3 normal = getNormal(pos-dir*normalDistance*3.0);
-	
-	float ao = ambientOcclusion(pos,normal)*0.4;	
-	
-	vec3 bg = vec3(1);
-	
-
-	vec3 color = getColor(normal, pos);
-	vec3 light = getLight(color, normal, dir);
-	
-	color = mix(color*Ambient+light,vec3(0),ao);
-	
-	if (steps == MaxSteps) {
-		return vec4(mix(color,bg,min(bestDist/bestTotal*400.,1.0)),1.0);
-	}
-	return vec4(pow(color,vec3(0.6,0.5,0.5)),1.0);
+	return vec4(pow(acc,vec3(0.6,0.5,0.5)),1.0);
 } 
 
 

@@ -250,6 +250,8 @@ function loadFiles(urls, callback) {
 
 
 function createFragmentShader(container, w, h, vertexShader, fragmentShader, folder) {
+	var showStats = false; // (typeof stats !== 'undefined');
+	
     var renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -294,8 +296,12 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
 
     // Controls
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
+	
     scene.doRender = function () {
-        renderer.render(scene, camera)
+		if (showStats)
+			return;
+		
+	    renderer.render(scene, camera);        
     };
     scene.uniformsChangedListeners = [];
     scene.uniformsChanged = function() {
@@ -312,7 +318,16 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
     controls.enablePan = false;
     
     setTimeout(function () { scene.doRender(); });
+	
+	function animate() {
+		stats.begin();
+		renderer.render(scene, camera);        
+		stats.end();
+		requestAnimationFrame( animate );
+	}
 
+	if (showStats) requestAnimationFrame( animate );
+		
     scene.params = {};
 
     function extractUniforms( ) {
@@ -323,6 +338,8 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
     
         var currentFolder = folder;
         
+		var knownFolders = {};
+		
         var lines = fragmentShader.split('\n');
         lines.forEach(function (line) {
             let m;
@@ -370,8 +387,11 @@ function createFragmentShader(container, w, h, vertexShader, fragmentShader, fol
     
             while ((m = controlGroup.exec(line)) !== null) {
                 var name = m[1];
-                currentFolder = folder.addFolder(name);
-                currentFolder.open();   
+				if (knownFolders[name] === undefined) {
+					knownFolders[name] = folder.addFolder(name); 
+				}
+				currentFolder = knownFolders[name];
+				currentFolder.open();			
             }
         })
     }

@@ -21,6 +21,7 @@ uniform float SRadius; // control[0.03, 0-0.2]
 uniform bool displayFaces; // control[true]
 uniform bool displaySegments; // control[true]
 uniform bool displayVertices; // control[true]
+uniform bool displayFundamental; // control[true]
 
 
 
@@ -64,7 +65,7 @@ float D2Planes(vec3 pos) {
 	float d1=dot(pos,pbc)-dot(pbc,p);
 	float d2=dot(pos,pca)-dot(pca,p);
 	
-	return max(max(d0,d1),d2);
+	return abs(max(max(d0,d1),d2));
 }
 
 float D2Segments(vec3 pos) {
@@ -86,24 +87,52 @@ float DE(vec3 pos) {
 	if(displayFaces) d=min(d,D2Planes(pos));
 	if(displaySegments) d=min(d,D2Segments(pos));
 	if(displayVertices) d=min(d,D2Vertices(pos));
-	return d ;
+	if (displayFundamental) {
+		float off = 0.01;
+		d = min (d, length(oPos-max(0.,dot(oPos, pab))*pab)-off );
+		d = min (d, length(oPos-max(0.,dot(oPos, pbc))*pbc)-off );
+		d = min (d, length(oPos-max(0.,dot(oPos, pca))*pca)-off );
+		d = min (d, length(oPos-max(0.,dot(oPos, p))*p)-off );
+		d = max (d, length(oPos)-1.2);
+	}
+	return d;
 }
 
-vec3 baseColor(vec3 pos, vec3 normal){
+vec4 baseColor(vec3 pos, vec3 normal){
+	vec3 oPos = pos;
 	pos=fold(pos);
-	float d0=1000.0,d1=1000.0,d2=1000.,dv=1000.,ds=1000.;
-	if(displayFaces){
-		d0=abs(dot(pos,pab)-dot(pab,p));
-		d1=abs(dot(pos,pbc)-dot(pbc,p));
-		d2=abs(dot(pos,pca)-dot(pca,p));
+	float d=10000.;
+	float planes = D2Planes(pos);
+	if(displayFaces) d=min(d,planes);
+	if(displaySegments) d=min(d,D2Segments(pos));
+	if(displayVertices) d=min(d,D2Vertices(pos));
+	
+	float vertex = 1000.0;
+	
+	if (displayFundamental) {
+		float off = 0.01;
+		d = min (d, length(oPos-max(0.,dot(oPos, pab))*pab)-off );
+		d = min (d, length(oPos-max(0.,dot(oPos, pbc))*pbc)-off );
+		d = min (d, length(oPos-max(0.,dot(oPos, pca))*pca)-off );
+		d = min (d, length(oPos-max(0.,dot(oPos, p))*p)-off );
+		vertex = length(oPos-max(0.,dot(oPos, p))*p)-off ;
+		d = min (d, vertex);
 	}
-	if(displaySegments) ds=D2Segments(pos);
-	if(displayVertices) dv=D2Vertices(pos);
-	float d=min(min(d0,min(d1,d2)),min(ds,dv));
-	vec3 col=face0Color;
-	if(d==d1) col=face1Color;
-	if(d==d2) col=face2Color;
-	if(d==ds) col=segmentsColor;
-	if(d==dv) col=verticesColor;
-	return col;
+
+	vec3 color = vec3(1.0);
+	float alpha = 1.0;
+	if (planes==d) {
+	    alpha = 0.5;
+		float d0=abs(dot(pos,pab)-dot(pab,p));
+		float d1=abs(dot(pos,pbc)-dot(pbc,p));
+		float d2=abs(dot(pos,pca)-dot(pca,p));
+		float d=min(d0,min(d1,d2));
+		if(d==d1) color = vec3(193./255.,124./255.,16./255.);
+		if(d==d2) color = vec3(188./255.,172./255.,156./255.);
+		if(d==d0) color = vec3(42./255.,61./255.,69./255.);
+	}
+	if (d == vertex) {
+		color = vec3(0.0);
+	}
+	return vec4(color, alpha);
 }
